@@ -1,0 +1,30 @@
+.page{
+    background-image: url("res://app_background");
+    background-size: cover;
+    background-color: black;
+    width:100%;
+    height:100%;
+}
+.backButton{
+    height:30;
+    width:30;
+}
+.pageHeading{
+    color:#E98A02;
+    font-size: 24;
+    text-align: center;
+    font-weight: 500;
+}
+
+.name{
+    font-size: 20;
+    color:black;
+    font-weight: 500;
+    text-align: center;
+}
+.message{
+    font-size: 16;
+    color:#E98A02;
+    font-weight: 300;
+    text-align: left;
+}

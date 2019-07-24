@@ -1,0 +1,51 @@
+{
+  "nativescript": {
+    "id": "org.nativescript.farmershut",
+    "tns-android": {
+      "version": "5.4.0"
+    },
+    "tns-ios": {
+      "version": "5.4.2"
+    }
+  },
+  "description": "NativeScript Application",
+  "license": "SEE LICENSE IN <your-license-filename>",
+  "repository": "<fill-your-repository-here>",
+  "dependencies": {
+    "@angular/animations": "^7.2.4",
+    "@angular/common": "^7.2.4",
+    "@angular/compiler": "^7.2.4",
+    "@angular/core": "^7.2.4",
+    "@angular/forms": "^7.2.4",
+    "@angular/http": "^7.2.4",
+    "@angular/platform-browser": "^7.2.4",
+    "@angular/platform-browser-dynamic": "^7.2.4",
+    "@angular/router": "^7.2.4",
+    "base-64": "^0.1.0",
+    "nativescript-angular": "^7.2.4",
+    "nativescript-cardview": "^3.2.0",
+    "nativescript-carousel": "^4.2.6",
+    "nativescript-grid-view": "^5.1.0",
+    "nativescript-imagecropper": "^1.0.6",
+    "nativescript-imagepicker": "^6.2.0",
+    "nativescript-localstorage": "^2.0.0",
+    "nativescript-photo-editor": "^1.1.0",
+    "nativescript-theme-core": "~1.0.4",
+    "nativescript-toast": "^2.0.0",
+    "reflect-metadata": "~0.1.12",
+    "rxjs": "~6.5.0",
+    "tns-core-modules": "^5.4.2",
+    "tns-platform-declarations": "^6.0.1",
+    "typescript": "^3.1.1",
+    "utf8": "^3.0.0",
+    "zone.js": "~0.9.1"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "^7.2.4",
+    "@ngtools/webpack": "^7.2.4",
+    "nativescript-dev-typescript": "~0.10.0",
+    "nativescript-dev-webpack": "~0.24.0"
+  },
+  "gitHead": "8c1a4866a66daab09bf5ef8e5a96472687192373",
+  "readme": "NativeScript Application"
+}

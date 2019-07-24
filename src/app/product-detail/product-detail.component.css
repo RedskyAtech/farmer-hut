@@ -1,0 +1,100 @@
+.page{
+    background-image: url("res://app_background");
+    background-size: cover;
+    background-color: black;
+    width:100%;
+    height:100%;
+}
+.backButton{
+    height:30;
+    width:30;
+}
+.cartButton{
+    height:30;
+    width:30;
+}
+.pageHeading{
+    color:#E98A02;
+    font-size: 24;
+    text-align: center;
+    font-weight: 500;
+}
+.productImage{
+    width:80%;
+    height:100%;
+}
+.brandName{
+    font-size: 20;
+    color:#E98A02;
+    font-weight: 500;
+}
+.brandNamePresents{
+    font-size: 20;
+    color:black;
+    font-weight: 500;
+}
+.fullName{
+    font-size: 18;
+    color:black;
+}
+.quantity{
+    font-size: 18;
+    color:#E98A02;
+}
+.price{
+    font-size: 24;
+    color:black;
+    font-weight: 900;
+}
+.delivery{
+    font-size: 18;
+    color:black;
+}
+.detail{
+    font-size: 18;
+    color:black;
+    font-weight: 500;
+}
+.detailHeading{
+    font-size: 16;
+    color:black;
+}
+.detailDescription{
+    font-size: 16;
+    color:black;
+    font-weight: 300;
+}
+.addToCartButton{
+    background-color: white;
+    color: black;
+    width: 100%;
+    height: 100%;
+    font-size: 16;
+    font-weight: 500;
+}
+.addToCartButton:highlighted{
+    background-color: #E98A02;
+    color:white;
+}
+.addedCartButton{
+    background-color: #9e9e9e;
+    color: black;
+    width: 100%;
+    height: 100%;
+    font-size: 16;
+    font-weight: 500;
+}
+.buyNowButton{
+    background-color: #E98A02;
+    color: white;
+    width: 100%;
+    height: 100%;
+    font-size: 16;
+    padding:0;
+    font-weight: 500;
+    border-width:0;
+}
+.buyNowButton:highlighted{
+    background-color: white;
+    color:black;
+}

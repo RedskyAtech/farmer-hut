@@ -1,0 +1,7 @@
+<!-- https://docs.nativescript.org/angular/core-concepts/angular-navigation.html#page-router-outlet -->
+<GridLayout width="100%" height="100%">
+    <router-outlet></router-outlet>
+    <ActivityIndicator #activityIndicator [busy]="showLoading" color="#273BD3" width="50" height="50"
+        class="activity-indicator">
+    </ActivityIndicator>
+</GridLayout>

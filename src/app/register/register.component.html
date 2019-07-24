@@ -1,0 +1,46 @@
+<Page actionBarHidden="true">
+    <GridLayout class="page" rows="auto,auto,auto,auto,auto,auto,auto,auto,auto">
+        <StackLayout row="0" width="100%" marginTop="10" height="20%">
+            <Image class="appLogo" src="res://logo"></Image>
+        </StackLayout>
+        <StackLayout row="1" width="100%" height="10%">
+            <Label class="appLabel" text="Farmers Hut"></Label>
+        </StackLayout>
+        <StackLayout row="2" width="80%" height="10%">
+            <TextField [hint]="nameHint" (textChange)="onNameTextChanged($event)" secure="false"
+                [borderColor]="nameBorderColor" returnKeyType="done" (returnPress)="onReturnPress($event)"
+                autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="3" width="80%" height="10%">
+            <TextField [hint]="emailHint" (textChange)="onEmailTextChanged($event)" keyboardType="email" secure="false"
+                [borderColor]="emailBorderColor" returnKeyType="done" (returnPress)="onReturnPress($event)"
+                autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="4" width="80%" height="10%">
+            <TextField [hint]="phoneHint" (textChange)="onPhoneTextChanged($event)" keyboardType="phone" secure="false"
+                maxLength="10" [borderColor]="phoneBorderColor" returnKeyType="done"
+                (returnPress)="onReturnPress($event)" autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="5" width="80%" height="10%">
+            <TextField [hint]="passwordHint" (textChange)="onPasswordTextChanged($event)" secure="true"
+                returnKeyType="done" [borderColor]="passwordBorderColor" (returnPress)="onReturnPress($event)"
+                autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="6" width="80%" height="10%">
+            <TextField [hint]="rePasswordHint" (textChange)="onRePassTextChanged($event)" secure="true"
+                returnKeyType="done" [borderColor]="rePasswordBorderColor" (returnPress)="onReturnPress($event)"
+                autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="7" width="80%" height="10%">
+            <Button class="button" text="Register" (tap)="onRegister()"></Button>
+        </StackLayout>
+        <StackLayout row="8" width="80%" height="10%">
+            <Label class="footer-label" text="Have an account? Log in" (tap)="onLogin()"></Label>
+        </StackLayout>
+    </GridLayout>
+</Page>

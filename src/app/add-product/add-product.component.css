@@ -1,0 +1,82 @@
+.page{
+    background-image: url("res://app_background");
+    background-size: cover;
+    background-color: black;
+    width:100%;
+    height:100%;
+}
+.backButton{
+    height:30;
+    width:30;
+}
+.pageHeading{
+    color:#E98A02;
+    font-size: 24;
+    text-align: center;
+    font-weight: 500;
+}
+.productImage{
+    width:100%;
+    height:100%;
+}
+.input-field{
+    placeholder-color:white;
+    border-bottom-width: 1;
+    height:40;
+    color:#E98A02;
+}
+.button{
+    border-color:white;
+    border-width:1;
+    border-radius:10;
+    color:white;
+    font-size: 20;
+    text-transform: initial;
+    text-align: center;
+    height:40;
+    padding:0;
+    background-color: #E98A02;
+}
+.button:highlighted{
+    background-color: transparent;
+    z-index:500;
+    border-color: #E98A02;
+    color:#E98A02;
+}
+.dimensionSelectButton{
+    border-color:#E98A02;
+    border-width:1;
+    border-radius:10;
+    color:#E98A02;
+    font-size: 20;
+    text-transform: initial;
+    text-align: center;
+    height:40;
+    padding:0;
+    background-color: transparent;
+}
+.dimensionSelectButton:highlighted{
+    background-color: #E98A02;
+    border-color: white;
+    color:white;    
+}
+.dimensionButton{
+    border-color:#E98A02;
+    border-width:1;
+    color:#E98A02;
+    font-size: 14;
+    text-transform: initial;
+    text-align: center;
+    height:20%;
+    padding:0;
+    background-color: white;
+}
+.dimensionButton:highlighted{
+    background-color: #E98A02;
+    border-color:white;
+    color:white;
+}
+.dimensionContainer{
+    width:20%; 
+    height:80%;
+}

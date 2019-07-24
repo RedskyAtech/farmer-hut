@@ -1,0 +1,157 @@
+<Page>
+    <GridLayout class="page">
+        <CardView #confirmOrderDialog modal size="lg" duration="100" backgroundColor="transparent">
+            <GridLayout width="80%" height="30%" borderRadius="20" backgroundColor="white">
+                <GridLayout rows="auto,auto" width="100%" height="100%">
+                    <StackLayout row="0" height="60%" width="90%" verticalAlignment="middle">
+                        <Label class="confirmDialogLabel" textWrap="true"
+                            text="Are you sure you want to confirm this order!"></Label>
+                    </StackLayout>
+                    <GridLayout row="1" columns="auto,auto" height="40%" width="90%" verticalAlignment="middle">
+                        <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
+                            <Button class="confirm-button" text="Confirm" (tap)="onConfirm()"></Button>
+                        </StackLayout>
+                        <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle">
+                            <Button class="cancel-button" text="Cancel" (tap)="onCancel()"></Button>
+                        </StackLayout>
+                    </GridLayout>
+                </GridLayout>
+            </GridLayout>
+        </CardView>
+        <GridLayout rows="auto,auto,auto" width="100%" height="100%">
+            <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
+                <StackLayout col="0" verticalAlignment="middle" width=" 15%">
+                    <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+                </StackLayout>
+                <StackLayout col="1" verticalAlignment="middle" width="70%">
+                    <Label class="pageHeading" text="Order detail"></Label>
+                </StackLayout>
+            </GridLayout>
+
+
+            <GridLayout row="1" width="100%" height="52%">
+                <GridView [items]="orderedProducts" colWidth="90%" rowHeight="30%" width="100%" height="100%"
+                    backgroundColor="transparent">
+                    <ng-template let-item="item" let-odd="odd">
+                        <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
+                            marginTop="10%" marginBottom="10%" columns="auto,auto">
+                            <StackLayout col="0" height="100%" width="20%">
+                                <Image class="productImage" [src]="item.image"></Image>
+                            </StackLayout>
+                            <GridLayout col="1" width="80%" height="100%" rows="auto,auto">
+                                <GridLayout columns="auto,auto,auto,auto" row="0" height="40%" width="100%">
+                                    <StackLayout col="0" verticalAlignment="middle">
+                                        <Label class="fullName" [text]="item.fullName"></Label>
+                                    </StackLayout>
+                                    <StackLayout col="1" verticalAlignment="middle">
+                                        <Label class="fullName" text=" ("></Label>
+                                    </StackLayout>
+                                    <StackLayout col="2" verticalAlignment="middle">
+                                        <Label class="quantity" [text]="item.weight"></Label>
+                                    </StackLayout>
+                                    <StackLayout col="3" verticalAlignment="middle">
+                                        <Label class="fullName" text=")"></Label>
+                                    </StackLayout>
+                                </GridLayout>
+                                <GridLayout row="1" columns="auto,auto,auto" height="60%" width="100%">
+                                    <StackLayout col="0" height="100%" width="30%" verticalAlignment="middle">
+                                        <Label class="price" [text]="item.price"></Label>
+                                    </StackLayout>
+                                    <GridLayout col="1" rows="auto,auto" height="100%" width="35%">
+                                        <StackLayout row="0" height="50%" width="100%" verticalAlignment="middle">
+                                            <Label class="quantityHeading" text="Quantity"></Label>
+                                        </StackLayout>
+                                        <StackLayout row="1" height="50%" width="100%" verticalAlignment="middle">
+                                            <Label class="quantityDetail" [text]="item.quantity"></Label>
+                                        </StackLayout>
+                                    </GridLayout>
+                                    <GridLayout col="2" rows="auto,auto" height="100%" width="35%">
+                                        <StackLayout row="0" height="50%" width="100%" verticalAlignment="middle">
+                                            <Label class="quantityHeading" text="Total price"></Label>
+                                        </StackLayout>
+                                        <StackLayout row="1" height="50%" width="100%" verticalAlignment="middle">
+                                            <Label class="quantityDetail" [text]="item.totalPrice"></Label>
+                                        </StackLayout>
+                                    </GridLayout>
+                                </GridLayout>
+                            </GridLayout>
+                        </GridLayout>
+                    </ng-template>
+                </GridView>
+            </GridLayout>
+
+            <GridLayout row="2" height="40%" width="100%" rows="auto,auto,auto,auto,auto,auto">
+                <GridLayout row="0" height="12%" width="90%" columns="auto,auto" marginTop="2%">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="Name : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" [text]="userName"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="1" width="90%" height="12%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="Phone number : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" [text]="phoneNumber"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="2" width="90%" height="30%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="Address : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" textWrap="true"
+                            text="House No. 121, 3rd crossing, Street no. 6, old suraj nagari"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="3" width="90%" height="12%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="Total amount : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" [text]="totalAmount"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="4" width="100%" height="17%" columns="auto,auto">
+                    <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle"
+                        horizontalAlignment="center">
+                        <Button class="rejectOrderButton" text="Reject" (tap)="onRejectOrder()"></Button>
+                    </StackLayout>
+                    <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle"
+                        horizontalAlignment="center">
+                        <Button class="confirmOrderButton" text="Confirm" (tap)="onConfirmOrder()"></Button>
+                    </StackLayout>
+                </GridLayout>
+                <StackLayout row="5" height="15%" width="90%" verticalAlignment="middle">
+                    <Button class="trackOrderButton" text="Track here" (tap)="onTrack()"></Button>
+                </StackLayout>
+                <!-- <GridLayout row="3" width="90%" height="12%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="City : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" textWrap="true" text="Abohar"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="4" width="90%" height="12%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="District : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" textWrap="true" text="Fazilka"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="5" width="90%" height="12%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="State : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" textWrap="true" text="Punjab"></Label>
+                    </StackLayout>
+                </GridLayout> -->
+            </GridLayout>
+        </GridLayout>
+    </GridLayout>
+</Page>

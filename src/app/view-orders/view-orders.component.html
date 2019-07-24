@@ -1,0 +1,48 @@
+<Page>
+    <GridLayout rows="auto,auto,auto" class="page">
+        <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
+            <StackLayout col="0" verticalAlignment="middle" width=" 20%">
+                <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+            </StackLayout>
+            <StackLayout col="1" verticalAlignment="middle" width=" 60%">
+                <Label class="pageHeading" text="Orders"></Label>
+            </StackLayout>
+        </GridLayout>
+        <GridLayout row="1" width="100%" height="92%">
+            <GridView [items]="orderedProducts" colWidth="90%" rowHeight="20%" width="100%" height="100%"
+                backgroundColor="transparent">
+                <ng-template let-item="item" let-odd="odd">
+                    <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
+                        marginTop="10%" marginBottom="10%" rows="auto,auto">
+                        <GridLayout row="0" rows="auto,auto" width="90%" height="70%">
+                            <!-- <GridLayout rows="auto,auto" width="90%" height="80%"> -->
+                            <!-- <GridLayout row="0" columns="auto,auto,auto,auto" height="40%" width=" 100%"> -->
+                            <StackLayout row="0" height="70%" width=" 100%" orientation="horizontal">
+                                <Label class="nameHeading" text="Customer name: "></Label>
+                                <Label class="nameDetail" textWrap="true" [text]="item.username"></Label>
+                                <!-- <StackLayout col="1" verticalAlignment="bottom">
+                                    <Label class="fullName" text=" ("></Label>
+                                </StackLayout>
+                                <StackLayout col="2" verticalAlignment="bottom">
+                                    <Label class="quantity" [text]="item.weight"></Label>
+                                </StackLayout>
+                                <StackLayout col="3" verticalAlignment="bottom">
+                                    <Label class="fullName" text=")"></Label>
+                                </StackLayout> -->
+                                <!-- </GridLayout> -->
+                            </StackLayout>
+                            <StackLayout row="1" height="30%" orientation="horizontal">
+                                <Label class="priceHeading" text="Contact number: "></Label>
+                                <Label class="priceDetail" textWrap="true" [text]="item.phone"></Label>
+                            </StackLayout>
+                        </GridLayout>
+                        <!-- </GridLayout> -->
+                        <StackLayout row="1" height="30%" marginRight="5%" verticalAlignment="middle" horizontalAlignment="right">
+                            <Button class="viewDetailButton" text="VIEW DETAIL" (tap)="onViewDetail(item)"></Button>
+                        </StackLayout>
+                    </GridLayout>
+                </ng-template>
+            </GridView>
+        </GridLayout>
+    </GridLayout>
+</Page>

@@ -1,0 +1,15 @@
+<Page actionBarHidden="true">
+    <GridLayout class="page" rows="auto,auto,auto">
+        <GridLayout row="0" columns="auto,auto" width="100%" marginTop="10" height="8%">
+            <StackLayout col="0" height="100%" verticalAlignment="middle" width="20%" (tap)="onBack()">
+                <Image class="backButton" src="res://back_icon"></Image>
+            </StackLayout>
+            <StackLayout col="1" verticalAlignment="middle" width="60%" height="100%">
+                <Label class="pageHeading" text="About us"></Label>
+            </StackLayout>
+        </GridLayout>
+        <ScrollView row="1" width="90%" height="80%" marginTop="5%" borderColor="white" borderWidth="1" borderRadius="10">
+            <Label color="white" fontSize="16" padding="10" textWrap="true" [text]="aboutUs"></Label>
+        </ScrollView>
+    </GridLayout>
+</Page>

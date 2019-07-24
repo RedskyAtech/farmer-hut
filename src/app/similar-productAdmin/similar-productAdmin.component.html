@@ -1,0 +1,79 @@
+<Page>
+    <GridLayout rows="auto,auto,auto" class="page">
+        <GridLayout row="0" height="10%" width="100%" columns="auto,auto,auto">
+            <StackLayout col="0" height="50%" width="15%">
+                <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+            </StackLayout>
+            <StackLayout col="1" height="50%" width="70%">
+                <Label class="pageHeading" text="Similar products"></Label>
+            </StackLayout>
+        </GridLayout>
+        <!-- <TabView row="1" [(ngModel)]="tabSelectedIndex" width="100%" height="80%" selectedTabTextColor="white"
+            tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
+            androidSelectedTabHighlightColor="white" tabBackgroundColor="transparent"
+            (selectedIndexChanged)="onSelectedIndexChanged($event)">
+            <StackLayout *tabItem="{title: 'Similar Products'}">
+                <GridLayout rows="auto"> -->
+        <GridLayout row="1" height="80%" width="100%">
+            <GridView [items]="similarProducts" colWidth="90%" rowHeight="30%" width="100%" height="100%"
+                backgroundColor="transparent">
+                <ng-template let-item="item" let-odd="odd" let-i="index">
+                    <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%" marginRight="5%"
+                        marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">
+                        <GridLayout row="0" columns="auto,auto" horizontalAlignment="center" height="20%"
+                            borderRadius="10">
+                            <StackLayout col="0" width="70%" height="100%" verticalAlignment="middle">
+                                <Label class="brand-name" [text]="item.brandName"></Label>
+                            </StackLayout>
+                            <StackLayout col="1" width="30%" height="100%" verticalAlignment="middle">
+                                <Button class="editButton" text="Edit" (tap)="onEdit(item)"></Button>
+                            </StackLayout>
+                        </GridLayout>
+                        <GridLayout row="1" columns="auto,auto" width="100%" height="80%">
+                            <StackLayout col="0" height="100%" width="40%">
+                                <Image [src]="item.image" stretch="fill" marginTop="10%" width="70%" height="90%">
+                                </Image>
+                            </StackLayout>
+                            <GridLayout col="1" rows="auto,auto,auto" height="100%" width="60%">
+                                <StackLayout row="0" height="40%" width="100%" verticalAlignment="middle">
+                                    <Label class="product-name" textWrap="true" [text]="item.name"></Label>
+                                </StackLayout>
+                                <GridLayout row="1" columns="auto,auto" width="100%" height="25%">
+                                    <StackLayout col="0" height="100%" width="50%">
+                                        <Label width="100%" color="#E98A02" fontSize="14"
+                                            [text]="item.quantity"></Label>
+                                    </StackLayout>
+                                    <StackLayout col="1" height="100%" width="50%">
+                                        <Label width="100%" color="#E98A02" fontSize="14" [text]="item.price"></Label>
+                                    </StackLayout>
+                                </GridLayout>
+                                <GridLayout row="2" columns="auto,auto" width="100%" height="35%">
+                                    <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
+                                        <Button class="inactiveButton" text="Inactive"
+                                            [backgroundColor]="item.status=='inactive'?'#E98A02':'transparent'"
+                                            [color]="item.status=='inactive'?'white':'#E98A02'"
+                                            [borderColor]="item.status=='inactive'?'white':'#E98A02'"
+                                            (tap)="onProductInactive(i)"></Button>
+                                    </StackLayout>
+                                    <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
+                                        <Button class="activeButton" text="Active"
+                                            [backgroundColor]="item.status=='active'?'#E98A02':'transparent'"
+                                            [color]="item.status=='active'?'white':'#E98A02'"
+                                            [borderColor]="item.status=='active'?'white':'#E98A02'"
+                                            (tap)="onProductActive(i)"></Button>
+                                    </StackLayout>
+                                </GridLayout>
+                            </GridLayout>
+                        </GridLayout>
+                    </GridLayout>
+                </ng-template>
+            </GridView>
+        </GridLayout>
+        <!-- </GridLayout>
+            </StackLayout>
+        </TabView> -->
+        <GridLayout row="2" height="10%" width="100%">
+            <Button class="addProductButton" text="Add Product" (tap)="onAddButton()"></Button>
+        </GridLayout>
+    </GridLayout>
+</Page>

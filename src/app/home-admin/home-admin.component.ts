@@ -1,0 +1,227 @@
+import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+// import { RouterExtensions } from "nativescript-angular/router";
+import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
+import { Product } from "~/app/models/product.model";
+import * as localstorage from "nativescript-localstorage";
+import { HttpClient } from "@angular/common/http";
+import { Values } from "~/app/values/values";
+import { UserService } from "../services/user.service";
+
+@Component({
+    selector: "ns-homeAdmin",
+    moduleId: module.id,
+    templateUrl: "./home-admin.component.html",
+    styleUrls: ["./home-admin.component.css"]
+})
+
+export class HomeAdminComponent implements OnInit {
+
+    products;
+    productCategories = [];
+    tabSelectedIndex: number;
+    addButtonText: string;
+    product: Product;
+
+    constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {
+        this.addButtonText = "Add Product";
+        this.product = new Product();
+        this.products = [];
+
+        this.route.queryParams.subscribe(params => {
+            if (params["index"] == "1" && params["index"] != undefined) {
+                this.tabSelectedIndex = 1;
+                this.addButtonText = "Add Category";
+            } else {
+                this.tabSelectedIndex = 0;
+                this.addButtonText = "Add Product";
+            }
+        });
+
+        if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
+            this.userService.showLoadingState(true);
+            this.http
+                .get(Values.BASE_URL + "products")
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            for (var i = 0; i < res.data.length; i++) {
+                                this.products.push({
+                                    id: res.data[i]._id,
+                                    status: res.data[i].status,
+                                    image: res.data[i].image.url,
+                                    brandName: res.data[i].brand,
+                                    name: res.data[i].name,
+                                    weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
+                                    price: res.data[i].price.currency + " " + res.data[i].price.value,
+                                })
+                            }
+                            this.userService.showLoadingState(false);
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    alert(error.error.error);
+                });
+        }
+    }
+
+    ngOnInit(): void {
+        this.productCategories.push({ categoryName: "Category 1", status: "active", image: "res://item_8" });
+        this.productCategories.push({ categoryName: "Category 2", status: "inactive", image: "res://item_9", });
+        this.productCategories.push({ categoryName: "Category 3", status: "active", image: "res://item_10" });
+        this.productCategories.push({ categoryName: "Category 4", status: "inactive", image: "res://item_11" });
+        this.productCategories.push({ categoryName: "Category 5", status: "inactive", image: "res://item_12" });
+        this.productCategories.push({ categoryName: "Category 6", status: "active", image: "res://item_13" });
+        this.productCategories.push({ categoryName: "Category 7", status: "inactive", image: "res://item_8", });
+        this.productCategories.push({ categoryName: "Category 8", status: "active", image: "res://item_9", });
+        this.productCategories.push({ categoryName: "Category 9", status: "inactive", image: "res://item_10" });
+    }
+
+    onSelectedIndexChanged(args: SelectedIndexChangedEventData) {
+        if (args.oldIndex !== -1) {
+            const newIndex = args.newIndex;
+            if (newIndex === 0) {
+                // this.tabSelectedIndexResult = "Profile Tab (tabSelectedIndex = 0 )";
+                this.tabSelectedIndex = 0;
+                this.addButtonText = "Add Product";
+            } else if (newIndex === 1) {
+                // this.tabSelectedIndexResult = "Stats Tab (tabSelectedIndex = 1 )";
+                this.tabSelectedIndex = 1;
+                this.addButtonText = "Add Category";
+            }
+        }
+    }
+
+    onCategory(product: Product) {
+        this.router.navigate(['/similarProductAdmin']);
+    }
+
+    onProfile() {
+        this.router.navigate(['./profile']);
+    }
+
+    onProductEdit(product: Product) {
+        let navigationExtras: NavigationExtras = {
+            queryParams: {
+                "productId": product.id,
+                "type": "edit"
+            },
+        };
+        this.router.navigate(['./addProduct'], navigationExtras);
+    }
+
+    onCategoryEdit(i: number) {
+        let navigationExtras: NavigationExtras = {
+            queryParams: {
+                "categoryImage": this.productCategories[i].image,
+                "categoryName": this.productCategories[i].categoryName
+            },
+        };
+        // this.router.navigate(['./addCategory'], navigationExtras);
+    }
+
+    onAddProductButton() {
+        if (this.tabSelectedIndex == 0) {
+            this.router.navigate(['./addProduct']);
+        }
+        if (this.tabSelectedIndex == 1) {
+            // this.router.navigate(['./addCategory']);
+        }
+    }
+
+    onAddSlider() {
+        this.router.navigate(['./addSlider']);
+    }
+
+    onProductInactive(product: Product) {
+        this.product.status = "disabled";
+        this.userService.showLoadingState(true);
+        this.http
+            .put(Values.BASE_URL + "products/update/" + product.id, this.product)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.http
+                            .get(Values.BASE_URL + "products")
+                            .subscribe((res: any) => {
+                                if (res != null && res != undefined) {
+                                    if (res.isSuccess == true) {
+                                        console.log(res);
+                                        this.userService.showLoadingState(false);
+                                        // for (var i = 0; i < this.products.length; i++) {
+                                        this.products = [];
+                                        // }
+                                        for (var i = 0; i < res.data.length; i++) {
+                                            this.products.push({
+                                                id: res.data[i]._id,
+                                                status: res.data[i].status,
+                                                image: res.data[i].image.url,
+                                                brandName: res.data[i].brand,
+                                                name: res.data[i].name,
+                                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
+                                                price: res.data[i].price.currency + " " + res.data[i].price.value,
+                                            })
+                                        }
+                                    }
+                                }
+                            }, error => {
+                                this.userService.showLoadingState(false);
+                                alert(error.error.error);
+                            });
+                    }
+                }
+            }, error => {
+                alert(error.error.error);
+            });
+
+    }
+
+    onProductActive(product: Product) {
+        this.product.status = "enabled";
+        this.userService.showLoadingState(true);
+        this.http
+            .put(Values.BASE_URL + "products/update/" + product.id, this.product)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.http
+                            .get(Values.BASE_URL + "products")
+                            .subscribe((res: any) => {
+                                if (res != null && res != undefined) {
+                                    if (res.isSuccess == true) {
+                                        this.userService.showLoadingState(false);
+                                        this.products = [];
+                                        for (var i = 0; i < res.data.length; i++) {
+                                            this.products.push({
+                                                id: res.data[i]._id,
+                                                status: res.data[i].status,
+                                                image: res.data[i].image.url,
+                                                brandName: res.data[i].brand,
+                                                name: res.data[i].name,
+                                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
+                                                price: res.data[i].price.currency + " " + res.data[i].price.value,
+                                            })
+                                        }
+                                    }
+                                }
+                            }, error => {
+                                this.userService.showLoadingState(false);
+                                alert(error.error.error);
+                            });
+                    }
+                }
+            }, error => {
+                alert(error.error.error);
+            });
+    }
+
+    onCategoryInactive(i: number) {
+        alert("category inactive at index: " + i);
+    }
+
+    onCategoryActive(i: number) {
+        alert("category active at index: " + i);
+    }
+
+}

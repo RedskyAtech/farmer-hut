@@ -1,0 +1,21 @@
+<Page actionBarHidden="true">
+    <GridLayout class="page" rows="auto,auto,auto">
+        <GridLayout row="0" columns="auto,auto,auto" width="100%" marginTop="10" height="8%">
+            <StackLayout col="0" height="100%" verticalAlignment="middle" width="20%" (tap)="onBack()">
+                <Image class="backButton" src="res://back_icon"></Image>
+            </StackLayout>
+            <StackLayout col="1" verticalAlignment="middle" width="60%" height="100%">
+                <Label class="pageHeading" text="Give feedback"></Label>
+            </StackLayout>
+        </GridLayout>
+        <StackLayout row="1" width="80%" height="10%" marginTop="10%">
+            <TextField [hint]="feedbackHint" (textChange)="onFeedbackTextChanged($event)" secure="false"
+                [borderColor]="feedbackBorderColor" returnKeyType="done" (returnPress)="onReturnPress($event)"
+                autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="2" width="80%" height="10%">
+            <Button class="button" text="Submit" (tap)="onSubmit()"></Button>
+        </StackLayout>
+    </GridLayout>
+</Page>

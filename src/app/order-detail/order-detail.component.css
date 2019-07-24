@@ -1,0 +1,182 @@
+.page{
+    background-image: url("res://app_background");
+    background-size: cover;
+    background-color: black;
+    width:100%;
+    height:100%;
+}
+.backButton{
+    height:30;
+    width:30;
+}
+.pageHeading{
+    color:#E98A02;
+    font-size: 24;
+    text-align: center;
+    font-weight: 500;
+}
+.productImage{
+    width:80%;
+    height:100%;
+}
+.fullName{
+    font-size: 16;
+    color:black;
+}
+.quantity{
+    font-size: 16;
+    color:#E98A02;
+}
+.price{
+    font-size: 22;
+    color:black;
+    font-weight: 900;
+}
+.quantityHeading{
+    font-size: 16;
+    color:black;
+    font-weight: 500;
+    text-align: center;
+}
+.quantityDetail{
+    font-size: 16;
+    color:#E98A02;
+    font-weight: 500;
+    text-align: center;
+}
+.delivery{
+    font-size: 18;
+    color:black;
+}
+.detail{
+    font-size: 18;
+    color:black;
+    font-weight: 500;
+}
+.labelHeading{
+    color:white;
+    font-size: 16;
+    text-align: left;
+    font-weight: 500;
+}
+.labelDetail{
+    color:#E98A02;
+    font-size: 16;
+    text-align: left;
+}
+.addToCartButton{
+    background-color: white;
+    color: black;
+    width: 100%;
+    height: 100%;
+    font-size: 16;
+    font-weight: 500;
+}
+.addToCartButton:highlighted{
+    background-color: #E98A02;
+    color:white;
+}
+.addedCartButton{
+    background-color: #9e9e9e;
+    color: black;
+    width: 100%;
+    height: 100%;
+    font-size: 16;
+    font-weight: 500;
+}
+.confirmOrderButton{
+    background-color: #E98A02;
+    color: white;
+    width: 90%;
+    height: 90%;
+    font-size: 20;
+    padding:0;
+    font-weight: 500;
+    border-width:1;
+    border-radius:10;
+    border-color: white;
+}
+.confirmOrderButton:highlighted{
+    background-color: transparent;
+    z-index:500;
+    color:#E98A02;
+    border-color:#E98A02;
+}
+.rejectOrderButton{
+    background-color: transparent;
+    z-index:500;
+    color: #E98A02;
+    width: 90%;
+    height: 90%;
+    font-size: 20;
+    padding:0;
+    font-weight: 500;
+    border-width:1;
+    border-radius:10;
+    border-color: #E98A02;
+}
+.rejectOrderButton:highlighted{
+    background-color: #E98A02;
+    color:white;
+    border-color:white;
+}
+.trackOrderButton{
+    background-color: #E98A02;
+    color: white;
+    width: 40%;
+    height: 80%;
+    font-size: 16;
+    padding:0;
+    font-weight: 500;
+    border-width:1;
+    border-radius:10;
+    border-color: white;
+}
+.trackOrderButton:highlighted{
+    background-color: transparent;
+    z-index:500;
+    color:#E98A02;
+    border-color:#E98A02;
+}
+.confirmDialogLabel{
+    color:#1B1B1B;
+    font-size: 20;
+    text-align:center;
+    font-weight:500;
+}
+.confirm-button{
+    border-radius: 10;
+    background-color:#E98A02;
+    text-transform: initial;
+    color:white;
+    height:50%;
+    width:90%;
+    padding:0;
+    font-size:12;
+    font-weight:500;
+    border-color: white;
+    border-width:1;
+}
+.confirm-button:highlighted{
+    background-color: white;
+    border-color:#E98A02;
+    color:#E98A02;
+}
+.cancel-button{
+    border-radius: 10;
+    background-color:white;
+    text-transform: initial;
+    color:#E98A02;
+    height:50%;
+    width:90%;
+    padding:0;
+    font-size:12;
+    font-weight:500;
+    border-color: #E98A02;
+    border-width:1;
+}
+.cancel-button:highlighted{
+    background-color: #E98A02;
+    border-color:white;
+    color:white;
+}

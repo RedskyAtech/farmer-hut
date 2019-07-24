@@ -1,0 +1,110 @@
+.page{
+    background-image: url("res://app_background");
+    background-size: cover;
+    background-color: black;
+    width:100%;
+    height:100%;
+}
+.backButton{
+    height:30;
+    width:30;
+}
+.pageHeading{
+    color:#E98A02;
+    font-size: 24;
+    text-align: center;
+    font-weight: 500;
+}
+.labelHeading{
+    color:white;
+    font-size: 16;
+    text-align: left;
+    font-weight: 500;
+}
+.labelDetail{
+    color:#E98A02;
+    font-size: 16;
+    text-align: left;
+}
+.button{
+    border-color:white;
+    border-width:1;
+    border-radius:10;
+    color:white;
+    font-size: 20;
+    text-transform: initial;
+    text-align: center;
+    height:80%;
+    width:80%;
+    padding:0;
+    background-color: #E98A02;
+}
+.button:highlighted{
+    background-color: transparent;
+    z-index:500;
+    border-color: #E98A02;
+    color:#E98A02;
+}
+.feedbackButton{
+    border-color:white;
+    border-width:1;
+    border-radius:10;
+    color:white;
+    font-size: 16;
+    text-transform: initial;
+    text-align: center;
+    height:80%;
+    width:80%;
+    padding:0;
+    background-color: #E98A02;
+}
+.feedbackButton:highlighted{
+    z-index:500;
+    background-color: transparent;
+    border-color: #E98A02;
+    color:#E98A02;
+}
+.aboutButton{
+    border-color:#E98A02;
+    border-width:1;
+    border-radius:10;
+    color:#E98A02;
+    font-size: 16;
+    text-transform: initial;
+    text-align: center;
+    height:80%;
+    width:80%;
+    padding:0;
+    background-color: transparent;
+    z-index:500;
+}
+.aboutButton:highlighted{
+    background-color: #E98A02;
+    border-color: white;
+    color:white;
+}
+.logoutButton{
+    border-color:white;
+    border-width:1;
+    border-radius:15;
+    color:white;
+    font-size: 12;
+    text-transform: initial;
+    text-align: center;
+    height:50%;
+    width:80%;
+    padding:0;
+    background-color: #E98A02;
+}
+.logoutButton:highlighted{
+    background-color: transparent;
+    z-index:500;
+    border-color: #E98A02;
+    color:#E98A02;
+}
+.input-field{
+    placeholder-color:white;
+    border-bottom-width: 1;
+    height:40;
+    color:#E98A02;
+}
