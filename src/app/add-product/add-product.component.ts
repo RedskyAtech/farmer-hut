@@ -33,7 +33,7 @@ export class AddProductComponent implements OnInit {
     @ViewChild('selectDimensionDialog') selectDimensionDialog: ModalComponent;
 
 
-    productImage: string = "res://image_icon";
+    productImage: string;
     brandBorderColor: string;
     nameBorderColor: string;
     weightBorderColor: string;
@@ -70,6 +70,7 @@ export class AddProductComponent implements OnInit {
         this.product.image = new Image();
         this.product.dimensions = [];
         this.product.price = new Price();
+        this.productImage = "res://image_icon";
 
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
@@ -216,19 +217,19 @@ export class AddProductComponent implements OnInit {
                     var image = new ImageSource();
                     image.fromFile(path);
 
-                    this.photoEditor.editPhoto({
+                    // this.photoEditor.editPhoto({
 
-                        // imageSource: image,
-                        // hiddenControls: [
-                        //     // PhotoEditorControl.,
-                        //     PhotoEditorControl.Crop,
-                        // ],
-                    }).then((newImage: ImageSource) => {
-                        // Here you can save newImage, send it to your backend or simply display it in your app
-                        that.resultImage = newImage;
-                    }).catch((e) => {
-                        console.error(e);
-                    });
+                    //     // imageSource: image,
+                    //     // hiddenControls: [
+                    //     //     // PhotoEditorControl.,
+                    //     //     PhotoEditorControl.Crop,
+                    //     // ],
+                    // }).then((newImage: ImageSource) => {
+                    //     // Here you can save newImage, send it to your backend or simply display it in your app
+                    //     that.resultImage = newImage;
+                    // }).catch((e) => {
+                    //     console.error(e);
+                    // });
 
 
                     var baseString = image.toBase64String('png', 100)
@@ -244,7 +245,7 @@ export class AddProductComponent implements OnInit {
     // }
 
     onAddProduct() {
-        if (this.productImage == "") {
+        if (this.productImage == "res://image_icon") {
             alert("Please select product image!!!");
         }
         else if (this.brandName == "") {

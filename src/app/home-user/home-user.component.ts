@@ -75,6 +75,7 @@ export class HomeUserComponent implements OnInit {
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });
+
         }
     }
 
