@@ -16,6 +16,10 @@ import { UserService } from '../services/user.service';
 import { CardView } from "nativescript-cardview";
 import { registerElement } from "nativescript-angular/element-registry";
 import { PhotoEditor, PhotoEditorControl } from "nativescript-photo-editor";
+import { ImageCropper } from 'nativescript-imagecropper';
+import * as camera from "nativescript-camera";
+import * as permissions from "nativescript-permissions";
+
 
 registerElement("CardView", () => CardView);
 
@@ -31,9 +35,9 @@ export class AddProductComponent implements OnInit {
     // @ViewChild("dd", { read: true, static: false }) dropDown: ElementRef;
 
     @ViewChild('selectDimensionDialog') selectDimensionDialog: ModalComponent;
+    @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
 
-
-    productImage: string;
+    productImage: string | ImageSource;
     brandBorderColor: string;
     nameBorderColor: string;
     weightBorderColor: string;
@@ -55,16 +59,17 @@ export class AddProductComponent implements OnInit {
     weightDimension = "kg";
     currency = "Rs";
     product: Product;
-    imageUrl: string;
+    imageUrl: any;
     productId: string;
     type: string;
-    photoEditor: PhotoEditor;
-    resultImage: ImageSource;
 
-    cardDialog;
+    private imageCropper: ImageCropper;
+
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
 
-        this.photoEditor = new PhotoEditor();
+        this.imageCropper = new ImageCropper();
+        this.imageUrl = null;
+
         this.product = new Product();
         this.product.heading = new Heading();
         this.product.image = new Image();
@@ -202,6 +207,11 @@ export class AddProductComponent implements OnInit {
     }
 
     onUploadImage() {
+        this.photoUploadDialog.show();
+    }
+
+    onGallery() {
+        this.photoUploadDialog.hide();
         var that = this;
         let context = imagepicker.create({
             mode: "single"
@@ -213,36 +223,58 @@ export class AddProductComponent implements OnInit {
             })
             .then(selection => {
                 selection.forEach(function (selected) {
-                    var path = selected.android.toString();
                     var image = new ImageSource();
-                    image.fromFile(path);
-
-                    // this.photoEditor.editPhoto({
-
-                    //     // imageSource: image,
-                    //     // hiddenControls: [
-                    //     //     // PhotoEditorControl.,
-                    //     //     PhotoEditorControl.Crop,
-                    //     // ],
-                    // }).then((newImage: ImageSource) => {
-                    //     // Here you can save newImage, send it to your backend or simply display it in your app
-                    //     that.resultImage = newImage;
-                    // }).catch((e) => {
-                    //     console.error(e);
-                    // });
-
-
-                    var baseString = image.toBase64String('png', 100)
-                    that.imageUrl = 'data:image/png;base64,' + baseString;
-                    that.productImage = that.imageUrl;
+                    image.fromAsset(selected).then((source) => {
+                        that.imageCropper.show(source, { lockSquare: true }).then((args) => {
+                            if (args.image !== null) {
+                                that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
+                                that.productImage = that.imageUrl;
+                            }
+                        })
+                            .catch(function (e) {
+                                console.log(e);
+                            });
+                    }).catch((err) => {
+                        console.log("Error -> " + err.message);
+                    });
                 });
             });
     }
 
-    // public onchangeDropDown(args: SelectedIndexChangedEventData) {
-    //     // console.log(`Drop Down selected index changed from ${args.oldIndex} to ${args.newIndex}`);
-    //     this.dimensionIndex = args.newIndex;
-    // }
+    onCamera() {
+        this.photoUploadDialog.hide();
+        if (camera.isAvailable()) {
+            var that = this;
+            permissions.requestPermission([android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE])
+                .then(() => {
+                    camera.takePicture({ width: 512, height: 512, keepAspectRatio: true })
+                        .then((imageAsset) => {
+                            let source = new ImageSource();
+                            source.fromAsset(imageAsset).then((source) => {
+                                this.imageCropper.show(source, { lockSquare: true }).then((args) => {
+                                    if (args.image !== null) {
+                                        that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
+                                        that.productImage = that.imageUrl;
+                                    }
+                                })
+                                    .catch(function (e) {
+                                        console.log(e);
+                                    });
+                            });
+                        }).catch((err) => {
+                            console.log("Error -> " + err.message);
+                        });
+                })
+                .catch(function () {
+                    alert("User denied permissions");
+                });
+        }
+    }
+
+    onOutsideClick() {
+        this.photoUploadDialog.hide();
+    }
+
 
     onAddProduct() {
         if (this.productImage == "res://image_icon") {

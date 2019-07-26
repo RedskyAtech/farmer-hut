@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-// import * as geolocation from "nativescript-geolocation";
+import * as geolocation from "nativescript-geolocation";
 import { Accuracy } from "tns-core-modules/ui/enums";
-// import { Directions } from "nativescript-directions";
+import { Directions } from "nativescript-directions";
 import { Router, ActivatedRoute, NavigationExtras } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
@@ -11,7 +11,7 @@ import * as localstorage from "nativescript-localstorage";
 import { Address } from "../models/address.model";
 import * as Toast from 'nativescript-toast';
 import { UserService } from "../services/user.service";
-// let directions = new Directions();
+let directions = new Directions();
 
 @Component({
     selector: "ns-address",
@@ -136,42 +136,53 @@ export class AddressComponent implements OnInit {
     }
 
     onMap() {
-        alert("On map clicked!!!");
-        //     geolocation.enableLocationRequest();
-        //     var that = this;
-        //     geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 10, maximumAge: 20000, timeout: 20000 }).
-        //         then(function (location) {
-        //             if (location) {
-        //                 that.startpointLatitude = location.latitude;
-        //                 that.startpointLongitude = location.longitude;
-        //                 that.address = "Address is selected";
-        //                 directions.navigate({
-        //                     from: { // optional, default 'current location'
-        //                         lat: location.latitude,
-        //                         lng: location.longitude
-        //                     },
-        //                     // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
-        //                     //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
-        //                     // },
-        //                     // {
-        //                     //     address: "Aak 98, Wieringerwerf, Netherlands"
-        //                     // }],
-        //                     to: {
-        //                         address: "Ivy Hospital, sector 71, Mohali"
-        //                     },
-        //                     type: "driving", // optional, can be: driving, transit, bicycling or walking
-        //                     ios: {
-        //                         preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
-        //                         allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
-        //                     }
-        //                 }).then(() => {
-        //                     console.log("Maps app launched.");
-        //                 }, error => {
-        //                     console.log(error);
-        //                 });
-        //             }
-        //         }, function (e) {
-        //             console.log("Error: " + e.message);
-        //         });
+        geolocation.enableLocationRequest();
+        var that = this;
+        geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 10, maximumAge: 20000, timeout: 20000 }).
+            then(function (location) {
+                if (location) {
+                    that.startpointLatitude = location.latitude;
+                    that.startpointLongitude = location.longitude;
+                    that.address = "Address is selected";
+                    directions.navigate({
+                        from: { // optional, default 'current location'
+                            lat: location.latitude,
+                            lng: location.longitude
+                        },
+                        // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
+                        //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
+                        // },
+                        // {
+                        //     address: "Aak 98, Wieringerwerf, Netherlands"
+                        // }],
+                        to: {
+                            address: "Ivy Hospital, sector 71, Mohali"
+                        },
+                        type: "driving", // optional, can be: driving, transit, bicycling or walking
+                        ios: {
+                            preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
+                            allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
+                        }
+                    }).then(() => {
+                        console.log("Maps app launched.");
+                    }, error => {
+                        console.log(error);
+                    });
+                }
+            }, function (e) {
+                console.log("Error: " + e.message);
+            });
+
+
+        console.log(that.startpointLatitude);
+        console.log(that.startpointLongitude);
+
+        // this.http
+        //     .get(Values.GOOGLE_MAP_URL + "address=" + this.startpointLatitude + "," + this.startpointLongitude + "," + "CA&key=AIzaSyDOB9HxUwz0kUfCDwioQryCFN2QLyQK4Jk")
+        //     .subscribe((res: any) => {
+        //         console.log("adresssssssss::::", res);
+        //     }, error => {
+        //         console.log(error);
+        //     });
     }
 }

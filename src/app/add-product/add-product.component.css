@@ -76,6 +76,22 @@
     border-color:white;
     color:white;
 }
+.photoUploadButton{
+    border-color:#E98A02;
+    border-width:1;
+    color:#E98A02;
+    font-size: 14;
+    text-transform: initial;
+    text-align: center;
+    height:50%;
+    padding:0;
+    background-color: white;
+}
+.photoUploadButton:highlighted{
+    background-color: #E98A02;
+    border-color:white;
+    color:white;
+}
 .dimensionContainer{
     width:20%; 
     height:80%;
