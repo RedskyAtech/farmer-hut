@@ -98,7 +98,7 @@
                                             (tap)="onCategory(item)"></Image>
                                     </StackLayout>
                                     <StackLayout row="2" horizontalAlignment="center" height="15%" borderRadius="10">
-                                        <Label class="product-name" [text]="item.categoryName"></Label>
+                                        <Label class="product-name" [text]="item.name"></Label>
                                     </StackLayout>
                                     <GridLayout row="3" width="90%" height="15%" columns="auto,auto">
                                         <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
@@ -106,14 +106,14 @@
                                                 [backgroundColor]="item.status=='inactive'?'#E98A02':'white'"
                                                 [color]="item.status=='inactive'?'white':'#E98A02'"
                                                 [borderColor]="item.status=='inactive'?'white':'#E98A02'"
-                                                (tap)="onCategoryInactive(i)"></Button>
+                                                (tap)="onCategoryInactive(item)"></Button>
                                         </StackLayout>
                                         <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
                                             <Button class="activeButton" text="Active"
                                                 [backgroundColor]="item.status=='active'?'#E98A02':'white'"
                                                 [color]="item.status=='active'?'white':'#E98A02'"
                                                 [borderColor]="item.status=='active'?'white':'#E98A02'"
-                                                (tap)="onCategoryActive(i)"></Button>
+                                                (tap)="onCategoryActive(item)"></Button>
                                         </StackLayout>
                                     </GridLayout>
                                 </GridLayout>

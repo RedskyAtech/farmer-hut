@@ -2,7 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import { Product } from "../models/product";
-
+import * as localstorage from "nativescript-localstorage";
+import { HttpClient } from "@angular/common/http";
+import { Values } from "~/app/values/values";
+import { UserService } from '../services/user.service';
+import { Order } from "~/app/models/order.model";
 
 @Component({
     selector: "ns-cart",
@@ -13,43 +17,70 @@ import { Product } from "../models/product";
 
 export class ViewOrdersComponent implements OnInit {
 
-    orderedProducts = [];
+    orderedProducts;
+    order: Order;
+    status: string;
 
-    constructor(private route: ActivatedRoute, private router: Router) {
-        // this.route.queryParams.subscribe(params => {
-        //     this.image = params["image"];
-        //     this.fullName = params["fullName"];
-        //     this.quantity = params["quantity"];
-        //     this.price = params["price"];
-        // });
+    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+        this.orderedProducts = [];
+        this.status = "Delivered";
+        this.order = new Order();
+        if (localstorage.getItem("adminToken") != null &&
+            localstorage.getItem("adminToken") != undefined &&
+            localstorage.getItem("adminId") != null &&
+            localstorage.getItem("adminId") != undefined) {
+            this.userService.showLoadingState(true);
+            this.http
+                .get(Values.BASE_URL + "orders/")
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            if (res.data.length != 0) {
+                                for (var i = 0; i < res.data.length; i++) {
+                                    if (res.data[i].status == "pending") {
+                                        var status = "Pending...";
+                                    }
+                                    else if (res.data[i].status == "confirmed") {
+                                        var status = "Confirmed";
+                                    }
+                                    else if (res.data[i].status == "completed") {
+                                        var status = "Delivered";
+                                    }
+                                    else if (res.data[i].status == "cancelled") {
+                                        var status = "Cancelled";
+                                    }
+                                    else {
+                                        var status = "Rejected";
+                                    }
+                                    this.orderedProducts.push({
+                                        _id: res.data[i]._id,
+                                        status: status
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    console.log(error.error.error);
+                });
+        }
     }
 
     ngOnInit(): void {
-        this.orderedProducts.push({ id: 0, username: "Sumit Sangwal gjjhg gjhgjh hjgjhgjh", phone: "1234567890", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_1", fullName: "Bee Fruity Red Gum Honey", quantity: "1", weight: "100 gm", price: "RS 100" });
-        this.orderedProducts.push({ id: 1, username: "dsad asdasdas", phone: "4567654323", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_2", fullName: "Bee Fruity Red Gum Honey", quantity: "2", weight: "200 gm", price: "RS 150" });
-        this.orderedProducts.push({ id: 2, username: "adadd asdadda", phone: "8765432134", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_3", fullName: "Bee Fruity Red Gum Honey", quantity: "3", weight: "400 gm", price: "RS 350" });
-        this.orderedProducts.push({ id: 3, username: "asdasd asdasd", phone: "2345687655", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_4", fullName: "Bee Fruity Red Gum Honey", quantity: "4", weight: "500 gm", price: "RS 450" });
-        this.orderedProducts.push({ id: 4, username: "asdas asdadda", phone: "3458765876", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_5", fullName: "Bee Fruity Red Gum Honey", quantity: "3", weight: "1 kg", price: "RS 850" });
-        this.orderedProducts.push({ id: 5, username: "asdas asdasad", phone: "0987652345", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_1", fullName: "Bee Fruity Red Gum Honey", quantity: "7", weight: "100 gm", price: "RS 100" });
-        this.orderedProducts.push({ id: 6, username: "asdas asdasdd", phone: "7654345676", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_2", fullName: "Bee Fruity Red Gum Honey", quantity: "1", weight: "200 gm", price: "RS 150" });
-        this.orderedProducts.push({ id: 7, username: "asdasd asdasd", phone: "7564235443", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_3", fullName: "Bee Fruity Red Gum Honey", quantity: "2", weight: "400 gm", price: "RS 350" });
-        this.orderedProducts.push({ id: 8, username: "sada adsasdsd", phone: "6456456435", address: "jhsgdj asdjgajd asdgad agduas", image: "res://item_4", fullName: "Bee Fruity Red Gum Honey", quantity: "1", weight: "500 gm", price: "RS 450" });
     }
 
     onBack() {
         this.router.navigate(['/profile']);
     }
 
-    onViewDetail(product: Product) {
-        // console.log(product.fullName);
-        // let navigationExtras: NavigationExtras = {
-        //     queryParams: {
-        //         "image": product.image,
-        //         "fullName": product.fullName,
-        //         "weight": product.weight,
-        //         "price": product.price,
-        //     },
-        // };
-        this.router.navigate(['/orderDetail']);
+    onViewDetail(id: string) {
+        let navigationExtras: NavigationExtras = {
+            queryParams: {
+                "orderId": id
+            },
+        };
+        this.router.navigate(['/orderDetail'], navigationExtras);
     }
 }

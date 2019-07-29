@@ -1,37 +1,18 @@
 <Page>
     <GridLayout class="page">
-        <CardView #confirmOrderDialog modal size="lg" duration="100" backgroundColor="transparent">
+        <CardView #cancelOrderDialog modal size="lg" duration="100" backgroundColor="transparent">
             <GridLayout width="80%" height="30%" borderRadius="20" backgroundColor="white">
                 <GridLayout rows="auto,auto" width="100%" height="100%">
                     <StackLayout row="0" height="60%" width="90%" verticalAlignment="middle">
-                        <Label class="confirmDialogLabel" textWrap="true"
-                            text="Are you sure you want to confirm this order!"></Label>
+                        <Label class="cancelDialogLabel" textWrap="true"
+                            text="Are you sure you want to cancel this order!"></Label>
                     </StackLayout>
                     <GridLayout row="1" columns="auto,auto" height="40%" width="90%" verticalAlignment="middle">
                         <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
-                            <Button class="confirm-button" [text]="confirmDialogButtonText"
-                                (tap)="onConfirm()"></Button>
+                            <Button class="yes-button" text="Yes" (tap)="onYes()"></Button>
                         </StackLayout>
                         <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle">
-                            <Button class="cancel-button" text="Cancel" (tap)="onCancelConfirm()"></Button>
-                        </StackLayout>
-                    </GridLayout>
-                </GridLayout>
-            </GridLayout>
-        </CardView>
-        <CardView #rejectOrderDialog modal size="lg" duration="100" backgroundColor="transparent">
-            <GridLayout width="80%" height="30%" borderRadius="20" backgroundColor="white">
-                <GridLayout rows="auto,auto" width="100%" height="100%">
-                    <StackLayout row="0" height="60%" width="90%" verticalAlignment="middle">
-                        <Label class="confirmDialogLabel" textWrap="true"
-                            text="Are you sure you want to confirm this order!"></Label>
-                    </StackLayout>
-                    <GridLayout row="1" columns="auto,auto" height="40%" width="90%" verticalAlignment="middle">
-                        <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
-                            <Button class="confirm-button" text="Reject" (tap)="onReject()"></Button>
-                        </StackLayout>
-                        <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle">
-                            <Button class="cancel-button" text="Cancel" (tap)="onCancelReject()"></Button>
+                            <Button class="no-button" text="No" (tap)="onNo()"></Button>
                         </StackLayout>
                     </GridLayout>
                 </GridLayout>
@@ -99,8 +80,8 @@
                 </GridView>
             </GridLayout>
 
-            <GridLayout row="2" height="40%" width="100%" rows="auto,auto,auto,auto,auto,auto">
-                <GridLayout row="0" height="12%" width="90%" columns="auto,auto" marginTop="2%">
+            <GridLayout row="2" height="40%" width="100%" rows="auto,auto,auto,auto,auto">
+                <GridLayout row="0" height="14%" width="90%" columns="auto,auto" marginTop="2%">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Name : "></Label>
                     </StackLayout>
@@ -108,7 +89,7 @@
                         <Label class="labelDetail" [text]="userName"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="1" width="90%" height="12%" columns="auto,auto">
+                <GridLayout row="1" width="90%" height="14%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Phone number : "></Label>
                     </StackLayout>
@@ -116,7 +97,7 @@
                         <Label class="labelDetail" [text]="phoneNumber"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="2" width="90%" height="30%" columns="auto,auto">
+                <GridLayout row="2" width="90%" height="36%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Address : "></Label>
                     </StackLayout>
@@ -124,7 +105,7 @@
                         <Label class="labelDetail" textWrap="true" [text]="address"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="3" width="90%" height="12%" columns="auto,auto">
+                <GridLayout row="3" width="90%" height="14%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Total amount : "></Label>
                     </StackLayout>
@@ -132,43 +113,12 @@
                         <Label class="labelDetail" [text]="totalAmount"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="4" width="100%" height="17%" columns="auto,auto">
-                    <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle"
+                <GridLayout row="4" width="100%" height="20%" columns="auto,auto">
+                    <StackLayout col="1" width="100%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
-                        <Button class="rejectOrderButton" [text]="rejectButtonText" (tap)="onRejectOrder()"></Button>
-                    </StackLayout>
-                    <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle"
-                        horizontalAlignment="center">
-                        <Button class="confirmOrderButton" [text]="confirmButtonText" (tap)="onConfirmOrder()"></Button>
+                        <Button class="cancelOrderButton" [text]="cancelButtonText" (tap)="onCancelOrder()"></Button>
                     </StackLayout>
                 </GridLayout>
-                <StackLayout row="5" height="15%" width="90%" verticalAlignment="middle">
-                    <Button class="trackOrderButton" text="Track here" (tap)="onTrack()"></Button>
-                </StackLayout>
-                <!-- <GridLayout row="3" width="90%" height="12%" columns="auto,auto">
-                    <StackLayout col="0" width="40%" height="100%">
-                        <Label class="labelHeading" text="City : "></Label>
-                    </StackLayout>
-                    <StackLayout col="1" width="60%" height="100%">
-                        <Label class="labelDetail" textWrap="true" text="Abohar"></Label>
-                    </StackLayout>
-                </GridLayout>
-                <GridLayout row="4" width="90%" height="12%" columns="auto,auto">
-                    <StackLayout col="0" width="40%" height="100%">
-                        <Label class="labelHeading" text="District : "></Label>
-                    </StackLayout>
-                    <StackLayout col="1" width="60%" height="100%">
-                        <Label class="labelDetail" textWrap="true" text="Fazilka"></Label>
-                    </StackLayout>
-                </GridLayout>
-                <GridLayout row="5" width="90%" height="12%" columns="auto,auto">
-                    <StackLayout col="0" width="40%" height="100%">
-                        <Label class="labelHeading" text="State : "></Label>
-                    </StackLayout>
-                    <StackLayout col="1" width="60%" height="100%">
-                        <Label class="labelDetail" textWrap="true" text="Punjab"></Label>
-                    </StackLayout>
-                </GridLayout> -->
             </GridLayout>
         </GridLayout>
     </GridLayout>

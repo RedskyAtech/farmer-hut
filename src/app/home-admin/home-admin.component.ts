@@ -7,6 +7,7 @@ import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from "../services/user.service";
+import { Category } from "../models/category.model";
 
 @Component({
     selector: "ns-homeAdmin",
@@ -22,60 +23,82 @@ export class HomeAdminComponent implements OnInit {
     tabSelectedIndex: number;
     addButtonText: string;
     product: Product;
+    category: Category;
 
     constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {
         this.addButtonText = "Add Product";
         this.product = new Product();
         this.products = [];
+        this.category = new Category();
 
         this.route.queryParams.subscribe(params => {
             if (params["index"] == "1" && params["index"] != undefined) {
                 this.tabSelectedIndex = 1;
                 this.addButtonText = "Add Category";
+
             } else {
                 this.tabSelectedIndex = 0;
                 this.addButtonText = "Add Product";
             }
         });
-
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
-            this.userService.showLoadingState(true);
-            this.http
-                .get(Values.BASE_URL + "products")
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            for (var i = 0; i < res.data.length; i++) {
-                                this.products.push({
-                                    id: res.data[i]._id,
-                                    status: res.data[i].status,
-                                    image: res.data[i].image.url,
-                                    brandName: res.data[i].brand,
-                                    name: res.data[i].name,
-                                    weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                    price: res.data[i].price.currency + " " + res.data[i].price.value,
-                                })
-                            }
-                            this.userService.showLoadingState(false);
-                        }
-                    }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    alert(error.error.error);
-                });
+            this.getProducts();
         }
     }
 
     ngOnInit(): void {
-        this.productCategories.push({ categoryName: "Category 1", status: "active", image: "res://item_8" });
-        this.productCategories.push({ categoryName: "Category 2", status: "inactive", image: "res://item_9", });
-        this.productCategories.push({ categoryName: "Category 3", status: "active", image: "res://item_10" });
-        this.productCategories.push({ categoryName: "Category 4", status: "inactive", image: "res://item_11" });
-        this.productCategories.push({ categoryName: "Category 5", status: "inactive", image: "res://item_12" });
-        this.productCategories.push({ categoryName: "Category 6", status: "active", image: "res://item_13" });
-        this.productCategories.push({ categoryName: "Category 7", status: "inactive", image: "res://item_8", });
-        this.productCategories.push({ categoryName: "Category 8", status: "active", image: "res://item_9", });
-        this.productCategories.push({ categoryName: "Category 9", status: "inactive", image: "res://item_10" });
+    }
+
+    getProducts() {
+        this.userService.showLoadingState(true);
+        this.http
+            .get(Values.BASE_URL + "products")
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        for (var i = 0; i < res.data.length; i++) {
+                            this.products.push({
+                                _id: res.data[i]._id,
+                                status: res.data[i].status,
+                                image: res.data[i].image.url,
+                                brandName: res.data[i].brand,
+                                name: res.data[i].name,
+                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
+                                price: res.data[i].price.currency + " " + res.data[i].price.value,
+                            })
+                        }
+                        this.getCategories();
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                alert(error.error.error);
+            });
+    }
+
+    getCategories() {
+        this.userService.showLoadingState(true);
+        this.http
+            .get(Values.BASE_URL + "categories")
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        for (var i = 0; i < res.data.length; i++) {
+                            this.productCategories.push({
+                                _id: res.data[i]._id,
+                                status: res.data[i].status,
+                                image: res.data[i].image.url,
+                                name: res.data[i].name,
+                            })
+                        }
+                        this.userService.showLoadingState(false);
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                alert(error.error.error);
+            });
     }
 
     onSelectedIndexChanged(args: SelectedIndexChangedEventData) {
@@ -104,7 +127,7 @@ export class HomeAdminComponent implements OnInit {
     onProductEdit(product: Product) {
         let navigationExtras: NavigationExtras = {
             queryParams: {
-                "productId": product.id,
+                "productId": product._id,
                 "type": "edit"
             },
         };
@@ -126,7 +149,7 @@ export class HomeAdminComponent implements OnInit {
             this.router.navigate(['./addProduct']);
         }
         if (this.tabSelectedIndex == 1) {
-            // this.router.navigate(['./addCategory']);
+            this.router.navigate(['./addCategory']);
         }
     }
 
@@ -138,37 +161,13 @@ export class HomeAdminComponent implements OnInit {
         this.product.status = "disabled";
         this.userService.showLoadingState(true);
         this.http
-            .put(Values.BASE_URL + "products/update/" + product.id, this.product)
+            .put(Values.BASE_URL + "products/update/" + product._id, this.product)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.http
-                            .get(Values.BASE_URL + "products")
-                            .subscribe((res: any) => {
-                                if (res != null && res != undefined) {
-                                    if (res.isSuccess == true) {
-                                        console.log(res);
-                                        this.userService.showLoadingState(false);
-                                        // for (var i = 0; i < this.products.length; i++) {
-                                        this.products = [];
-                                        // }
-                                        for (var i = 0; i < res.data.length; i++) {
-                                            this.products.push({
-                                                id: res.data[i]._id,
-                                                status: res.data[i].status,
-                                                image: res.data[i].image.url,
-                                                brandName: res.data[i].brand,
-                                                name: res.data[i].name,
-                                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                                price: res.data[i].price.currency + " " + res.data[i].price.value,
-                                            })
-                                        }
-                                    }
-                                }
-                            }, error => {
-                                this.userService.showLoadingState(false);
-                                alert(error.error.error);
-                            });
+                        this.userService.showLoadingState(false);
+                        this.products = [];
+                        this.getProducts();
                     }
                 }
             }, error => {
@@ -181,34 +180,13 @@ export class HomeAdminComponent implements OnInit {
         this.product.status = "enabled";
         this.userService.showLoadingState(true);
         this.http
-            .put(Values.BASE_URL + "products/update/" + product.id, this.product)
+            .put(Values.BASE_URL + "products/update/" + product._id, this.product)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.http
-                            .get(Values.BASE_URL + "products")
-                            .subscribe((res: any) => {
-                                if (res != null && res != undefined) {
-                                    if (res.isSuccess == true) {
-                                        this.userService.showLoadingState(false);
-                                        this.products = [];
-                                        for (var i = 0; i < res.data.length; i++) {
-                                            this.products.push({
-                                                id: res.data[i]._id,
-                                                status: res.data[i].status,
-                                                image: res.data[i].image.url,
-                                                brandName: res.data[i].brand,
-                                                name: res.data[i].name,
-                                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                                price: res.data[i].price.currency + " " + res.data[i].price.value,
-                                            })
-                                        }
-                                    }
-                                }
-                            }, error => {
-                                this.userService.showLoadingState(false);
-                                alert(error.error.error);
-                            });
+                        this.userService.showLoadingState(false);
+                        this.products = [];
+                        this.getProducts();
                     }
                 }
             }, error => {
@@ -216,8 +194,24 @@ export class HomeAdminComponent implements OnInit {
             });
     }
 
-    onCategoryInactive(i: number) {
-        alert("category inactive at index: " + i);
+    onCategoryInactive(category: Category) {
+        console.log(category._id);
+        this.category.status = "inactive";
+        this.userService.showLoadingState(true);
+        console.log(this.category.status);
+        this.http
+            .put(Values.BASE_URL + "categories/update/" + category._id, this.category)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        this.productCategories = [];
+                        this.getCategories();
+                    }
+                }
+            }, error => {
+                alert(error.error.error);
+            });
     }
 
     onCategoryActive(i: number) {

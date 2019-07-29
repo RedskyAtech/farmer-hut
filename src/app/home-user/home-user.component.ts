@@ -3,12 +3,12 @@ import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { Router, NavigationExtras } from "@angular/router";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Product } from "~/app/models/product.model";
+import { Cart } from "~/app/models/cart.model";
 import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../services/user.service';
-import { Dimensions } from "../models/dimensions.model";
-import { Price } from "../models/price.model";
+import * as Toast from 'nativescript-toast';
 
 @Component({
     selector: "ns-homeUser",
@@ -26,16 +26,20 @@ export class HomeUserComponent implements OnInit {
     sliderImage2: string;
     sliderImage3: string;
     sliderImage4: string;
-    cartCount: boolean;
+    isCartCount: boolean;
     product: Product;
+    cart: Cart;
+    cartCount: number;
 
     constructor(private router: Router, private http: HttpClient, private userService: UserService) {
-        this.sliderImage1 = "res://slider1";
-        this.sliderImage2 = "res://slider2";
-        this.sliderImage3 = "res://slider3";
-        this.sliderImage4 = "res://slider4";
+        this.sliderImage1 = "";
+        this.sliderImage2 = "";
+        this.sliderImage3 = "";
+        this.sliderImage4 = "";
 
         this.product = new Product();
+        this.cart = new Cart();
+        this.cart.product = new Product();
 
         this.products = [];
 
@@ -51,16 +55,16 @@ export class HomeUserComponent implements OnInit {
         }, 2000);
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
+            this.updateSlider();
             this.userService.showLoadingState(true);
             this.http
                 .get(Values.BASE_URL + "products?status=enabled")
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            this.userService.showLoadingState(false);
                             for (var i = 0; i < res.data.length; i++) {
                                 this.products.push({
-                                    id: res.data[i]._id,
+                                    _id: res.data[i]._id,
                                     status: res.data[i].status,
                                     image: res.data[i].image.url,
                                     brandName: res.data[i].brand,
@@ -69,14 +73,17 @@ export class HomeUserComponent implements OnInit {
                                     price: res.data[i].price.currency + " " + res.data[i].price.value,
                                 })
                             }
+                            if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
+                                this.updateCartCount();
+                            }
                         }
                     }
                 }, error => {
                     this.userService.showLoadingState(false);
-                    alert(error.error.error);
+                    console.log(error.error.error);
                 });
-
         }
+
     }
 
     ngOnInit(): void {
@@ -106,10 +113,50 @@ export class HomeUserComponent implements OnInit {
         }
     }
 
+    updateSlider() {
+        this.userService.showLoadingState(true);
+        this.http
+            .get(Values.BASE_URL + "files")
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        this.sliderImage1 = res.data[0].images[0].url;
+                        this.sliderImage2 = res.data[0].images[1].url;
+                        this.sliderImage3 = res.data[0].images[2].url;
+                        this.sliderImage4 = res.data[0].images[3].url;
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
+    updateCartCount() {
+        this.userService.showLoadingState(true);
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data.products.length != 0) {
+                            this.isCartCount = true;
+                            this.cartCount = res.data.products.length;
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
     onViewDetail(product: Product) {
         let navigationExtras: NavigationExtras = {
             queryParams: {
-                "productId": product.id,
+                "productId": product._id,
             },
         };
         this.router.navigate(['/productDetail'], navigationExtras);
@@ -127,8 +174,57 @@ export class HomeUserComponent implements OnInit {
         this.router.navigate(['/cart']);
     }
 
-    onAddCart(i: number) {
-        this.cartCount = true;
+    onAddCart(product: Product) {
+        this.userService.showLoadingState(true);
+        this.cart.product._id = product._id;
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data.products.length != 0) {
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                if (product._id == res.data.products[i]._id) {
+                                    var quantity = parseInt(res.data.products[i].quantity) + 1;
+                                    this.cart.product.quantity = quantity.toString();
+                                    this.updateCart();
+                                    break;
+                                }
+                                else {
+                                    this.cart.product.quantity = "1";
+                                    this.updateCart();
+                                }
+                            }
+                        }
+                        else {
+                            this.cart.product.quantity = "1";
+                            this.updateCart();
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
+    updateCart() {
+        this.userService.showLoadingState(true);
+        this.http
+            .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        Toast.makeText("Product is added to cart!!!", "long").show();
+                        this.updateCartCount();
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
     }
 
 }

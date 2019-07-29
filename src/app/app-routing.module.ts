@@ -10,7 +10,7 @@ import { ProfileComponent } from "./profile/profile.component";
 import { HomeUserComponent } from "./home-user/home-user.component";
 import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
 import { ConfirmOtpComponent } from "./confirm-otp/confirm-otp.component";
-import { MyOrdersComponent } from "./my-orders/my-orders.component";
+import { MyOrderDetailComponent } from "./my-order-detail/my-order-detail.component";
 import { ViewOrdersComponent } from "./view-orders/view-orders.component";
 import { ProductDetailComponent } from "./product-detail/product-detail.component";
 import { CartComponent } from "./cart/cart.component";
@@ -24,6 +24,7 @@ import { SimilarProductUserComponent } from "./similar-productUser/similar-produ
 import { SimilarProductAdminComponent } from "./similar-productAdmin/similar-productAdmin.component";
 import { AddCategoryComponent } from "./add-category/add-category.component";
 import { AddSliderComponent } from "./add-slider/add-slider.component";
+import { MyOrdersComponent } from "./my-orders/my-orders.component";
 
 const routes: Routes = [
     { path: "", redirectTo: "/login", pathMatch: "full" },
@@ -36,6 +37,7 @@ const routes: Routes = [
     { path: "forgotPassword", component: ForgotPasswordComponent },
     { path: "confirmOtp", component: ConfirmOtpComponent },
     { path: "myOrders", component: MyOrdersComponent },
+    { path: "myOrderDetail", component: MyOrderDetailComponent },
     { path: "viewOrders", component: ViewOrdersComponent },
     { path: "productDetail", component: ProductDetailComponent },
     { path: "cart", component: CartComponent },

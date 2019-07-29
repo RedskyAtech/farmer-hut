@@ -94,6 +94,17 @@ export class LoginComponent implements OnInit {
                                 }
                                 if (res.data._id != null && res.data._id != undefined) {
                                     localstorage.setItem('userId', res.data._id);
+                                    this.http
+                                        .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
+                                        .subscribe((res: any) => {
+                                            if (res != "" && res != undefined) {
+                                                if (res.isSuccess == true) {
+                                                    localstorage.setItem('cartId', res.data.cartId);
+                                                }
+                                            }
+                                        }, error => {
+                                            alert(error.error.error);
+                                        });
                                 }
                                 localstorage.setItem('userType', res.data.type);
                                 Toast.makeText("Login successfully!!!", "long").show();

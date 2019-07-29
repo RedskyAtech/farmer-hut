@@ -14,7 +14,7 @@ import { ProfileComponent } from "./profile/profile.component";
 import { HomeUserComponent } from "./home-user/home-user.component";
 import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
 import { ConfirmOtpComponent } from "./confirm-otp/confirm-otp.component";
-import { MyOrdersComponent } from "./my-orders/my-orders.component";
+import { MyOrderDetailComponent } from "./my-order-detail/my-order-detail.component";
 import { ViewOrdersComponent } from "./view-orders/view-orders.component";
 import { UserService } from "./services/user.service";
 import { ProductDetailComponent } from "./product-detail/product-detail.component";
@@ -29,6 +29,7 @@ import { AddCategoryComponent } from "./add-category/add-category.component";
 import { SimilarProductAdminComponent } from "./similar-productAdmin/similar-productAdmin.component";
 import { SimilarProductUserComponent } from "./similar-productUser/similar-productUser.component";
 import { AddSliderComponent } from "./add-slider/add-slider.component";
+import { MyOrdersComponent } from "./my-orders/my-orders.component";
 
 @NgModule({
     bootstrap: [
@@ -52,6 +53,7 @@ import { AddSliderComponent } from "./add-slider/add-slider.component";
         ForgotPasswordComponent,
         ConfirmOtpComponent,
         MyOrdersComponent,
+        MyOrderDetailComponent,
         ViewOrdersComponent,
         ProductDetailComponent,
         CartComponent,

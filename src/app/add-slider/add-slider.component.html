@@ -1,22 +1,30 @@
 <!-- <Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:dd="nativescript-drop-down"> -->
 <Page>
-    <GridLayout rows="auto,auto,auto" class="page">
-        <GridLayout row="0" columns="auto,auto,auto" width="100%" height="10%">
-            <StackLayout col="0" verticalAlignment="middle" width=" 20%">
-                <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+    <GridLayout class="page">
+        <CardView #photoUploadDialog modal size="lg" duration="100" backgroundColor="transparent">
+            <StackLayout height="10%" width="50%" backgroundColor="white" orientation="vertical">
+                <Button class="photoUploadButton" width="100%" text="Gallery" (tap)="onGallery()"></Button>
+                <Button class="photoUploadButton" width="100%" text="Camera" (tap)="onCamera()"></Button>
             </StackLayout>
-            <StackLayout col="1" verticalAlignment="middle" width=" 60%">
-                <Label class="pageHeading" text="Add Slider Image"></Label>
-            </StackLayout>
-        </GridLayout>
-        <GridLayout row="1" width="100%" height="92%" rows="auto,auto,auto">
-            <StackLayout row="0" width="50%" height="25%" borderRadius="10" backgroundColor="white"
-                (tap)="onUploadImage()">
-                <Image class="sliderImage" [src]="sliderImage"></Image>
-            </StackLayout>
-            <StackLayout row="1" width="80%" height="10%" marginTop="5%">
-                <Button class="button" text="Add to Slider" (tap)="onAddToSlider()"></Button>
-            </StackLayout>
+        </CardView>
+        <GridLayout rows="auto,auto,auto" width="100%" height="100%">
+            <GridLayout row="0" columns="auto,auto,auto" width="100%" height="10%">
+                <StackLayout col="0" verticalAlignment="middle" width=" 20%">
+                    <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+                </StackLayout>
+                <StackLayout col="1" verticalAlignment="middle" width=" 60%">
+                    <Label class="pageHeading" text="Add Slider Image"></Label>
+                </StackLayout>
+            </GridLayout>
+            <GridLayout row="1" width="100%" height="92%" rows="auto,auto,auto">
+                <StackLayout row="0" width="50%" height="25%" borderRadius="10" backgroundColor="white"
+                    (tap)="onUploadImage()">
+                    <Image class="sliderImage" [src]="sliderImage"></Image>
+                </StackLayout>
+                <StackLayout row="1" width="80%" height="10%" marginTop="5%">
+                    <Button class="button" text="Add to Slider" (tap)="onAddToSlider()"></Button>
+                </StackLayout>
+            </GridLayout>
         </GridLayout>
     </GridLayout>
 </Page>

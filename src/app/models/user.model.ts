@@ -1,4 +1,4 @@
-import { Address } from "../../../../../code/native-script/farmers-hut/src/app/models/address.model";
+import { Address } from "./address.model";
 export class User {
 
     name: string;

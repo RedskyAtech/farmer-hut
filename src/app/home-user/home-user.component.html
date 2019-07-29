@@ -10,9 +10,9 @@
             <StackLayout col="2" height="50%" width="15%" (tap)="onCartClick()">
                 <Image class="cartButton" src="res://cart_icon"></Image>
             </StackLayout>
-            <StackLayout *ngIf="cartCount" col="2" verticalAlignment="middle" width="20" height="20"
+            <StackLayout *ngIf="isCartCount" col="2" verticalAlignment="middle" width="20" height="20"
                 backgroundColor="white" borderRadius="10" marginBottom="15" marginLeft="15">
-                <Label color="#E98A02" fontWeight="500" horizontalAlignment="center" text="1"></Label>
+                <Label color="#E98A02" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
         <GridLayout row="1" height="20%" width="100%">
@@ -80,7 +80,7 @@
                                                 <StackLayout col="0" height="100%" width="50%"
                                                     verticalAlignment="middle">
                                                     <Button class="addCartButton" text="Add to cart"
-                                                        (tap)="onAddCart(i)"></Button>
+                                                        (tap)="onAddCart(item)"></Button>
                                                 </StackLayout>
                                                 <StackLayout col="1" height="100%" width="50%"
                                                     verticalAlignment="middle">

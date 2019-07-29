@@ -149,6 +149,7 @@ export class ProfileComponent implements OnInit {
         localstorage.removeItem('adminToken');
         localstorage.removeItem('userId');
         localstorage.removeItem('adminId');
+        localstorage.removeItem("cartId");
     }
 
     onFeedback() {

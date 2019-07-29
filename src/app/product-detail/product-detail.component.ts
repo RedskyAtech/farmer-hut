@@ -6,6 +6,9 @@ import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../services/user.service';
+import { Cart } from '~/app/models/cart.model';
+import * as Toast from 'nativescript-toast';
+import { Product } from "../models/product.model";
 
 @Component({
     selector: "ns-productDetail",
@@ -25,7 +28,9 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     cartStatus: boolean;
     addToCartButton: boolean;
     addedCartButton: boolean;
-    cartCount: boolean;
+    cartCount: number;
+    isCartCount: boolean;
+    cart: Cart;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
 
@@ -34,13 +39,14 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         });
 
         this.userService.showLoadingState(true);
+        this.cart = new Cart();
+        this.cart.product = new Product();
 
         this.http
             .get(Values.BASE_URL + "products/" + this.productId)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        console.log(res);
                         this.userService.showLoadingState(false);
                         this.image = res.data.image.url;
                         this.brandName = res.data.brand;
@@ -48,8 +54,27 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                         this.detailHeading = res.data.heading.title;
                         this.detailDescription = res.data.heading.description;
                         this.quantity = res.data.dimensions[0].value + " " + res.data.dimensions[0].unit;
-                        this.price = res.data.price.currency + "" + res.data.price.value;
+                        this.price = res.data.price.currency + " " + res.data.price.value;
                         this.userService.showLoadingState(false);
+                        if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
+                            this.userService.showLoadingState(true);
+                            this.http
+                                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+                                .subscribe((res: any) => {
+                                    if (res != null && res != undefined) {
+                                        if (res.isSuccess == true) {
+                                            this.userService.showLoadingState(false);
+                                            if (res.data.products.length != 0) {
+                                                this.isCartCount = true;
+                                                this.cartCount = res.data.products.length;
+                                            }
+                                        }
+                                    }
+                                }, error => {
+                                    this.userService.showLoadingState(false);
+                                    alert(error.error.error);
+                                });
+                        }
                     }
                 }
             }, error => {
@@ -85,9 +110,77 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     }
 
     onAddToCart() {
-        this.addToCartButton = false;
-        this.addedCartButton = true;
-        this.cartCount = true;
+        // this.addToCartButton = false;
+        // this.addedCartButton = true;
+        this.userService.showLoadingState(true);
+        this.cart.product._id = this.productId;
+
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data.products.length != 0) {
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                if (this.productId == res.data.products[i]._id) {
+                                    var quantity = parseInt(res.data.products[i].quantity) + 1;
+                                    this.cart.product.quantity = quantity.toString();
+                                    this.updateCart();
+                                    break;
+                                }
+                                else {
+                                    this.cart.product.quantity = "1";
+                                    this.updateCart();
+                                }
+                            }
+                        }
+                        else {
+                            this.cart.product.quantity = "1";
+                            this.updateCart();
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
+    updateCart() {
+        this.userService.showLoadingState(true);
+        this.http
+            .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        Toast.makeText("Product is added to cart!!!", "long").show();
+                        this.updateCartCount();
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
+    updateCartCount() {
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data.products.length != 0) {
+                            this.isCartCount = true;
+                            this.cartCount = res.data.products.length;
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
     }
 
     onBuyNow() {

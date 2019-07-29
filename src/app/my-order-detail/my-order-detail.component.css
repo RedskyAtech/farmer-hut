@@ -16,7 +16,7 @@
     font-weight: 500;
 }
 .productImage{
-    width:100%;
+    width:80%;
     height:100%;
 }
 .fullName{
@@ -28,87 +28,67 @@
     color:#E98A02;
 }
 .price{
-    font-size: 24;
+    font-size: 22;
     color:black;
     font-weight: 900;
 }
-.removeItem{
-    font-size: 16;
-    color:#E98A02;
-    font-weight: 500;
-}
-.heading{
+.quantityHeading{
     font-size: 16;
     color:black;
     font-weight: 500;
-}
-.detail{
-    font-size: 16;
-    color:#E98A02;
-    font-weight: 500;
-}
-.plusMinus{
-  width:20;
-  height:20;
-}
-.quantity{
-    font-size: 16;
-    font-weight: 500;
-    color:#E98A02;
     text-align: center;
 }
-.address{
+.quantityDetail{
     font-size: 16;
+    color:#E98A02;
+    font-weight: 500;
+    text-align: center;
+}
+.delivery{
+    font-size: 18;
+    color:black;
+}
+.detail{
+    font-size: 18;
+    color:black;
+    font-weight: 500;
+}
+.labelHeading{
     color:white;
-    font-weight: 300;
+    font-size: 16;
+    text-align: left;
+    font-weight: 500;
 }
-.orderItemButton{
+.labelDetail{
+    color:#E98A02;
+    font-size: 16;
+    text-align: left;
+}
+.cancelOrderButton{
+    background-color: #E98A02;
     color: white;
     width: 80%;
-    height: 80%;
-    margin-top:20%;
-    vertical-align: middle;
-    font-size: 16;
+    height: 90%;
+    font-size: 20;
     padding:0;
     font-weight: 500;
     border-width:1;
     border-radius:10;
-    border-color:white;
-    background-color: #E98A02;
+    border-color: white;
 }
-.orderItemButton:highlighted{
+.cancelOrderButton:highlighted{
     background-color: transparent;
     z-index:500;
-    border-color: #E98A02;
     color:#E98A02;
+    border-color:#E98A02;
 }
-.enterAddressButton{
-    color: white;
-    width: 80%;
-    height: 80%;
-    margin-top:20%;
-    vertical-align: middle;
-    font-size: 16;
-    padding:0;
-    font-weight: 500;
-    border-width:1;
-    border-radius:10;
-    border-color:white;
-    background-color: #E98A02;
-}
-.enterAddressButton:highlighted{
-    background-color: transparent;
-    z-index:500;
-    border-color: #E98A02;
-    color:#E98A02;
-}
-.confirmDialogLabel{
+.cancelDialogLabel{
     color:#1B1B1B;
     font-size: 20;
     text-align:center;
     font-weight:500;
 }
-.confirm-button{
+.yes-button{
     border-radius: 10;
     background-color:#E98A02;
     text-transform: initial;
@@ -121,16 +101,14 @@
     border-color: white;
     border-width:1;
 }
-.confirm-button:highlighted{
+.yes-button:highlighted{
     background-color: white;
-    /* z-index:500; */
     border-color:#E98A02;
     color:#E98A02;
 }
-.cancel-button{
+.no-button{
     border-radius: 10;
     background-color:white;
-    /* z-index:500; */
     text-transform: initial;
     color:#E98A02;
     height:50%;
@@ -141,38 +119,8 @@
     border-color: #E98A02;
     border-width:1;
 }
-.cancel-button:highlighted{
+.no-button:highlighted{
     background-color: #E98A02;
     border-color:white;
     color:white;
-}
-.removeItemButton{
-    border-radius: 5;
-    background-color:#E98A02;
-    text-transform: initial;
-    color:white;
-    height:80%;
-    width:30%;
-    padding:0;
-    font-size:12;
-    font-weight:500;
-    border-color: #E98A02;
-    border-width:1;
-}
-.removeItemButton:highlighted{
-    background-color: transparent;
-    z-index:500;
-    border-color:#E98A02;
-    color:#E98A02;
-}
-.labelHeading{
-    color:white;
-    font-size: 16;
-    text-align: left;
-    font-weight: 500;
-}
-.labelDetail{
-    color:#E98A02;
-    font-size: 16;
-    text-align: left;
 }

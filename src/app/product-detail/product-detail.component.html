@@ -10,9 +10,9 @@
             <StackLayout col="2" verticalAlignment="middle" width=" 20%">
                 <Image class="cartButton" src="res://cart_icon" (tap)="onCartClick()"></Image>
             </StackLayout>
-            <StackLayout *ngIf="cartCount" col="2" verticalAlignment="middle" width="20" height="20"
+            <StackLayout *ngIf="isCartCount" col="2" verticalAlignment="middle" width="20" height="20"
                 backgroundColor="white" borderRadius="10" marginBottom="15" marginLeft="15">
-                <Label color="#E98A02" fontWeight="500" horizontalAlignment="center" text="1"></Label>
+                <Label color="#E98A02" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
         <GridLayout row="1" width="100%" height="32%" backgroundColor="white">
@@ -72,9 +72,10 @@
         </GridLayout>
         <GridLayout row="3" columns="auto,auto" width="100%" height="8%" marginTop="3%">
             <StackLayout col="0" height="100%" width="50%" borderWidth="0">
-                <Button *ngIf="addToCartButton" class="addToCartButton" text="ADD TO CART"
-                    (tap)="onAddToCart()"></Button>
-                <Button *ngIf="addedCartButton" class="addedCartButton" text="ADDED TO CART"></Button>
+                <!-- <Button *ngIf="addToCartButton" class="addToCartButton" text="ADD TO CART"
+                    (tap)="onAddToCart()"></Button> -->
+                <Button class="addToCartButton" text="ADD TO CART" (tap)="onAddToCart()"></Button>
+                <!-- <Button *ngIf="addedCartButton" class="addedCartButton" text="ADDED TO CART"></Button> -->
             </StackLayout>
             <StackLayout col="1" height="100%" width="50%" borderWidth="0">
                 <Button class="buyNowButton" text="BUY NOW" (tap)="onBuyNow()"></Button>

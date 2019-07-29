@@ -15,31 +15,24 @@
                     <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
                         marginTop="10%" marginBottom="10%" rows="auto,auto">
                         <GridLayout row="0" rows="auto,auto" width="90%" height="70%">
-                            <!-- <GridLayout rows="auto,auto" width="90%" height="80%"> -->
-                            <!-- <GridLayout row="0" columns="auto,auto,auto,auto" height="40%" width=" 100%"> -->
                             <StackLayout row="0" height="70%" width=" 100%" orientation="horizontal">
                                 <Label class="nameHeading" text="Customer name: "></Label>
-                                <Label class="nameDetail" textWrap="true" [text]="item.username"></Label>
-                                <!-- <StackLayout col="1" verticalAlignment="bottom">
-                                    <Label class="fullName" text=" ("></Label>
-                                </StackLayout>
-                                <StackLayout col="2" verticalAlignment="bottom">
-                                    <Label class="quantity" [text]="item.weight"></Label>
-                                </StackLayout>
-                                <StackLayout col="3" verticalAlignment="bottom">
-                                    <Label class="fullName" text=")"></Label>
-                                </StackLayout> -->
-                                <!-- </GridLayout> -->
+                                <Label class="nameDetail" textWrap="true" [text]="item.name"></Label>
                             </StackLayout>
                             <StackLayout row="1" height="30%" orientation="horizontal">
-                                <Label class="priceHeading" text="Contact number: "></Label>
-                                <Label class="priceDetail" textWrap="true" [text]="item.phone"></Label>
+                                <Label class="priceHeading" text="Order id: "></Label>
+                                <Label class="priceDetail" textWrap="true" [text]="item._id"></Label>
                             </StackLayout>
                         </GridLayout>
-                        <!-- </GridLayout> -->
-                        <StackLayout row="1" height="30%" marginRight="5%" verticalAlignment="middle" horizontalAlignment="right">
-                            <Button class="viewDetailButton" text="VIEW DETAIL" (tap)="onViewDetail(item)"></Button>
-                        </StackLayout>
+                        <GridLayout row="1" columns="auto,auto" height="30%" width="100%">
+                            <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
+                                <Label class="status" [text]="item.status"></Label>
+                            </StackLayout>
+                            <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle">
+                                <Button class="viewDetailButton" text="VIEW DETAIL"
+                                    (tap)="onViewDetail(item._id)"></Button>
+                            </StackLayout>
+                        </GridLayout>
                     </GridLayout>
                 </ng-template>
             </GridView>

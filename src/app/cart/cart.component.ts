@@ -5,6 +5,14 @@ import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import { ModalComponent } from "../modals/modal.component";
 import * as Toast from 'nativescript-toast';
 import { Color } from "tns-core-modules/color/color";
+import * as localstorage from "nativescript-localstorage";
+import { HttpClient } from "@angular/common/http";
+import { Values } from "~/app/values/values";
+import { UserService } from '../services/user.service';
+import { Cart } from "~/app/models/cart.model";
+import { Product } from "~/app/models/product.model";
+import { Order } from "~/app/models/order.model";
+// import { MyOrders } from "~/app/models/myOrders.model";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -20,49 +28,142 @@ export class CartComponent implements OnInit {
 
     @ViewChild('placeOrderDialog') placeOrderDialog: ModalComponent;
 
-    cartProducts = [];
-    address: string = "Select address";
+    cartProducts;
+    totalAmount: string;
+    cart: Cart;
+    product: Product;
+    order: Order;
+    // myOrders: MyOrders;
 
-    constructor(private route: ActivatedRoute, private router: Router) {
-        // this.route.queryParams.subscribe(params => {
-        //     this.image = params["image"];
-        //     this.fullName = params["fullName"];
-        //     this.quantity = params["quantity"];
-        //     this.price = params["price"];
-        // });
+    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+        this.cartProducts = [];
+        this.cart = new Cart();
+        this.cart.product = new Product();
+        this.product = new Product();
+        this.cart.order = new Order();
+
+        if (localstorage.getItem("cartId") != null &&
+            localstorage.getItem("cartId") != undefined &&
+            localstorage.getItem("userToken") != null &&
+            localstorage.getItem("userToken") != undefined &&
+            localstorage.getItem("userId") != null &&
+            localstorage.getItem("userId") != undefined) {
+            this.refreshCartPage();
+        }
     }
 
     ngOnInit(): void {
-        this.cartProducts.push({ id: 0, image: "res://item_1", totalPrice: "100", fullName: "Bee Fruity Red Gum Honey", quantity: "100 gm", price: "RS 100", noOfProduct: 1 });
-        this.cartProducts.push({ id: 1, image: "res://item_2", totalPrice: "150", fullName: "Bee Fruity Red Gum Honey", quantity: "200 gm", price: "RS 150", noOfProduct: 1 });
-        this.cartProducts.push({ id: 2, image: "res://item_3", totalPrice: "350", fullName: "Bee Fruity Red Gum Honey", quantity: "400 gm", price: "RS 350", noOfProduct: 1 });
-        this.cartProducts.push({ id: 3, image: "res://item_4", totalPrice: "450", fullName: "Bee Fruity Red Gum Honey", quantity: "500 gm", price: "RS 450", noOfProduct: 1 });
-        this.cartProducts.push({ id: 4, image: "res://item_5", totalPrice: "850", fullName: "Bee Fruity Red Gum Honey", quantity: "1 kg", price: "RS 850", noOfProduct: 1 });
-        this.cartProducts.push({ id: 5, image: "res://item_1", totalPrice: "100", fullName: "Bee Fruity Red Gum Honey", quantity: "100 gm", price: "RS 100", noOfProduct: 1 });
-        this.cartProducts.push({ id: 6, image: "res://item_2", totalPrice: "150", fullName: "Bee Fruity Red Gum Honey", quantity: "200 gm", price: "RS 150", noOfProduct: 1 });
-        this.cartProducts.push({ id: 7, image: "res://item_3", totalPrice: "350", fullName: "Bee Fruity Red Gum Honey", quantity: "400 gm", price: "RS 350", noOfProduct: 1 });
-        this.cartProducts.push({ id: 8, image: "res://item_4", totalPrice: "450", fullName: "Bee Fruity Red Gum Honey", quantity: "500 gm", price: "RS 450", noOfProduct: 1 });
+
     }
 
     onBack() {
         this.router.navigate(['/homeUser']);
     }
 
-    onRemoveItem(item: any) {
-        this.cartProducts.splice(item.id, 1);
-        for (let i = item.id; i < this.cartProducts.length; i++) {
-            this.cartProducts[i].id = i;
-        }
+    onRemoveItem(product: Product) {
+        this.cart.product._id = product._id;
+        this.cart.product.quantity = "0";
+        this.updateCartQuantity();
     }
 
-    onPlus(item: any) {
-        this.cartProducts[item.id].noOfProduct++;
+    onPlus(product: Product) {
+        this.userService.showLoadingState(true);
+        this.cart.product._id = product._id;
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        if (res.data.products.length != 0) {
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                if (product._id == res.data.products[i]._id) {
+                                    var quantity = parseInt(res.data.products[i].quantity) + 1;
+                                    this.cart.product.quantity = quantity.toString();
+                                    this.userService.showLoadingState(false);
+                                    this.updateCartQuantity();
+                                }
+                            }
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
     }
 
-    onMinus(item: any) {
-        if (this.cartProducts[item.id].noOfProduct > 1) {
-            this.cartProducts[item.id].noOfProduct--;
-        }
+    onMinus(product: Product) {
+        this.userService.showLoadingState(true);
+        this.cart.product._id = product._id;
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        if (res.data.products.length != 0) {
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                if (product._id == res.data.products[i]._id) {
+                                    var quantity = parseInt(res.data.products[i].quantity) - 1;
+                                    this.cart.product.quantity = quantity.toString();
+                                    this.userService.showLoadingState(false);
+                                    this.updateCartQuantity();
+                                }
+                            }
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
+    updateCartQuantity() {
+        this.userService.showLoadingState(true);
+        this.http
+            .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        this.refreshCartPage();
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
+    refreshCartPage() {
+        this.userService.showLoadingState(true);
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data.products.length != 0) {
+                            this.cartProducts = [];
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                this.cartProducts.push({
+                                    _id: res.data.products[i]._id,
+                                    image: res.data.products[i].image.url,
+                                    fullName: res.data.products[i].name,
+                                    quantity: res.data.products[i].quantity,
+                                    totalPrice: "RS" + " " + res.data.products[i].total,
+                                    weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
+                                    price: res.data.products[i].price.currency + " " + res.data.products[i].price.value
+                                })
+                            }
+                            this.totalAmount = res.data.grandTotal;
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
     }
 
     onAddress() {
@@ -75,16 +176,49 @@ export class CartComponent implements OnInit {
     }
 
     onOrderItem() {
-        this.placeOrderDialog.show();
+        if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
+            this.userService.showLoadingState(true);
+            this.http
+                .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
+                .subscribe((res: any) => {
+                    if (res != "" && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            if (res.data.address.line1 == null && res.data.address.line1 == undefined) {
+                                alert("Please add your address first.");
+                            }
+                            else {
+                                this.placeOrderDialog.show();
+                            }
+                        }
+                    }
+                }, error => {
+                    alert(error.error.error);
+                });
+        }
     }
 
     onConfirm() {
-        this.placeOrderDialog.hide();
-        this.router.navigate(['/homeUser']);
-        Toast.makeText("Order successfully placed!!!", "long").show();
+        this.userService.showLoadingState(true);
+        this.cart.order._id = localstorage.getItem("cartId");
+        this.http
+            .post(Values.BASE_URL + "orders/", this.cart)
+            .subscribe((res: any) => {
+                if (res != "" && res != undefined) {
+                    if (res.isSuccess == true) {
+                        console.log(res);
+                        // localstorage.setItem('orderId', res.data._id);
+                        this.placeOrderDialog.hide();
+                        this.router.navigate(['/homeUser']);
+                        Toast.makeText("Order successfully placed!!!", "long").show();
+                    }
+                }
+            }, error => {
+                alert(error.error.error);
+            });
     }
 
-    onReject() {
+    onCancel() {
         this.placeOrderDialog.hide();
         // Toast.makeText("Order is rejected!!!", "long").show();
     }

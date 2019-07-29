@@ -12,7 +12,7 @@
             <Label class="appLabel" text="Farmers Hut"></Label>
         </StackLayout>
         <StackLayout row="2" width="80%" height="10%">
-            <TextField [hint]="addressHint" (textChange)="onAddressTextChanged($event)" secure="false"
+            <TextField [hint]="addressHint" [text]="address" (textChange)="onAddressTextChanged($event)" secure="false"
                 [borderColor]="addressBorderColor" returnKeyType="done" (returnPress)="onReturnPress($event)"
                 autocorrect="false" class="input input-border input-field">
             </TextField>
@@ -44,7 +44,7 @@
         </StackLayout>
         <StackLayout row="7" width="80%" height="10%">
             <StackLayout height="100%" horizontalAlignment="center" orientation="horizontal" (tap)="onMap()">
-                <Label class="footer-label" text="Choose your location from map"></Label>
+                <Label class="footer-label" text="Choose your current location from map"></Label>
                 <Image class="map" verticalAlignment="top" src="res://map"></Image>
             </StackLayout>
         </StackLayout>

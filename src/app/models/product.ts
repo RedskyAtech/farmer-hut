@@ -1,5 +1,6 @@
 export class Product {
 
+    id: string;
     image: string;
     name: string;
     brandName: string;
@@ -13,7 +14,7 @@ export class Product {
     orderByName: string;
     orderByAddress: string;
     orderByPhone: string;
-    
+
     constructor(obj?: any) {
         if (!obj) {
             return;

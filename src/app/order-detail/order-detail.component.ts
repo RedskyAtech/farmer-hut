@@ -4,6 +4,15 @@ import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import { ModalComponent } from "~/app/modals/modal.component";
 import * as Toast from 'nativescript-toast';
+import * as localstorage from "nativescript-localstorage";
+import { HttpClient } from "@angular/common/http";
+import { Values } from "~/app/values/values";
+import { UserService } from '../services/user.service';
+import * as geolocation from "nativescript-geolocation";
+import { Accuracy } from "tns-core-modules/ui/enums";
+import { Directions } from "nativescript-directions";
+import { Order } from "../models/order.model";
+let directions = new Directions();
 
 @Component({
     selector: "ns-orderDetail",
@@ -14,30 +23,90 @@ import * as Toast from 'nativescript-toast';
 export class OrderDetailComponent implements OnInit, AfterViewInit {
 
     @ViewChild('confirmOrderDialog') confirmOrderDialog: ModalComponent;
+    @ViewChild('rejectOrderDialog') rejectOrderDialog: ModalComponent;
 
     orderedProducts = [];
     userName: string;
     phoneNumber: string;
     address: string;
     totalAmount: string;
+    orderId: string;
+    userLatitude: string;
+    userLongitude: string;
+    orderStatus: string;
+    confirmButtonText: string;
+    confirmDialogButtonText: string;
+    rejectButtonText: string;
+    order: Order;
 
-    constructor(private route: ActivatedRoute, private router: Router) {
-        this.userName = "Sumit Kumar Sangwal";
-        this.phoneNumber = "1234567890";
-        this.address = "House No. 121, 3rd crossing, Street no. 6, old suraj nagari";
-        this.totalAmount = "7800";
+    constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private http: HttpClient) {
+        this.userName = "";
+        this.phoneNumber = "";
+        this.address = "";
+        this.totalAmount = "";
+        this.order = new Order();
+        this.route.queryParams.subscribe(params => {
+            if (params["orderId"] != "") {
+                this.orderId = params["orderId"];
+            }
+        });
+
+        if (this.orderId != null && this.orderId != undefined) {
+            this.userService.showLoadingState(true);
+            this.http
+                .get(Values.BASE_URL + "orders/" + this.orderId)
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            this.address = res.data.address.line1;
+                            this.userLatitude = res.data.address.location.latitude;
+                            this.userLongitude = res.data.address.location.longitude;
+                            this.userName = res.data.name;
+                            this.phoneNumber = res.data.phone;
+                            this.totalAmount = res.data.grandTotal;
+                            this.orderStatus = res.data.status;
+                            if (this.orderStatus == "pending") {
+                                this.confirmButtonText = "Confirm";
+                                this.confirmDialogButtonText = "Confirm";
+                            }
+                            if (this.orderStatus == "confirmed") {
+                                this.confirmButtonText = "Deliver";
+                                this.confirmDialogButtonText = "Deliver";
+                            }
+                            if (this.orderStatus == "completed") {
+                                this.confirmButtonText = "Delivered";
+                            }
+                            if (this.orderStatus == "rejected") {
+                                this.rejectButtonText = "Rejected";
+                            }
+                            else {
+                                this.rejectButtonText = "Reject";
+                            }
+                            if (res.data.length != 0) {
+                                // for (var i = 0; i < res.data.length; i++) {
+                                for (var j = 0; j < res.data.products.length; j++) {
+                                    this.orderedProducts.push({
+                                        image: res.data.products[j].image.url,
+                                        name: res.data.products[j].name,
+                                        weight: res.data.products[j].dimensions[0].value + " " + res.data.products[j].dimensions[0].unit,
+                                        price: res.data.products[j].price.currency + " " + res.data.products[j].price.value,
+                                        quantity: res.data.products[j].quantity,
+                                        totalPrice: res.data.products[j].total,
+                                    })
+
+                                }
+                            }
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    console.log(error.error.error);
+                });
+        }
     }
 
     ngOnInit(): void {
-        this.orderedProducts.push({ id: 0, image: "res://item_1", fullName: "Bee Fruity Red Gum Honey", quantity: "1", totalPrice: "100", weight: "100 gm", price: "RS 100" });
-        this.orderedProducts.push({ id: 1, image: "res://item_2", fullName: "Bee Fruity Red Gum Honey", quantity: "2", totalPrice: "300", weight: "200 gm", price: "RS 150" });
-        this.orderedProducts.push({ id: 2, image: "res://item_3", fullName: "Bee Fruity Red Gum Honey", quantity: "3", totalPrice: "1050", weight: "400 gm", price: "RS 350" });
-        this.orderedProducts.push({ id: 3, image: "res://item_4", fullName: "Bee Fruity Red Gum Honey", quantity: "4", totalPrice: "1800", weight: "500 gm", price: "RS 450" });
-        this.orderedProducts.push({ id: 4, image: "res://item_5", fullName: "Bee Fruity Red Gum Honey", quantity: "3", totalPrice: "2550", weight: "1 kg", price: "RS 850" });
-        this.orderedProducts.push({ id: 5, image: "res://item_1", fullName: "Bee Fruity Red Gum Honey", quantity: "7", totalPrice: "700", weight: "100 gm", price: "RS 100" });
-        this.orderedProducts.push({ id: 6, image: "res://item_2", fullName: "Bee Fruity Red Gum Honey", quantity: "1", totalPrice: "150", weight: "200 gm", price: "RS 150" });
-        this.orderedProducts.push({ id: 7, image: "res://item_3", fullName: "Bee Fruity Red Gum Honey", quantity: "2", totalPrice: "700", weight: "400 gm", price: "RS 350" });
-        this.orderedProducts.push({ id: 8, image: "res://item_4", fullName: "Bee Fruity Red Gum Honey", quantity: "1", totalPrice: "450", weight: "500 gm", price: "RS 450" });
     }
 
     ngAfterViewInit(): void {
@@ -49,20 +118,122 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     }
 
     onConfirmOrder() {
-        this.confirmOrderDialog.show();
+        if (this.orderStatus != "completed") {
+            this.confirmOrderDialog.show();
+        }
+    }
+
+    onRejectOrder() {
+        if (this.orderStatus != "rejected" && this.orderStatus != "completed") {
+            this.rejectOrderDialog.show();
+        }
     }
 
     onConfirm() {
-        this.confirmOrderDialog.hide();
-        this.router.navigate(['./viewOrders']);
-        Toast.makeText("Order successfully confirmed!!!", "long").show();
+        if (this.orderStatus == "pending") {
+            this.order.status = "confirmed";
+            this.updateOrderStatus();
+        }
+        if (this.orderStatus == "confirmed") {
+            this.order.status = "completed";
+            this.updateOrderStatus();
+        }
     }
 
-    onCancel() {
+    updateOrderStatus() {
+        this.userService.showLoadingState(true);
+        this.http
+            .put(Values.BASE_URL + "orders/update/" + this.orderId, this.order)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.confirmOrderDialog.hide();
+                        this.router.navigate(['./viewOrders']);
+                        this.userService.showLoadingState(false);
+                        if (this.order.status == "confirmed") {
+                            Toast.makeText("Order successfully confirmed!!!", "long").show();
+                            this.confirmButtonText = "Deliver";
+                            this.confirmDialogButtonText = "Deliver";
+                        }
+                        else if (this.order.status == "completed") {
+                            Toast.makeText("Order successfully delivered!!!", "long").show();
+                            this.confirmButtonText = "Delivered";
+                        }
+                        else {
+                            Toast.makeText("Order successfully rejected!!!", "long").show();
+                            this.confirmButtonText = "Delivered";
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
+    onReject() {
+        this.order.status = "rejected";
+        this.updateOrderStatus();
+    }
+
+    onCancelConfirm() {
         this.confirmOrderDialog.hide();
+    }
+
+    onCancelReject() {
+        this.rejectOrderDialog.hide();
     }
 
     onTrack() {
-        alert("track clicked");
+        if (this.address != null && this.address != undefined) {
+            this.userService.showLoadingState(true);
+            geolocation.enableLocationRequest();
+            var that = this;
+            // that.http
+            //     .get(Values.GOOGLE_MAP_URL + "address=" + that.address + "," + "CA&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
+            //     .subscribe((res: any) => {
+            //         that.userLatitude = res.results[0].geometry.location.lat;
+            //         that.userLongitude = res.results[0].geometry.location.lng;
+            //         // that.userService.showLoadingState(false);
+            //         // // that.address = res.results[0].address_components[0].long_name;
+            //         // that.address = res.results[0].formatted_address;
+            //     }, error => {
+            //         console.log(error);
+            //     });
+            geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 100, maximumAge: 20000 }).
+                then(function (location) {
+                    if (location) {
+                        that.userService.showLoadingState(false);
+                        directions.navigate({
+                            // from: { // optional, default 'current location'
+                            // },
+                            // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
+                            //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
+                            // },
+                            // {
+                            //     address: "Aak 98, Wieringerwerf, Netherlands"
+                            // }],
+                            to: {
+                                address: that.address,
+                                // lat: parseInt(that.userLatitude),
+                                // lng: parseInt(that.userLongitude)
+                            },
+                            type: "driving", // optional, can be: driving, transit, bicycling or walking
+                            ios: {
+                                preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
+                                allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
+                            }
+                        }).then(() => {
+                            console.log("Maps app launched.");
+                        }, error => {
+                            console.log(error);
+                        });
+
+                    }
+                }, function (e) {
+                    console.log("Error: " + e.message);
+                });
+        }
+
     }
 }

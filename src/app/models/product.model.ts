@@ -3,7 +3,7 @@ import { Heading } from "./heading.model";
 import { Dimensions } from "./dimensions.model";
 import { Price } from "./price.model";
 export class Product {
-    id: string;
+    _id: string;
     name: string;
     brand: string;
     status: string;
@@ -12,11 +12,12 @@ export class Product {
     heading: Heading;
     dimensions: Array<Dimensions>;
     price: Price;
+    quantity: string;
     constructor(obj?: any) {
         if (!obj) {
             return;
         }
-        this.id = obj.id;
+        this._id = obj._id;
         this.name = obj.name;
         this.brand = obj.brand;
         this.status = obj.status;
@@ -25,5 +26,6 @@ export class Product {
         this.heading = obj.heading;
         this.dimensions = obj.dimensions;
         this.price = obj.price;
+        this.quantity = obj.quantity;
     }
 }

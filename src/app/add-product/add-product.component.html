@@ -10,7 +10,8 @@
                 <Button class="dimensionButton" width="100%" text="piece" (tap)="onPiece()"></Button>
             </StackLayout>
         </CardView>
-        <CardView #photoUploadDialog modal size="lg" duration="100" backgroundColor="transparent">
+        <CardView #photoUploadDialog modal size="lg" duration="100" backgroundColor="transparent"
+            (tap)="onOutsideClick()">
             <StackLayout height="10%" width="50%" backgroundColor="white" orientation="vertical">
                 <Button class="photoUploadButton" width="100%" text="Gallery" (tap)="onGallery()"></Button>
                 <Button class="photoUploadButton" width="100%" text="Camera" (tap)="onCamera()"></Button>

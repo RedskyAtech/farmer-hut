@@ -273,6 +273,7 @@ export class AddProductComponent implements OnInit {
 
     onOutsideClick() {
         this.photoUploadDialog.hide();
+        this.selectDimensionDialog.hide();
     }
 
 
@@ -303,6 +304,9 @@ export class AddProductComponent implements OnInit {
         }
         else if (this.detailDescription == "") {
             alert("Please enter detail description!!!");
+        }
+        else if (this.imageUrl == "") {
+            alert("Please select product image!!!");
         }
         else {
             this.userService.showLoadingState(true);
