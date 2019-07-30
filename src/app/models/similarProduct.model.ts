@@ -1,9 +1,9 @@
+import { Product } from "./product.model";
 import { Image } from "./image.model";
 import { Heading } from "./heading.model";
 import { Dimensions } from "./dimensions.model";
 import { Price } from "./price.model";
-import { Category } from "./category.model";
-export class Product {
+export class SimilarProduct {
     _id: string;
     name: string;
     brand: string;
@@ -14,8 +14,7 @@ export class Product {
     dimensions: Array<Dimensions>;
     price: Price;
     quantity: string;
-    category: Category;
-    isSimilarProduct: boolean;
+    products: Array<Product>;
     constructor(obj?: any) {
         if (!obj) {
             return;
@@ -30,7 +29,6 @@ export class Product {
         this.dimensions = obj.dimensions;
         this.price = obj.price;
         this.quantity = obj.quantity;
-        this.category = obj.category;
-        this.isSimilarProduct = obj.isSimilarProduct;
+        this.products = obj.products;
     }
 }

@@ -90,7 +90,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                                         image: res.data.products[j].image.url,
                                         name: res.data.products[j].name,
                                         weight: res.data.products[j].dimensions[0].value + " " + res.data.products[j].dimensions[0].unit,
-                                        price: res.data.products[j].price.currency + " " + res.data.products[j].price.value,
+                                        price: "Rs " + res.data.products[j].price.value,
                                         quantity: res.data.products[j].quantity,
                                         totalPrice: res.data.products[j].total,
                                     })

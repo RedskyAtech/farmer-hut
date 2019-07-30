@@ -43,8 +43,8 @@
     height:80%;
     width:95%;
     padding:0;
-    background-color: transparent;
-    z-index:500;
+    background-color: white;
+    /* z-index:500; */
 }
 .addCartButton:highlighted{
     background-color: #E98A02;

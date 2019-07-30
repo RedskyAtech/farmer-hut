@@ -19,6 +19,8 @@ import { PhotoEditor, PhotoEditorControl } from "nativescript-photo-editor";
 import { ImageCropper } from 'nativescript-imagecropper';
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
+import { SimilarProduct } from "../models/similarProduct.model";
+import { Category } from "../models/category.model";
 
 
 registerElement("CardView", () => CardView);
@@ -59,9 +61,12 @@ export class AddProductComponent implements OnInit {
     weightDimension = "kg";
     currency = "Rs";
     product: Product;
+    similarProduct: SimilarProduct;
     imageUrl: any;
     productId: string;
+    similarProductId: string;
     type: string;
+    classType: string;
 
     private imageCropper: ImageCropper;
 
@@ -71,8 +76,11 @@ export class AddProductComponent implements OnInit {
         this.imageUrl = null;
 
         this.product = new Product();
+        this.similarProduct = new SimilarProduct();
+        this.similarProduct.products = [];
         this.product.heading = new Heading();
         this.product.image = new Image();
+        this.product.category = new Category();
         this.product.dimensions = [];
         this.product.price = new Price();
         this.productImage = "res://image_icon";
@@ -88,58 +96,63 @@ export class AddProductComponent implements OnInit {
             if (params["productId"] != undefined) {
                 this.productId = params["productId"];
             }
+            if (params["similarProductId"] != undefined) {
+                this.similarProductId = params["similarProductId"];
+            }
             if (params["type"] != undefined) {
                 this.type = params["type"];
             }
-            if (params["image"] != undefined) {
-                this.productImage = params["image"];
-            }
-            if (params["brandName"] != undefined) {
-                this.brandName = params["brandName"];
-                this.brandBorderColor = "#E98A02";
-            }
-            if (params["productName"] != undefined) {
-                this.productName = params["productName"];
-                this.nameBorderColor = "#E98A02";
-            }
-            if (params["weight"] != undefined) {
-                this.weight = params["weight"];
-                this.weightBorderColor = "#E98A02";
-            }
-            if (params["price"] != undefined) {
-                this.price = params["price"];
-                this.priceBorderColor = "#E98A02";
-            }
-            if (params["detailHeading"] != undefined) {
-                this.detailHeading = params["detailHeading"];
-                this.detailHeadingBorderColor = "#E98A02";
-            }
-            if (params["detailDescription"] != undefined) {
-                this.detailDescription = params["detailDescription"];
-                this.detailDescriptionBorderColor = "#E98A02";
+            if (params["classType"] != undefined) {
+                this.classType = params["classType"];
             }
         });
 
-        if (this.productId != undefined) {
-            this.userService.showLoadingState(true);
-            this.http
-                .get(Values.BASE_URL + "products/" + this.productId)
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            this.userService.showLoadingState(false);
-                            this.productImage = res.data.image.url;
-                            this.brandName = res.data.brand;
-                            this.productName = res.data.name;
-                            this.detailHeading = res.data.heading.title;
-                            this.detailDescription = res.data.heading.description;
-                            this.weight = res.data.dimensions[0].value;
-                            this.price = res.data.price.value;
+        if (this.classType == "similarProduct") {
+            if (this.similarProductId != undefined) {
+                this.userService.showLoadingState(true);
+                this.http
+                    .get(Values.BASE_URL + "similarProducts/" + this.similarProductId)
+                    .subscribe((res: any) => {
+                        if (res != null && res != undefined) {
+                            if (res.isSuccess == true) {
+                                this.userService.showLoadingState(false);
+                                this.productImage = res.data.image.url;
+                                this.brandName = res.data.brand;
+                                this.productName = res.data.name;
+                                this.detailHeading = res.data.heading.title;
+                                this.detailDescription = res.data.heading.description;
+                                this.weight = res.data.dimensions[0].value;
+                                this.price = res.data.price.value;
+                            }
                         }
-                    }
-                }, error => {
-                    alert(error.error.error);
-                });
+                    }, error => {
+                        this.userService.showLoadingState(false);
+                        alert(error.error.error);
+                    });
+            }
+        }
+        else {
+            if (this.productId != undefined) {
+                this.userService.showLoadingState(true);
+                this.http
+                    .get(Values.BASE_URL + "products/" + this.productId)
+                    .subscribe((res: any) => {
+                        if (res != null && res != undefined) {
+                            if (res.isSuccess == true) {
+                                this.userService.showLoadingState(false);
+                                this.productImage = res.data.image.url;
+                                this.brandName = res.data.brand;
+                                this.productName = res.data.name;
+                                this.detailHeading = res.data.heading.title;
+                                this.detailDescription = res.data.heading.description;
+                                this.weight = res.data.dimensions[0].value;
+                                this.price = res.data.price.value;
+                            }
+                        }
+                    }, error => {
+                        alert(error.error.error);
+                    });
+            }
         }
     }
 
@@ -318,35 +331,71 @@ export class AddProductComponent implements OnInit {
             this.product.price.currency = this.currency;
             this.product.heading.title = this.detailHeading;
             this.product.heading.description = this.detailDescription;
-
             if (this.type == "edit") {
-                this.http
-                    .put(Values.BASE_URL + "products/update/" + this.productId, this.product)
-                    .subscribe((res: any) => {
-                        if (res != null && res != undefined) {
-                            if (res.isSuccess == true) {
-                                this.userService.showLoadingState(false);
-                                this.router.navigate(['./homeAdmin']);
+                if (this.classType == "similarProduct") {
+                    this.http
+                        .put(Values.BASE_URL + "similarProducts/update/" + this.similarProductId, this.product)
+                        .subscribe((res: any) => {
+                            if (res != null && res != undefined) {
+                                if (res.isSuccess == true) {
+                                    this.userService.showLoadingState(false);
+                                    this.router.navigate(['./similarProductAdmin']);
+                                }
                             }
-                        }
-                    }, error => {
-                        this.userService.showLoadingState(false);
-                        alert(error.error.error);
-                    });
+                        }, error => {
+                            alert(error.error.error);
+                        });
+                }
+                else {
+                    this.http
+                        .put(Values.BASE_URL + "products/update/" + this.productId, this.product)
+                        .subscribe((res: any) => {
+                            if (res != null && res != undefined) {
+                                if (res.isSuccess == true) {
+                                    this.userService.showLoadingState(false);
+                                    this.router.navigate(['./homeAdmin']);
+                                }
+                            }
+                        }, error => {
+                            this.userService.showLoadingState(false);
+                            alert(error.error.error);
+                        });
+                }
             } else {
-                this.http
-                    .post(Values.BASE_URL + "products/", this.product)
-                    .subscribe((res: any) => {
-                        if (res != null && res != undefined) {
-                            if (res.isSuccess == true) {
-                                this.userService.showLoadingState(false);
-                                this.router.navigate(['./homeAdmin']);
+                if (this.classType == "similarProduct") {
+                    if (localStorage.getItem("categoryId") != null && localStorage.getItem("categoryId") != undefined) {
+                        var categoryId = localStorage.getItem("categoryId");
+                        this.product.category._id = categoryId;
+                    }
+                    this.http
+                        .post(Values.BASE_URL + "similarProducts", this.product)
+                        .subscribe((res: any) => {
+                            if (res != null && res != undefined) {
+                                if (res.isSuccess == true) {
+                                    this.userService.showLoadingState(false);
+                                    this.router.navigate(['./similarProductAdmin']);
+                                }
                             }
-                        }
-                    }, error => {
-                        this.userService.showLoadingState(false);
-                        alert(error.error.error);
-                    });
+                        }, error => {
+                            this.userService.showLoadingState(false);
+                            alert(error.error.error);
+                        });
+                }
+                else {
+                    this.http
+                        .post(Values.BASE_URL + "products", this.product)
+                        .subscribe((res: any) => {
+                            if (res != null && res != undefined) {
+                                if (res.isSuccess == true) {
+                                    this.userService.showLoadingState(false);
+                                    this.router.navigate(['./homeAdmin']);
+                                }
+                            }
+                        }, error => {
+                            this.userService.showLoadingState(false);
+                            alert(error.error.error);
+                        });
+                }
             }
         }
     }

@@ -65,7 +65,7 @@ export class HomeAdminComponent implements OnInit {
                                 brandName: res.data[i].brand,
                                 name: res.data[i].name,
                                 weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                price: res.data[i].price.currency + " " + res.data[i].price.value,
+                                price: "Rs " + res.data[i].price.value,
                             })
                         }
                         this.getCategories();
@@ -82,6 +82,7 @@ export class HomeAdminComponent implements OnInit {
         this.http
             .get(Values.BASE_URL + "categories")
             .subscribe((res: any) => {
+
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         for (var i = 0; i < res.data.length; i++) {
@@ -116,8 +117,12 @@ export class HomeAdminComponent implements OnInit {
         }
     }
 
-    onCategory(product: Product) {
-        this.router.navigate(['/similarProductAdmin']);
+    onCategory(category: Category) {
+        if (category._id != undefined && category._id != null) {
+            localstorage.removeItem("categoryId");
+            localstorage.setItem('categoryId', category._id);
+            this.router.navigate(['/similarProductAdmin']);
+        }
     }
 
     onProfile() {
@@ -134,14 +139,14 @@ export class HomeAdminComponent implements OnInit {
         this.router.navigate(['./addProduct'], navigationExtras);
     }
 
-    onCategoryEdit(i: number) {
+    onCategoryEdit(category: Category) {
         let navigationExtras: NavigationExtras = {
             queryParams: {
-                "categoryImage": this.productCategories[i].image,
-                "categoryName": this.productCategories[i].categoryName
+                "categoryId": category._id,
+                "type": "edit"
             },
         };
-        // this.router.navigate(['./addCategory'], navigationExtras);
+        this.router.navigate(['./addCategory'], navigationExtras);
     }
 
     onAddProductButton() {
@@ -195,10 +200,8 @@ export class HomeAdminComponent implements OnInit {
     }
 
     onCategoryInactive(category: Category) {
-        console.log(category._id);
         this.category.status = "inactive";
         this.userService.showLoadingState(true);
-        console.log(this.category.status);
         this.http
             .put(Values.BASE_URL + "categories/update/" + category._id, this.category)
             .subscribe((res: any) => {
@@ -214,8 +217,22 @@ export class HomeAdminComponent implements OnInit {
             });
     }
 
-    onCategoryActive(i: number) {
-        alert("category active at index: " + i);
+    onCategoryActive(category: Category) {
+        this.category.status = "active";
+        this.userService.showLoadingState(true);
+        this.http
+            .put(Values.BASE_URL + "categories/update/" + category._id, this.category)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        this.productCategories = [];
+                        this.getCategories();
+                    }
+                }
+            }, error => {
+                alert(error.error.error);
+            });
     }
 
 }

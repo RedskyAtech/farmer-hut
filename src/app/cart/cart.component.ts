@@ -63,59 +63,120 @@ export class CartComponent implements OnInit {
     onRemoveItem(product: Product) {
         this.cart.product._id = product._id;
         this.cart.product.quantity = "0";
+        if (product.isSimilarProduct == true) {
+            this.cart.product.isSimilarProduct = product.isSimilarProduct;
+        } else {
+            this.cart.product.isSimilarProduct = false;
+        }
         this.updateCartQuantity();
     }
 
     onPlus(product: Product) {
         this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
-        this.http
-            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        if (res.data.products.length != 0) {
-                            for (var i = 0; i < res.data.products.length; i++) {
-                                if (product._id == res.data.products[i]._id) {
-                                    var quantity = parseInt(res.data.products[i].quantity) + 1;
-                                    this.cart.product.quantity = quantity.toString();
-                                    this.userService.showLoadingState(false);
-                                    this.updateCartQuantity();
+        if (product.isSimilarProduct == true) {
+            this.cart.product.isSimilarProduct = product.isSimilarProduct;
+            this.http
+                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            if (res.data.products.length != 0) {
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                    if (product._id == res.data.products[i]._id) {
+                                        var quantity = parseInt(res.data.products[i].quantity) + 1;
+                                        this.cart.product.quantity = quantity.toString();
+                                        this.userService.showLoadingState(false);
+                                        this.updateCartQuantity();
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                console.log(error.error.error);
-            });
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    console.log(error.error.error);
+                });
+        }
+        else {
+            this.cart.product.isSimilarProduct = false;
+            this.cart.product.isSimilarProduct = product.isSimilarProduct;
+            this.http
+                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            if (res.data.products.length != 0) {
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                    if (product._id == res.data.products[i]._id) {
+                                        var quantity = parseInt(res.data.products[i].quantity) + 1;
+                                        this.cart.product.quantity = quantity.toString();
+                                        this.userService.showLoadingState(false);
+                                        this.updateCartQuantity();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    console.log(error.error.error);
+                });
+        }
     }
 
     onMinus(product: Product) {
         this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
-        this.http
-            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        if (res.data.products.length != 0) {
-                            for (var i = 0; i < res.data.products.length; i++) {
-                                if (product._id == res.data.products[i]._id) {
-                                    var quantity = parseInt(res.data.products[i].quantity) - 1;
-                                    this.cart.product.quantity = quantity.toString();
-                                    this.userService.showLoadingState(false);
-                                    this.updateCartQuantity();
+        if (product.isSimilarProduct == true) {
+            console.log(product.isSimilarProduct);
+            this.cart.product.isSimilarProduct = product.isSimilarProduct;
+            this.http
+                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            if (res.data.products.length != 0) {
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                    if (product._id == res.data.products[i]._id) {
+                                        var quantity = parseInt(res.data.products[i].quantity) - 1;
+                                        this.cart.product.quantity = quantity.toString();
+                                        this.userService.showLoadingState(false);
+                                        this.updateCartQuantity();
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                console.log(error.error.error);
-            });
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    console.log(error.error.error);
+                });
+        }
+        else {
+            this.cart.product.isSimilarProduct = false;
+            this.http
+                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            if (res.data.products.length != 0) {
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                    if (product._id == res.data.products[i]._id) {
+                                        var quantity = parseInt(res.data.products[i].quantity) - 1;
+                                        this.cart.product.quantity = quantity.toString();
+                                        this.userService.showLoadingState(false);
+                                        this.updateCartQuantity();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    console.log(error.error.error);
+                });
+        }
     }
 
     updateCartQuantity() {
@@ -143,17 +204,21 @@ export class CartComponent implements OnInit {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.userService.showLoadingState(false);
-                        if (res.data.products.length != 0) {
+                        if (res.data.products.length > 0) {
                             this.cartProducts = [];
                             for (var i = 0; i < res.data.products.length; i++) {
+                                if (res.data.products[i].isSimilarProduct) {
+                                    var productType = res.data.products[i].isSimilarProduct;
+                                }
                                 this.cartProducts.push({
                                     _id: res.data.products[i]._id,
+                                    isSimilarProduct: productType,
                                     image: res.data.products[i].image.url,
                                     fullName: res.data.products[i].name,
                                     quantity: res.data.products[i].quantity,
                                     totalPrice: "RS" + " " + res.data.products[i].total,
                                     weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                    price: res.data.products[i].price.currency + " " + res.data.products[i].price.value
+                                    price: "Rs " + res.data.products[i].price.value
                                 })
                             }
                             this.totalAmount = res.data.grandTotal;

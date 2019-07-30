@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 // import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras } from "@angular/router";
+import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Product } from "~/app/models/product.model";
 import { Cart } from "~/app/models/cart.model";
@@ -9,6 +9,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../services/user.service';
 import * as Toast from 'nativescript-toast';
+import { Category } from "../models/category.model";
 
 @Component({
     selector: "ns-homeUser",
@@ -30,8 +31,10 @@ export class HomeUserComponent implements OnInit {
     product: Product;
     cart: Cart;
     cartCount: number;
+    category: Category;
+    tabSelectedIndex: number;
 
-    constructor(private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {
         this.sliderImage1 = "";
         this.sliderImage2 = "";
         this.sliderImage3 = "";
@@ -40,8 +43,18 @@ export class HomeUserComponent implements OnInit {
         this.product = new Product();
         this.cart = new Cart();
         this.cart.product = new Product();
+        this.category = new Category();
 
         this.products = [];
+
+        this.route.queryParams.subscribe(params => {
+            if (params["index"] == "1" && params["index"] != undefined) {
+                this.tabSelectedIndex = 1;
+
+            } else {
+                this.tabSelectedIndex = 0;
+            }
+        });
 
         setInterval(() => {
             setTimeout(() => {
@@ -70,11 +83,11 @@ export class HomeUserComponent implements OnInit {
                                     brandName: res.data[i].brand,
                                     name: res.data[i].name,
                                     weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                    price: res.data[i].price.currency + " " + res.data[i].price.value,
+                                    price: "Rs " + res.data[i].price.value,
                                 })
                             }
                             if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
-                                this.updateCartCount();
+                                this.getCategory();
                             }
                         }
                     }
@@ -87,29 +100,42 @@ export class HomeUserComponent implements OnInit {
     }
 
     ngOnInit(): void {
+    }
 
-        this.productCategories.push({ categoryName: "Category 1", image: "res://item_8" });
-        this.productCategories.push({ categoryName: "Category 2", image: "res://item_9", });
-        this.productCategories.push({ categoryName: "Category 3", image: "res://item_10" });
-        this.productCategories.push({ categoryName: "Category 4", image: "res://item_11" });
-        this.productCategories.push({ categoryName: "Category 5", image: "res://item_12" });
-        this.productCategories.push({ categoryName: "Category 6", image: "res://item_13" });
-        this.productCategories.push({ categoryName: "Category 7", image: "res://item_8", });
-        this.productCategories.push({ categoryName: "Category 8", image: "res://item_9", });
-        this.productCategories.push({ categoryName: "Category 9", image: "res://item_10" });
+    getCategory() {
+        this.userService.showLoadingState(true);
+        this.http
+            .get(Values.BASE_URL + "categories?status=active")
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        for (var i = 0; i < res.data.length; i++) {
+                            this.productCategories.push({
+                                _id: res.data[i]._id,
+                                image: res.data[i].image.url,
+                                name: res.data[i].name,
+                            })
+                        }
+                        this.updateCartCount();
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
     }
 
     onSelectedIndexChanged(args: SelectedIndexChangedEventData) {
         if (args.oldIndex !== -1) {
-            // const newIndex = args.newIndex;
-            // if (newIndex === 0) {
-            //     this.tabSelectedIndexResult = "Profile Tab (tabSelectedIndex = 0 )";
-            //     this.tabSelectedIndex = 0;
-            // } else if (newIndex === 1) {
-            //     this.tabSelectedIndexResult = "Stats Tab (tabSelectedIndex = 1 )";
-            // } else if (newIndex === 2) {
-            //     this.tabSelectedIndexResult = "Settings Tab (tabSelectedIndex = 2 )";
-            // }
+            const newIndex = args.newIndex;
+            if (newIndex === 0) {
+                // this.tabSelectedIndexResult = "Profile Tab (tabSelectedIndex = 0 )";
+                this.tabSelectedIndex = 0;
+            } else if (newIndex === 1) {
+                // this.tabSelectedIndexResult = "Stats Tab (tabSelectedIndex = 1 )";
+                this.tabSelectedIndex = 1;
+            }
         }
     }
 
@@ -162,8 +188,13 @@ export class HomeUserComponent implements OnInit {
         this.router.navigate(['/productDetail'], navigationExtras);
     }
 
-    onCategory(product: Product) {
-        this.router.navigate(['/similarProductUser']);
+    onCategory(category: Category) {
+        let navigationExtras: NavigationExtras = {
+            queryParams: {
+                "categoryId": category._id,
+            },
+        };
+        this.router.navigate(['/similarProductUser'], navigationExtras);
     }
 
     onProfile() {

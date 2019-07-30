@@ -31,6 +31,8 @@ export class AddCategoryComponent implements OnInit {
     imageUrl: any;
     private imageCropper: ImageCropper;
     category: Category;
+    categoryId: string;
+    type: string;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
         this.categoryBorderColor = "white"
@@ -40,20 +42,37 @@ export class AddCategoryComponent implements OnInit {
         this.category.image = new Image();
 
         this.route.queryParams.subscribe(params => {
-            if (params["categoryImage"] != undefined) {
-                this.categoryImage = params["categoryImage"];
+            if (params["categoryId"] != undefined) {
+                this.categoryId = params["categoryId"];
             }
-            if (params["categoryName"] != undefined) {
-                this.categoryName = params["categoryName"];
-                this.categoryBorderColor = "#E98A02";
+            if (params["type"] != undefined) {
+                this.type = params["type"];
             }
         });
+
+        if (this.categoryId != undefined) {
+            this.userService.showLoadingState(true);
+            this.http
+                .get(Values.BASE_URL + "categories/" + this.categoryId)
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            this.categoryImage = res.data.image.url;
+                            this.categoryName = res.data.name
+                            this.categoryBorderColor = "#E98A02";
+                        }
+                    }
+                }, error => {
+                    alert(error.error.error);
+                });
+        }
     }
 
     ngOnInit(): void {
     }
 
-    onBack() {
+    onBack() {  
         let navigationExtras: NavigationExtras = {
             queryParams: {
                 "index": "1"
@@ -146,25 +165,47 @@ export class AddCategoryComponent implements OnInit {
             this.category.name = this.categoryName;
             this.category.image.url = this.imageUrl;
             this.userService.showLoadingState(true);
-            this.http
-                .post(Values.BASE_URL + "categories/", this.category)
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            console.log(res);
-                            this.userService.showLoadingState(false);
-                            let navigationExtras: NavigationExtras = {
-                                queryParams: {
-                                    "index": "1"
-                                },
-                            };
-                            this.router.navigate(['./homeAdmin'], navigationExtras);
+
+            if (this.type == "edit") {
+                this.http
+                    .put(Values.BASE_URL + "categories/update/" + this.categoryId, this.category)
+                    .subscribe((res: any) => {
+                        if (res != null && res != undefined) {
+                            if (res.isSuccess == true) {
+                                this.userService.showLoadingState(false);
+                                let navigationExtras: NavigationExtras = {
+                                    queryParams: {
+                                        "index": "1"
+                                    },
+                                };
+                                this.router.navigate(['./homeAdmin'], navigationExtras);
+                            }
                         }
-                    }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    alert(error.error.error);
-                });
+                    }, error => {
+                        this.userService.showLoadingState(false);
+                        alert(error.error.error);
+                    });
+            }
+            else {
+                this.http
+                    .post(Values.BASE_URL + "categories/", this.category)
+                    .subscribe((res: any) => {
+                        if (res != null && res != undefined) {
+                            if (res.isSuccess == true) {
+                                this.userService.showLoadingState(false);
+                                let navigationExtras: NavigationExtras = {
+                                    queryParams: {
+                                        "index": "1"
+                                    },
+                                };
+                                this.router.navigate(['./homeAdmin'], navigationExtras);
+                            }
+                        }
+                    }, error => {
+                        this.userService.showLoadingState(false);
+                        alert(error.error.error);
+                    });
+            }
         }
     }
 }

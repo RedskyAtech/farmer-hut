@@ -31,56 +31,65 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     cartCount: number;
     isCartCount: boolean;
     cart: Cart;
+    classType: string;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
 
         this.route.queryParams.subscribe(params => {
             this.productId = params["productId"];
+            this.classType = params["classType"];
         });
 
         this.userService.showLoadingState(true);
         this.cart = new Cart();
         this.cart.product = new Product();
 
-        this.http
-            .get(Values.BASE_URL + "products/" + this.productId)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.image = res.data.image.url;
-                        this.brandName = res.data.brand;
-                        this.fullName = res.data.name;
-                        this.detailHeading = res.data.heading.title;
-                        this.detailDescription = res.data.heading.description;
-                        this.quantity = res.data.dimensions[0].value + " " + res.data.dimensions[0].unit;
-                        this.price = res.data.price.currency + " " + res.data.price.value;
-                        this.userService.showLoadingState(false);
-                        if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
-                            this.userService.showLoadingState(true);
-                            this.http
-                                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-                                .subscribe((res: any) => {
-                                    if (res != null && res != undefined) {
-                                        if (res.isSuccess == true) {
-                                            this.userService.showLoadingState(false);
-                                            if (res.data.products.length != 0) {
-                                                this.isCartCount = true;
-                                                this.cartCount = res.data.products.length;
-                                            }
-                                        }
-                                    }
-                                }, error => {
-                                    this.userService.showLoadingState(false);
-                                    alert(error.error.error);
-                                });
+        if (this.classType == "similarProduct") {
+            this.http
+                .get(Values.BASE_URL + "similarProducts/" + this.productId)
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            this.image = res.data.image.url;
+                            this.brandName = res.data.brand;
+                            this.fullName = res.data.name;
+                            this.detailHeading = res.data.heading.title;
+                            this.detailDescription = res.data.heading.description;
+                            this.quantity = res.data.dimensions[0].value + " " + res.data.dimensions[0].unit;
+                            this.price = "Rs " + res.data.price.value;
+                            this.userService.showLoadingState(false);
+                            this.updateCartCount();
                         }
                     }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                alert(error.error.error);
-            });
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    alert(error.error.error);
+                });
+        }
+        else {
+            this.http
+                .get(Values.BASE_URL + "products/" + this.productId)
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            this.image = res.data.image.url;
+                            this.brandName = res.data.brand;
+                            this.fullName = res.data.name;
+                            this.detailHeading = res.data.heading.title;
+                            this.detailDescription = res.data.heading.description;
+                            this.quantity = res.data.dimensions[0].value + " " + res.data.dimensions[0].unit;
+                            this.price = "Rs " + res.data.price.value;
+                            this.userService.showLoadingState(false);
+                            this.updateCartCount();
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    alert(error.error.error);
+                });
+        }
 
         if (this.cartStatus == true) {
             this.addToCartButton = false;
@@ -155,6 +164,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         Toast.makeText("Product is added to cart!!!", "long").show();
+                        this.userService.showLoadingState(false);
                         this.updateCartCount();
                     }
                 }
@@ -165,6 +175,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     }
 
     updateCartCount() {
+        this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {

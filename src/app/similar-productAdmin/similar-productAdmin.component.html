@@ -8,12 +8,6 @@
                 <Label class="pageHeading" text="Similar products"></Label>
             </StackLayout>
         </GridLayout>
-        <!-- <TabView row="1" [(ngModel)]="tabSelectedIndex" width="100%" height="80%" selectedTabTextColor="white"
-            tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
-            androidSelectedTabHighlightColor="white" tabBackgroundColor="transparent"
-            (selectedIndexChanged)="onSelectedIndexChanged($event)">
-            <StackLayout *tabItem="{title: 'Similar Products'}">
-                <GridLayout rows="auto"> -->
         <GridLayout row="1" height="80%" width="100%">
             <GridView [items]="similarProducts" colWidth="90%" rowHeight="30%" width="100%" height="100%"
                 backgroundColor="transparent">
@@ -40,8 +34,7 @@
                                 </StackLayout>
                                 <GridLayout row="1" columns="auto,auto" width="100%" height="25%">
                                     <StackLayout col="0" height="100%" width="50%">
-                                        <Label width="100%" color="#E98A02" fontSize="14"
-                                            [text]="item.quantity"></Label>
+                                        <Label width="100%" color="#E98A02" fontSize="14" [text]="item.weight"></Label>
                                     </StackLayout>
                                     <StackLayout col="1" height="100%" width="50%">
                                         <Label width="100%" color="#E98A02" fontSize="14" [text]="item.price"></Label>
@@ -50,17 +43,17 @@
                                 <GridLayout row="2" columns="auto,auto" width="100%" height="35%">
                                     <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
                                         <Button class="inactiveButton" text="Inactive"
-                                            [backgroundColor]="item.status=='inactive'?'#E98A02':'transparent'"
-                                            [color]="item.status=='inactive'?'white':'#E98A02'"
-                                            [borderColor]="item.status=='inactive'?'white':'#E98A02'"
-                                            (tap)="onProductInactive(i)"></Button>
+                                            [backgroundColor]="item.status=='disabled'?'#E98A02':'transparent'"
+                                            [color]="item.status=='disabled'?'white':'#E98A02'"
+                                            [borderColor]="item.status=='disabled'?'white':'#E98A02'"
+                                            (tap)="onProductInactive(item)"></Button>
                                     </StackLayout>
                                     <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
                                         <Button class="activeButton" text="Active"
-                                            [backgroundColor]="item.status=='active'?'#E98A02':'transparent'"
-                                            [color]="item.status=='active'?'white':'#E98A02'"
-                                            [borderColor]="item.status=='active'?'white':'#E98A02'"
-                                            (tap)="onProductActive(i)"></Button>
+                                            [backgroundColor]="item.status=='enabled'?'#E98A02':'transparent'"
+                                            [color]="item.status=='enabled'?'white':'#E98A02'"
+                                            [borderColor]="item.status=='enabled'?'white':'#E98A02'"
+                                            (tap)="onProductActive(item)"></Button>
                                     </StackLayout>
                                 </GridLayout>
                             </GridLayout>
@@ -69,9 +62,6 @@
                 </ng-template>
             </GridView>
         </GridLayout>
-        <!-- </GridLayout>
-            </StackLayout>
-        </TabView> -->
         <GridLayout row="2" height="10%" width="100%">
             <Button class="addProductButton" text="Add Product" (tap)="onAddButton()"></Button>
         </GridLayout>

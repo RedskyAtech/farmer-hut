@@ -42,8 +42,8 @@
                 </CarouselItem>
             </Carousel>
         </GridLayout>
-        <TabView row="2" [(ngModel)]="tabSelectedIndex" width="100%" height="72%" selectedTabTextColor="white"
-            tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
+        <TabView row="2" [(ngModel)]="tabSelectedIndex" [selectedIndex]="tabSelectedIndex" width="100%" height="72%"
+            selectedTabTextColor="white" tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
             androidSelectedTabHighlightColor="white" tabBackgroundColor="transparent"
             (selectedIndexChanged)="onSelectedIndexChanged($event)">
             <StackLayout *tabItem="{title: 'Products'}">
@@ -110,7 +110,7 @@
                                             height="90%" (tap)="onCategory(item)"></Image>
                                     </StackLayout>
                                     <StackLayout row="1" horizontalAlignment="center" height="20%" borderRadius="10">
-                                        <Label class="product-name" [text]="item.categoryName"></Label>
+                                        <Label class="product-name" [text]="item.name"></Label>
                                     </StackLayout>
                                 </GridLayout>
                             </ng-template>
