@@ -12,7 +12,6 @@ import * as localstorage from "nativescript-localstorage";
 import { Address } from "../models/address.model";
 import * as Toast from 'nativescript-toast';
 import { UserService } from "../services/user.service";
-import { equalSegments } from "@angular/router/src/url_tree";
 let directions = new Directions();
 
 @Component({

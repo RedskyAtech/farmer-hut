@@ -30,6 +30,8 @@ import { SimilarProductAdminComponent } from "./similar-productAdmin/similar-pro
 import { SimilarProductUserComponent } from "./similar-productUser/similar-productUser.component";
 import { AddSliderComponent } from "./add-slider/add-slider.component";
 import { MyOrdersComponent } from "./my-orders/my-orders.component";
+import { ConfirmEmailComponent } from "./confirm-email/confirm-email.component";
+import { OrderHistoryComponent } from "./order-history/order-history.component";
 
 @NgModule({
     bootstrap: [
@@ -66,7 +68,9 @@ import { MyOrdersComponent } from "./my-orders/my-orders.component";
         AddCategoryComponent,
         SimilarProductAdminComponent,
         SimilarProductUserComponent,
-        AddSliderComponent
+        AddSliderComponent,
+        ConfirmEmailComponent,
+        OrderHistoryComponent
     ],
     providers: [UserService],
     schemas: [

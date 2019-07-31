@@ -34,21 +34,21 @@
                 <StackLayout row="1" width="80%" height="10%" marginTop="5%">
                     <TextField [hint]="brandHint" [text]="brandName" (textChange)="onBrandTextChanged($event)"
                         secure="false" [borderColor]="brandBorderColor" returnKeyType="done"
-                        (returnPress)="onReturnPress($event)" autocorrect="false"
+                         autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="2" width="80%" height="10%">
                     <TextField [hint]="nameHint" [text]="productName" (textChange)="onNameTextChanged($event)"
                         secure="false" [borderColor]="nameBorderColor" returnKeyType="done"
-                        (returnPress)="onReturnPress($event)" autocorrect="false"
+                         autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="3" width="80%" height="10%" orientation="horizontal">
                     <TextField [hint]="weightHint" [text]="weight" width="80%"
                         (textChange)="onWeightTextChanged($event)" maxLength="3" keyboardType="number" secure="false"
-                        [borderColor]="weightBorderColor" returnKeyType="done" (returnPress)="onReturnPress($event)"
+                        [borderColor]="weightBorderColor" returnKeyType="done" 
                         autocorrect="false" class="input input-border input-field">
                     </TextField>
                     <StackLayout class="dimensionContainer">
@@ -59,21 +59,21 @@
                 <StackLayout row="4" width="80%" height="10%">
                     <TextField [hint]="priceHint" [text]="price" (textChange)="onPriceTextChanged($event)"
                         keyboardType="number" secure="false" returnKeyType="done" [borderColor]="priceBorderColor"
-                        (returnPress)="onReturnPress($event)" autocorrect="false"
+                         autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="5" width="80%" height="10%">
                     <TextField [hint]="detailHeadingHint" [text]="detailHeading"
                         (textChange)="onDetailHeadingTextChanged($event)" secure="false" returnKeyType="done"
-                        [borderColor]="detailHeadingBorderColor" (returnPress)="onReturnPress($event)"
+                        [borderColor]="detailHeadingBorderColor" 
                         autocorrect="false" class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="6" width="80%" height="10%">
                     <TextField [hint]="detailDescriptionHint" [text]="detailDescription"
                         (textChange)="onDetailDescriptionTextChanged($event)" secure="false" returnKeyType="done"
-                        [borderColor]="detailDescriptionBorderColor" (returnPress)="onReturnPress($event)"
+                        [borderColor]="detailDescriptionBorderColor"
                         autocorrect="false" class="input input-border input-field">
                     </TextField>
                 </StackLayout>

@@ -35,10 +35,10 @@ export class HomeUserComponent implements OnInit {
     tabSelectedIndex: number;
 
     constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {
-        this.sliderImage1 = "";
-        this.sliderImage2 = "";
-        this.sliderImage3 = "";
-        this.sliderImage4 = "";
+        this.sliderImage1 = "res://image_icon";
+        this.sliderImage2 = "res://image_icon";
+        this.sliderImage3 = "res://image_icon";
+        this.sliderImage4 = "res://image_icon";
 
         this.product = new Product();
         this.cart = new Cart();
@@ -208,6 +208,7 @@ export class HomeUserComponent implements OnInit {
     onAddCart(product: Product) {
         this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
+        console.log(localstorage.getItem("cartId"));
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
@@ -241,6 +242,8 @@ export class HomeUserComponent implements OnInit {
     }
 
     updateCart() {
+        console.log(localstorage.getItem("cartId"));
+        console.log(this.cart);
         this.userService.showLoadingState(true);
         this.http
             .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)

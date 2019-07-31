@@ -367,11 +367,13 @@ export class AddProductComponent implements OnInit {
                         var categoryId = localStorage.getItem("categoryId");
                         this.product.category._id = categoryId;
                     }
+                    console.log(this.product);
                     this.http
                         .post(Values.BASE_URL + "similarProducts", this.product)
                         .subscribe((res: any) => {
                             if (res != null && res != undefined) {
                                 if (res.isSuccess == true) {
+                                    console.log(res);
                                     this.userService.showLoadingState(false);
                                     this.router.navigate(['./similarProductAdmin']);
                                 }

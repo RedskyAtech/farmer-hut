@@ -37,7 +37,6 @@ export class SimilarProductUserComponent implements OnInit {
         });
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
-            this.updateCartCount();
             this.getSimilarProducts();
         }
     }
@@ -64,6 +63,7 @@ export class SimilarProductUserComponent implements OnInit {
                                 price: "Rs " + res.data[i].price.value,
                             })
                         }
+                        this.updateCartCount();
                     }
                 }
             }, error => {

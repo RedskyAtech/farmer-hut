@@ -13,30 +13,30 @@
         </StackLayout>
         <StackLayout row="2" width="80%" height="10%">
             <TextField [hint]="addressHint" [text]="address" (textChange)="onAddressTextChanged($event)" secure="false"
-                [borderColor]="addressBorderColor" returnKeyType="done" (returnPress)="onReturnPress($event)"
+                [borderColor]="addressBorderColor" returnKeyType="done" 
                 autocorrect="false" class="input input-border input-field">
             </TextField>
         </StackLayout>
         <StackLayout row="3" width="80%" height="10%">
             <TextField [text]="city" secure="false" [borderColor]="cityBorderColor" returnKeyType="done"
-                (returnPress)="onReturnPress($event)" autocorrect="false" class="input input-border input-field">
+                 autocorrect="false" class="input input-border input-field">
             </TextField>
         </StackLayout>
         <StackLayout row="4" width="80%" height="10%">
             <TextField [text]="district" secure="false" returnKeyType="done" [borderColor]="districtBorderColor"
-                (returnPress)="onReturnPress($event)" autocorrect="false" class="input input-border input-field">
+               autocorrect="false" class="input input-border input-field">
             </TextField>
         </StackLayout>
         <StackLayout row="5" width="80%" height="10%">
             <TextField [text]="state" editable="false" secure="false" returnKeyType="done"
-                [borderColor]="stateBorderColor" (returnPress)="onReturnPress($event)" autocorrect="false"
+                [borderColor]="stateBorderColor"  autocorrect="false"
                 class="input input-border input-field">
             </TextField>
         </StackLayout>
         <!-- <StackLayout row="6" width="80%" height="10%">
             <TextField [hint]="pincodeHint" (textChange)="onPincodeTextChanged($event)" keyboardType="number"
                 secure="false" returnKeyType="done" [borderColor]="pincodeBorderColor"
-                (returnPress)="onReturnPress($event)" autocorrect="false" class="input input-border input-field">
+                 autocorrect="false" class="input input-border input-field">
             </TextField>
         </StackLayout> -->
         <StackLayout row="6" width="80%" height="10%">

@@ -29,6 +29,7 @@ export class ProfileComponent implements OnInit {
     addressButton: string;
     ordersButtonText: string;
     feedbackButtonText: string;
+    historyButtonText: string;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private router: Router, private http: HttpClient, private userService: UserService) {
         this.city = "Abohar";
@@ -40,10 +41,12 @@ export class ProfileComponent implements OnInit {
 
         if (localstorage.getItem("userType") == "admin") {
             this.ordersButtonText = "View Orders";
+            this.historyButtonText = "Order History";
             this.feedbackButtonText = "View Feedback"
         }
         else {
             this.ordersButtonText = "My Orders";
+            this.historyButtonText = "Order History"
             this.feedbackButtonText = "Give feedback";
         }
 
@@ -140,6 +143,10 @@ export class ProfileComponent implements OnInit {
         else {
             this.routerExtensions.navigate(['./myOrders']);
         }
+    }
+
+    onHistory() {
+        this.routerExtensions.navigate(['./orderHistory']);
     }
 
     onLogout() {

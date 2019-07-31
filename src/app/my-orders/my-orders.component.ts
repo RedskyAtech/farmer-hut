@@ -31,12 +31,11 @@ export class MyOrdersComponent implements OnInit {
             this.userService.showLoadingState(true);
             console.log(localstorage.getItem("cartId"));
             this.http
-                .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId"))
+                .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=false")
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            console.log(res);
                             if (res.data.length != 0) {
                                 for (var i = 0; i < res.data.length; i++) {
                                     if (res.data[i].status == "pending") {
@@ -45,7 +44,7 @@ export class MyOrdersComponent implements OnInit {
                                     else if (res.data[i].status == "confirmed") {
                                         var status = "Confirmed";
                                     }
-                                    else if (res.data[i].status == "completed") {
+                                    else if (res.data[i].status == "delivered") {
                                         var status = "Delivered";
                                     }
                                     else if (res.data[i].status == "rejected") {

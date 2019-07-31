@@ -1,0 +1,35 @@
+<Page>
+    <GridLayout rows="auto,auto,auto" class="page">
+        <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
+            <StackLayout col="0" verticalAlignment="middle" width=" 20%">
+                <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+            </StackLayout>
+            <StackLayout col="1" verticalAlignment="middle" width=" 60%">
+                <Label class="pageHeading" text="Order History"></Label>
+            </StackLayout>
+        </GridLayout>
+        <GridLayout row="1" width="100%" height="92%">
+            <GridView [items]="orderedProducts" colWidth="90%" rowHeight="15%" width="100%" height="100%"
+                backgroundColor="transparent">
+                <ng-template let-item="item" let-odd="odd">
+                    <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
+                        marginTop="10%" marginBottom="10%" rows="auto,auto">
+                        <StackLayout row="0" width="90%" height="50%" orientation="horizontal">
+                            <Label class="orderIdHeading" text="Order id: "></Label>
+                            <Label class="orderIdDetail" textWrap="true" [text]="item._id"></Label>
+                        </StackLayout>
+                        <GridLayout row="1" columns="auto,auto" height="50%" width="100%">
+                            <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
+                                <Label class="status" [text]="item.status"></Label>
+                            </StackLayout>
+                            <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle">
+                                <Button class="viewDetailButton" text="VIEW DETAIL"
+                                    (tap)="onViewDetail(item._id)"></Button>
+                            </StackLayout>
+                        </GridLayout>
+                    </GridLayout>
+                </ng-template>
+            </GridView>
+        </GridLayout>
+    </GridLayout>
+</Page>

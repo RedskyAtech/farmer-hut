@@ -38,12 +38,15 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     confirmDialogButtonText: string;
     rejectButtonText: string;
     order: Order;
+    isConfirmButton: boolean;
+    isRejectButton: boolean;
 
     constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private http: HttpClient) {
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
         this.totalAmount = "";
+        this.isConfirmButton = true;
         this.order = new Order();
         this.route.queryParams.subscribe(params => {
             if (params["orderId"] != "") {
@@ -60,8 +63,12 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             this.address = res.data.address.line1;
-                            this.userLatitude = res.data.address.location.latitude;
-                            this.userLongitude = res.data.address.location.longitude;
+                            // if (res.data.address.location.latitude && res.data.address.location.latitude != undefined) {
+                            //     this.userLatitude = res.data.address.location.latitude;
+                            // }
+                            // if (res.data.address.location.longitude != undefined) {
+                            //     this.userLongitude = res.data.address.location.longitude;
+                            // }
                             this.userName = res.data.name;
                             this.phoneNumber = res.data.phone;
                             this.totalAmount = res.data.grandTotal;
@@ -74,11 +81,13 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                                 this.confirmButtonText = "Deliver";
                                 this.confirmDialogButtonText = "Deliver";
                             }
-                            if (this.orderStatus == "completed") {
+                            if (this.orderStatus == "delivered") {
                                 this.confirmButtonText = "Delivered";
+                                this.isRejectButton = false;
                             }
                             if (this.orderStatus == "rejected") {
                                 this.rejectButtonText = "Rejected";
+                                this.isConfirmButton = false;
                             }
                             else {
                                 this.rejectButtonText = "Reject";
@@ -114,17 +123,17 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     }
 
     onBack() {
-        this.router.navigate(['/viewOrders']);
+        this.router.navigate(['/profile']);
     }
 
     onConfirmOrder() {
-        if (this.orderStatus != "completed") {
+        if (this.orderStatus == "pending" || this.orderStatus == "confirmed") {
             this.confirmOrderDialog.show();
         }
     }
 
     onRejectOrder() {
-        if (this.orderStatus != "rejected" && this.orderStatus != "completed") {
+        if (this.orderStatus != "rejected" && this.orderStatus != "delivered") {
             this.rejectOrderDialog.show();
         }
     }
@@ -135,7 +144,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
             this.updateOrderStatus();
         }
         if (this.orderStatus == "confirmed") {
-            this.order.status = "completed";
+            this.order.status = "delivered";
             this.updateOrderStatus();
         }
     }
@@ -155,7 +164,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                             this.confirmButtonText = "Deliver";
                             this.confirmDialogButtonText = "Deliver";
                         }
-                        else if (this.order.status == "completed") {
+                        else if (this.order.status == "delivered") {
                             Toast.makeText("Order successfully delivered!!!", "long").show();
                             this.confirmButtonText = "Delivered";
                         }

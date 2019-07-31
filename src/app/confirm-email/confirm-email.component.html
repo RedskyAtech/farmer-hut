@@ -1,5 +1,5 @@
 <Page actionBarHidden="true">
-    <GridLayout class="page" rows="auto,auto,auto,auto,auto,auto,auto,auto">
+    <GridLayout class="page" rows="auto,auto,auto,auto,auto">
         <GridLayout row="0" columns="auto,auto,auto" width="100%" marginTop="10" height="30%">
             <StackLayout col="0" height="50%" verticalAlignment="top" width="20%">
                 <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
@@ -14,25 +14,24 @@
             <Label class="appLabel" text="Farmer's Hut"></Label>
         </StackLayout>
         <StackLayout row="2" width="80%" height="10%">
-            <TextField [hint]="otpHint" (textChange)="onOtpTextChanged($event)" keyboardType="phone" secure="false"
-                maxLength="6" [borderColor]="otpBorderColor" returnKeyType="done" 
-                autocorrect="false" class="input input-border input-field">
-            </TextField>
+            <Label class="description-label" textWrap="true"
+                text="To confirm your email, you need to enter your registered email. We will send the OTP to your email"></Label>
         </StackLayout>
         <StackLayout row="3" width="80%" height="10%">
-            <TextField [hint]="passwordHint" (textChange)="onPasswordTextChanged($event)" secure="true"
-                returnKeyType="done" [borderColor]="passwordBorderColor" 
+            <!-- <TextField [hint]="phoneHint" (textChange)="onPhoneTextChanged($event)" keyboardType="phone" secure="false"
+                maxLength="10" [borderColor]="phoneBorderColor" returnKeyType="done"
+                 autocorrect="false" (focus)="onPhoneFocus($event)"
+                (blur)="onBlur($event)" class="input input-border input-field">
+            </TextField> -->
+
+            <TextField [hint]="emailHint" (textChange)="onEmailTextChanged($event)" keyboardType="email" secure="false"
+                [borderColor]="emailBorderColor" returnKeyType="done" 
                 autocorrect="false" class="input input-border input-field">
             </TextField>
+
         </StackLayout>
         <StackLayout row="4" width="80%" height="10%">
-            <TextField [hint]="rePasswordHint" (textChange)="onRePassTextChanged($event)" secure="true"
-                returnKeyType="done" [borderColor]="rePasswordBorderColor" 
-                autocorrect="false" class="input input-border input-field">
-            </TextField>
-        </StackLayout>
-        <StackLayout row="5" width="80%" height="10%">
-            <Button class="button" text="Done" (tap)="onDone()"></Button>
+            <Button class="button" text="Send OTP" (tap)="onSendOtp()"></Button>
         </StackLayout>
     </GridLayout>
 </Page>

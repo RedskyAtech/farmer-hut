@@ -208,4 +208,8 @@ export class AddCategoryComponent implements OnInit {
             }
         }
     }
+
+    onOutsideClick() {
+        this.photoUploadDialog.hide();
+    }
 }

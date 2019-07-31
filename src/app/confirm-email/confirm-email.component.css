@@ -1,0 +1,49 @@
+.page{
+    background-image: url("res://app_background");
+    background-size: cover;
+    background-color: black;
+    width:100%;
+    height:100%;
+}
+.appLogo{
+    height:150;
+    width:150;
+}
+.backButton{
+    height:30;
+    width:30;
+}
+.appLabel{
+    color:#E98A02;
+    font-size: 36;
+    text-align: center;
+    font-weight: 500;
+}
+.button{
+    border-color:white;
+    border-width:1;
+    border-radius:10;
+    color:white;
+    font-size: 20;
+    text-transform: initial;
+    text-align: center;
+    height:40;
+    padding:0;
+    background-color: #E98A02;
+}
+.button:highlighted{
+    background-color: transparent;
+    z-index: 500;    
+    border-color: #E98A02;
+    color:#E98A02;
+}
+.input-field{
+    placeholder-color:white;
+    border-bottom-width: 1;
+    height:40;
+    color:#E98A02;
+}
+.description-label{
+    color:white;
+    text-align: center;
+}

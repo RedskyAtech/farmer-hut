@@ -135,11 +135,12 @@
                 <GridLayout row="4" width="100%" height="17%" columns="auto,auto">
                     <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
-                        <Button class="rejectOrderButton" [text]="rejectButtonText" (tap)="onRejectOrder()"></Button>
+                        <Button *ngIf="isRejectButton" class="rejectOrderButton" [text]="rejectButtonText" (tap)="onRejectOrder()"></Button>
                     </StackLayout>
                     <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
-                        <Button class="confirmOrderButton" [text]="confirmButtonText" (tap)="onConfirmOrder()"></Button>
+                        <Button *ngIf="isConfirmButton" class="confirmOrderButton" [text]="confirmButtonText"
+                            (tap)="onConfirmOrder()"></Button>
                     </StackLayout>
                 </GridLayout>
                 <StackLayout row="5" height="15%" width="90%" verticalAlignment="middle">

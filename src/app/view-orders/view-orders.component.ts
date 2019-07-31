@@ -23,7 +23,6 @@ export class ViewOrdersComponent implements OnInit {
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
         this.orderedProducts = [];
-        this.status = "Delivered";
         this.order = new Order();
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
@@ -31,7 +30,7 @@ export class ViewOrdersComponent implements OnInit {
             localstorage.getItem("adminId") != undefined) {
             this.userService.showLoadingState(true);
             this.http
-                .get(Values.BASE_URL + "orders/")
+                .get(Values.BASE_URL + "orders?history=false")
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
@@ -41,20 +40,12 @@ export class ViewOrdersComponent implements OnInit {
                                     if (res.data[i].status == "pending") {
                                         var status = "Pending...";
                                     }
-                                    else if (res.data[i].status == "confirmed") {
-                                        var status = "Confirmed";
-                                    }
-                                    else if (res.data[i].status == "completed") {
-                                        var status = "Delivered";
-                                    }
-                                    else if (res.data[i].status == "cancelled") {
-                                        var status = "Cancelled";
-                                    }
                                     else {
-                                        var status = "Rejected";
+                                        var status = "Confirmed";
                                     }
                                     this.orderedProducts.push({
                                         _id: res.data[i]._id,
+                                        name: res.data[i].name,
                                         status: status
                                     })
                                 }
