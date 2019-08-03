@@ -5,6 +5,7 @@ import { User } from "~/app/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../services/user.service';
+import * as localstorage from "nativescript-localstorage";
 
 @Component({
     selector: "ns-register",
@@ -115,9 +116,10 @@ export class RegisterComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != "" && res != undefined) {
                         if (res.isSuccess == true) {
+                            console.log(res);
                             this.userService.showLoadingState(false);
-                            Toast.makeText("Registered successfully!!!").show();
-                            this.routerExtensions.navigate(['./login']);
+                            localstorage.setItem('regToken', res.data.regToken);
+                            this.routerExtensions.navigate(['./confirmEmail']);
                         }
                     }
                 }, error => {

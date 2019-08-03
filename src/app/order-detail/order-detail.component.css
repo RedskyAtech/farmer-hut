@@ -16,8 +16,8 @@
     font-weight: 500;
 }
 .productImage{
-    width:80%;
-    height:100%;
+    width:100vw;
+    height:100vh;
 }
 .fullName{
     font-size: 16;
@@ -179,4 +179,10 @@
     background-color: #E98A02;
     border-color:white;
     color:white;
+}
+.input-field{
+    placeholder-color:#E98A02;
+    border-bottom-width: 1;
+    height:40;
+    color:black;
 }

@@ -8,12 +8,12 @@ import { Values } from "~/app/values/values";
 import * as localstorage from "nativescript-localstorage";
 
 @Component({
-    selector: "ns-register",
+    selector: "ns-setPassword",
     moduleId: module.id,
-    templateUrl: "./confirm-otp.component.html",
-    styleUrls: ["./confirm-otp.component.css"]
+    templateUrl: "./set-password.component.html",
+    styleUrls: ["./set-password.component.css"]
 })
-export class ConfirmOtpComponent implements OnInit {
+export class SetPasswordComponent implements OnInit {
 
     otpBorderColor = "white";
     passwordBorderColor = "white";

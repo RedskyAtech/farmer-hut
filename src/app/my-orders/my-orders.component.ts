@@ -18,18 +18,21 @@ export class MyOrdersComponent implements OnInit {
     orderedProducts;
     address: string;
     status: string;
-
+    isRenderingMessage: boolean;
+    isRenderingOrders: boolean;
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";
+        this.isRenderingMessage = false;
+        this.isRenderingOrders = false;
 
         if (localstorage.getItem("userToken") != null &&
             localstorage.getItem("userToken") != undefined &&
             localstorage.getItem("userId") != null &&
             localstorage.getItem("userId") != undefined) {
             this.userService.showLoadingState(true);
-            console.log(localstorage.getItem("cartId"));
             this.http
                 .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=false")
                 .subscribe((res: any) => {
@@ -37,6 +40,7 @@ export class MyOrdersComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             if (res.data.length != 0) {
+                                this.isRenderingOrders = true;
                                 for (var i = 0; i < res.data.length; i++) {
                                     if (res.data[i].status == "pending") {
                                         var status = "In progress...";
@@ -59,6 +63,9 @@ export class MyOrdersComponent implements OnInit {
                                         status: status
                                     })
                                 }
+                            }
+                            else {
+                                this.isRenderingMessage = true;
                             }
                         }
                     }

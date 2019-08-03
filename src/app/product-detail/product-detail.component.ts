@@ -32,6 +32,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     isCartCount: boolean;
     cart: Cart;
     classType: string;
+    isRenderingDetail: boolean;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
 
@@ -43,6 +44,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         this.userService.showLoadingState(true);
         this.cart = new Cart();
         this.cart.product = new Product();
+        this.isRenderingDetail = false;
 
         if (this.classType == "similarProduct") {
             this.http
@@ -59,6 +61,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                             this.quantity = res.data.dimensions[0].value + " " + res.data.dimensions[0].unit;
                             this.price = "Rs " + res.data.price.value;
                             this.userService.showLoadingState(false);
+                            this.isRenderingDetail = true;
                             this.updateCartCount();
                         }
                     }
@@ -82,6 +85,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                             this.quantity = res.data.dimensions[0].value + " " + res.data.dimensions[0].unit;
                             this.price = "Rs " + res.data.price.value;
                             this.userService.showLoadingState(false);
+                            this.isRenderingDetail = true;
                             this.updateCartCount();
                         }
                     }

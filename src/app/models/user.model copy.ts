@@ -1,5 +1,4 @@
 import { Address } from "./address.model";
-import { DeliveryAddress } from "./delivery-address.model";
 export class User {
 
     name: string;
@@ -11,7 +10,6 @@ export class User {
     otp: string;
     tempToken: string;
     regToken: string;
-    deliveryAddress: DeliveryAddress;
     constructor(obj?: any) {
         if (!obj) {
             return;
@@ -25,6 +23,5 @@ export class User {
         this.otp = obj.otp;
         this.tempToken = obj.tempToken;
         this.regToken = obj.regToken;
-        this.deliveryAddress = obj.deliveryAddress;
     }
 }

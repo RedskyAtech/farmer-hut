@@ -8,7 +8,10 @@
                 <Label class="pageHeading" text="My Orders"></Label>
             </StackLayout>
         </GridLayout>
-        <GridLayout row="1" width="100%" height="92%">
+        <StackLayout *ngIf="isRenderingMessage" row="1" width="100%" height="92%" verticalAlignment="middle">
+            <Label text="There is no pending orders..." textAlignment="center" fontSize="18" color="white"></Label>
+        </StackLayout>
+        <GridLayout *ngIf="isRenderingOrders" row="1" width="100%" height="92%">
             <GridView [items]="orderedProducts" colWidth="90%" rowHeight="15%" width="100%" height="100%"
                 backgroundColor="transparent">
                 <ng-template let-item="item" let-odd="odd">

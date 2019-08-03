@@ -24,6 +24,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
 
     @ViewChild('confirmOrderDialog') confirmOrderDialog: ModalComponent;
     @ViewChild('rejectOrderDialog') rejectOrderDialog: ModalComponent;
+    @ViewChild('rejectReasonDialog') rejectReasonDialog: ModalComponent;
 
     orderedProducts = [];
     userName: string;
@@ -40,13 +41,27 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     order: Order;
     isConfirmButton: boolean;
     isRejectButton: boolean;
+    confirmDialogText: string;
+    isTrackButton: boolean;
+    isRenderingUserDetail: boolean;
+    reasonHint: string;
+    reasonBorderColor: string;
+    reason: string;
+    isReasonButton: boolean;
 
     constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private http: HttpClient) {
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
         this.totalAmount = "";
-        this.isConfirmButton = true;
+        this.isConfirmButton = false;
+        this.isRejectButton = false;
+        this.isTrackButton = false;
+        this.isRenderingUserDetail = false;
+        this.reasonHint = "Enter reason";
+        this.reasonBorderColor = "#E98A02";
+        this.reason = "";
+        this.isReasonButton = false;
         this.order = new Order();
         this.route.queryParams.subscribe(params => {
             if (params["orderId"] != "") {
@@ -62,32 +77,41 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            this.address = res.data.address.line1;
-                            // if (res.data.address.location.latitude && res.data.address.location.latitude != undefined) {
-                            //     this.userLatitude = res.data.address.location.latitude;
-                            // }
-                            // if (res.data.address.location.longitude != undefined) {
-                            //     this.userLongitude = res.data.address.location.longitude;
-                            // }
                             this.userName = res.data.name;
                             this.phoneNumber = res.data.phone;
                             this.totalAmount = res.data.grandTotal;
                             this.orderStatus = res.data.status;
+                            this.address = res.data.deliveryAddress.line1;
+                            this.reason = res.data.reason;
+                            this.isRenderingUserDetail = true;
                             if (this.orderStatus == "pending") {
                                 this.confirmButtonText = "Confirm";
                                 this.confirmDialogButtonText = "Confirm";
+                                this.rejectButtonText = "Reject";
+                                this.isConfirmButton = true;
+                                this.isRejectButton = true;
+                                this.isTrackButton = true;
                             }
-                            if (this.orderStatus == "confirmed") {
+                            else if (this.orderStatus == "confirmed") {
                                 this.confirmButtonText = "Deliver";
                                 this.confirmDialogButtonText = "Deliver";
+                                this.rejectButtonText = "Reject";
+                                this.isConfirmButton = true;
+                                this.isRejectButton = true;
+                                this.isTrackButton = true;
                             }
-                            if (this.orderStatus == "delivered") {
+                            else if (this.orderStatus == "delivered") {
                                 this.confirmButtonText = "Delivered";
+                                this.isConfirmButton = true;
                                 this.isRejectButton = false;
+                                this.isTrackButton = false;
                             }
-                            if (this.orderStatus == "rejected") {
+                            else if (this.orderStatus == "rejected") {
                                 this.rejectButtonText = "Rejected";
                                 this.isConfirmButton = false;
+                                this.isTrackButton = false;
+                                this.isRejectButton = true;
+                                this.isReasonButton = true;
                             }
                             else {
                                 this.rejectButtonText = "Reject";
@@ -122,19 +146,37 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
 
     }
 
+    onReason() {
+        this.rejectReasonDialog.show();
+    }
+    onCancelReason() {
+        this.rejectReasonDialog.hide();
+    }
+
+    onReasonTextChanged(args) {
+        this.reasonBorderColor = "#E98A02";
+        this.reason = args.object.text.toLowerCase();
+    }
+
     onBack() {
         this.router.navigate(['/profile']);
     }
 
     onConfirmOrder() {
-        if (this.orderStatus == "pending" || this.orderStatus == "confirmed") {
+        if (this.orderStatus == "pending") {
             this.confirmOrderDialog.show();
+            this.confirmDialogText = "Are you sure you want to confirm this order.";
+        }
+        if (this.orderStatus == "confirmed") {
+            this.confirmOrderDialog.show();
+            this.confirmDialogText = "Are you sure you want to deliver this order.";
         }
     }
 
     onRejectOrder() {
         if (this.orderStatus != "rejected" && this.orderStatus != "delivered") {
             this.rejectOrderDialog.show();
+            this.reasonBorderColor = "#E98A02";
         }
     }
 
@@ -181,8 +223,14 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     }
 
     onReject() {
-        this.order.status = "rejected";
-        this.updateOrderStatus();
+        if (this.reason == "") {
+            alert("Please enter rejection reason!!!");
+        }
+        else {
+            this.order.status = "rejected";
+            this.order.reason = this.reason;
+            this.updateOrderStatus();
+        }
     }
 
     onCancelConfirm() {

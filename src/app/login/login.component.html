@@ -8,16 +8,14 @@
         </StackLayout>
         <StackLayout row="2" width="80%" height="10%">
             <TextField [hint]="phoneHint" (textChange)="onPhoneTextChanged($event)" keyboardType="phone" secure="false"
-                maxLength="10" [borderColor]="phoneBorderColor" returnKeyType="done"
-                 autocorrect="false"
+                maxLength="10" [borderColor]="phoneBorderColor" returnKeyType="done" autocorrect="false"
                 class="input input-border input-field">
-                
             </TextField>
         </StackLayout>
         <StackLayout row="3" width="80%" height="10%">
             <TextField [hint]="passwordHint" (textChange)="onPasswordTextChanged($event)" secure="true"
-                returnKeyType="done" [borderColor]="passwordBorderColor" 
-                autocorrect="false" class="input input-border input-field">
+                returnKeyType="done" [borderColor]="passwordBorderColor" autocorrect="false"
+                class="input input-border input-field">
             </TextField>
         </StackLayout>
         <StackLayout row="4" width="80%" height="5%">

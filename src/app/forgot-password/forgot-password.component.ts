@@ -58,7 +58,7 @@ export class ForgotPasswordComponent implements OnInit {
                         if (res.isSuccess == true) {
                             localstorage.setItem('tempToken', res.data.tempToken);
                             this.userService.showLoadingState(false);
-                            this.routerExtensions.navigate(['./confirmOtp']);
+                            this.routerExtensions.navigate(['./setPassword']);
                         }
                     }
                 }, error => {

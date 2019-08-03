@@ -12,6 +12,7 @@ import { UserService } from '../services/user.service';
 import { Cart } from "~/app/models/cart.model";
 import { Product } from "~/app/models/product.model";
 import { Order } from "~/app/models/order.model";
+import { TouchAction } from "tns-core-modules/ui/gestures/gestures";
 // import { MyOrders } from "~/app/models/myOrders.model";
 
 declare const android: any;
@@ -34,6 +35,8 @@ export class CartComponent implements OnInit {
     product: Product;
     order: Order;
     // myOrders: MyOrders;
+    isRendering: boolean;
+    deliveryAddress: string;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
         this.cartProducts = [];
@@ -41,6 +44,8 @@ export class CartComponent implements OnInit {
         this.cart.product = new Product();
         this.product = new Product();
         this.cart.order = new Order();
+        this.isRendering = false;
+        this.deliveryAddress = "";
 
         if (localstorage.getItem("cartId") != null &&
             localstorage.getItem("cartId") != undefined &&
@@ -203,7 +208,6 @@ export class CartComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
                         if (res.data.products.length > 0) {
                             this.cartProducts = [];
                             for (var i = 0; i < res.data.products.length; i++) {
@@ -222,6 +226,21 @@ export class CartComponent implements OnInit {
                                 })
                             }
                             this.totalAmount = res.data.grandTotal;
+                            this.isRendering = true;
+                            this.http
+                                .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
+                                .subscribe((res: any) => {
+                                    if (res != "" && res != undefined) {
+                                        if (res.isSuccess == true) {
+                                            this.userService.showLoadingState(false);
+                                            if (res.data.deliveryAddress.line1 != null && res.data.deliveryAddress.line1 != undefined) {
+                                                this.deliveryAddress = res.data.deliveryAddress.line1;
+                                            }
+                                        }
+                                    }
+                                }, error => {
+                                    alert(error.error.error);
+                                });
                         }
                     }
                 }
@@ -242,25 +261,29 @@ export class CartComponent implements OnInit {
 
     onOrderItem() {
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
-            this.userService.showLoadingState(true);
-            this.http
-                .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
-                .subscribe((res: any) => {
-                    if (res != "" && res != undefined) {
-                        if (res.isSuccess == true) {
-                            this.userService.showLoadingState(false);
-                            if (res.data.address.line1 == null && res.data.address.line1 == undefined) {
-                                alert("Please add your address first.");
-                            }
-                            else {
-                                this.placeOrderDialog.show();
-                            }
+            this.getAddress();
+        }
+    }
+
+    getAddress() {
+        this.userService.showLoadingState(true);
+        this.http
+            .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
+            .subscribe((res: any) => {
+                if (res != "" && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data.deliveryAddress.line1 == null && res.data.deliveryAddress.line1 == undefined) {
+                            alert("Please add your delivery address first.");
+                        }
+                        else {
+                            this.placeOrderDialog.show();
                         }
                     }
-                }, error => {
-                    alert(error.error.error);
-                });
-        }
+                }
+            }, error => {
+                alert(error.error.error);
+            });
     }
 
     onConfirm() {
@@ -271,11 +294,10 @@ export class CartComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != "" && res != undefined) {
                     if (res.isSuccess == true) {
-                        console.log(res);
-                        // localstorage.setItem('orderId', res.data._id);
                         this.placeOrderDialog.hide();
                         this.router.navigate(['/homeUser']);
                         Toast.makeText("Order successfully placed!!!", "long").show();
+                        this.userService.showLoadingState(true);
                     }
                 }
             }, error => {

@@ -155,9 +155,6 @@ export class AddCategoryComponent implements OnInit {
         if (this.categoryName == "") {
             alert("Please enter category name!!!")
         }
-        else if (!(this.categoryName.match("^[a-zA-Z ]*$"))) {
-            alert("Category name contains characters only!!!");
-        }
         else if (this.imageUrl == "") {
             alert("Please select category image!!!");
         }

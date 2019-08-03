@@ -11,12 +11,41 @@
             </StackLayout>
 
         </GridLayout>
-        <StackLayout row="1" width="100%" height="8%">
-            <Button class="addButton" text="Add Slider Images" (tap)="onAddSlider()"></Button>
-        </StackLayout>
-        <TabView row="2" [selectedIndex]="tabSelectedIndex" width="100%" height="74%" selectedTabTextColor="white"
-            tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
-            androidSelectedTabHighlightColor="white" tabBackgroundColor="transparent"
+        <GridLayout *ngIf="isRenderingSlider" row="1" width="100%" height="15%" columns="auto,auto">
+            <GridLayout col="0" width="70%" height="100%">
+                <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
+                    android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="80%"
+                    width="90%" indicatorColor="#E98A02" android:indicatorAnimation="drop"
+                    indicatorColorUnselected="#D4D4D4">
+                    <CarouselItem>
+                        <StackLayout width="100%" height="100%">
+                            <Image stretch="aspectFill" borderRadius="10" [src]="sliderImage1"></Image>
+                        </StackLayout>
+                    </CarouselItem>
+                    <CarouselItem>
+                        <StackLayout width="100%" height="100%">
+                            <Image stretch="aspectFill" borderRadius="10" [src]="sliderImage2"></Image>
+                        </StackLayout>
+                    </CarouselItem>
+                    <CarouselItem>
+                        <StackLayout width="100%" height="100%">
+                            <Image stretch="aspectFill" borderRadius="10" [src]="sliderImage3"></Image>
+                        </StackLayout>
+                    </CarouselItem>
+                    <CarouselItem>
+                        <StackLayout width="100%" height="100%">
+                            <Image stretch="aspectFill" borderRadius="10" [src]="sliderImage4"></Image>
+                        </StackLayout>
+                    </CarouselItem>
+                </Carousel>
+            </GridLayout>
+            <GridLayout col="1" width="30%" height="100%">
+                <Button class="addButton" text="Add Slider Images" (tap)="onAddSlider()"></Button>
+            </GridLayout>
+        </GridLayout>
+        <TabView *ngIf="isRenderingProducts" row="2" [selectedIndex]="tabSelectedIndex" width="100%" height="67%"
+            selectedTabTextColor="white" tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
+            androidSelectedTabHighlightColor="#E98A02" tabBackgroundColor="transparent"
             (selectedIndexChanged)="onSelectedIndexChanged($event)">
             <StackLayout *tabItem="{title: 'Products'}">
                 <GridLayout rows="auto">
@@ -37,8 +66,8 @@
                                     </GridLayout>
                                     <GridLayout row="1" columns="auto,auto" width="100%" height="80%">
                                         <StackLayout col="0" height="100%" width="40%">
-                                            <Image [src]="item.image" stretch="fill" marginTop="10%" width="70%"
-                                                height="90%"></Image>
+                                            <Image [src]="item.image" stretch="aspectFit" width="100vw" height="100vh">
+                                            </Image>
                                         </StackLayout>
                                         <GridLayout col="1" rows="auto,auto,auto" height="100%" width="60%">
                                             <StackLayout row="0" height="40%" width="100%" verticalAlignment="middle">
@@ -94,7 +123,7 @@
                                         <Button class="editButton" text="Edit" (tap)="onCategoryEdit(item)"></Button>
                                     </StackLayout>
                                     <StackLayout row="1" width="100%" height="55%" borderRadius="10">
-                                        <Image [src]="item.image" stretch="fill" width="65%" height="90%"
+                                        <Image [src]="item.image" stretch="aspectFit" width="100vw" height="100vh"
                                             (tap)="onCategory(item)"></Image>
                                     </StackLayout>
                                     <StackLayout row="2" horizontalAlignment="center" height="15%" borderRadius="10">

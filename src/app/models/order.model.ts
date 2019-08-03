@@ -1,6 +1,7 @@
 export class Order {
     _id: string;
     status: string;
+    reason: string;
     constructor(obj?: any) {
         if (!obj) {
             return;

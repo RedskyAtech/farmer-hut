@@ -9,7 +9,7 @@ import { RegisterComponent } from "./register/register.component";
 import { ProfileComponent } from "./profile/profile.component";
 import { HomeUserComponent } from "./home-user/home-user.component";
 import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
-import { ConfirmOtpComponent } from "./confirm-otp/confirm-otp.component";
+import { SetPasswordComponent } from "./set-password/set-password.component";
 import { MyOrderDetailComponent } from "./my-order-detail/my-order-detail.component";
 import { ViewOrdersComponent } from "./view-orders/view-orders.component";
 import { ProductDetailComponent } from "./product-detail/product-detail.component";
@@ -37,7 +37,7 @@ const routes: Routes = [
     { path: "profile", component: ProfileComponent },
     { path: "homeUser", component: HomeUserComponent },
     { path: "forgotPassword", component: ForgotPasswordComponent },
-    { path: "confirmOtp", component: ConfirmOtpComponent },
+    { path: "setPassword", component: SetPasswordComponent },
     { path: "myOrders", component: MyOrdersComponent },
     { path: "myOrderDetail", component: MyOrderDetailComponent },
     { path: "viewOrders", component: ViewOrdersComponent },

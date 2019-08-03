@@ -15,13 +15,13 @@
                 <Label color="#E98A02" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
-        <GridLayout row="1" width="100%" height="32%" backgroundColor="white">
+        <GridLayout *ngIf="isRenderingDetail" row="1" width="100%" height="32%" backgroundColor="white">
             <StackLayout height="100%" width=" 100%">
                 <Image class="productImage" [src]="image"></Image>
             </StackLayout>
         </GridLayout>
-        <GridLayout row="2" rows="auto,auto,auto,auto,auto,auto,auto,*" width="100%" height="44%" marginTop="3%"
-            backgroundColor="white">
+        <GridLayout *ngIf="isRenderingDetail" row="2" rows="auto,auto,auto,auto,auto,auto,auto,*" width="100%"
+            height="44%" marginTop="3%" backgroundColor="white">
             <StackLayout row="0" height="10%" width="90%" verticalAlignment="middle" orientation="horizontal">
                 <Label class="brandName" [text]="brandName"></Label>
                 <Label class="brandNamePresents" text=" presents:"></Label>
@@ -40,26 +40,26 @@
                     <Label class="fullName" text=")"></Label>
                 </StackLayout>
             </GridLayout>
-            <GridLayout row="2" height="15%" width=" 90%">
+            <GridLayout row="2" height="10%" width=" 90%">
+                <StackLayout verticalAlignment="middle">
+                    <Label class="detailHeading" [text]="detailHeading"></Label>
+                </StackLayout>
+            </GridLayout>
+            <GridLayout row="3" height="15%" width=" 90%">
                 <StackLayout verticalAlignment="middle">
                     <Label class="price" [text]="price"></Label>
                 </StackLayout>
             </GridLayout>
-            <GridLayout row="3" height="10%" width=" 90%">
+            <GridLayout row="4" height="10%" width=" 90%">
                 <StackLayout verticalAlignment="middle">
                     <Label class="delivery" text="FREE Delivery"></Label>
                 </StackLayout>
             </GridLayout>
-            <StackLayout row="4" height="1" marginTop="3%" width=" 90%" backgroundColor="black">
+            <StackLayout row="5" height="1" marginTop="3%" width=" 90%" backgroundColor="black">
             </StackLayout>
-            <GridLayout row="5" height="10%" width=" 90%">
-                <StackLayout verticalAlignment="middle">
-                    <Label class="detail" text="Detail :"></Label>
-                </StackLayout>
-            </GridLayout>
             <GridLayout row="6" height="10%" width=" 90%">
                 <StackLayout verticalAlignment="middle">
-                    <Label class="detailHeading" [text]="detailHeading"></Label>
+                    <Label class="detail" text="Detail :"></Label>
                 </StackLayout>
             </GridLayout>
             <GridLayout row="7" width=" 90%">
@@ -70,7 +70,7 @@
                 </ScrollView>
             </GridLayout>
         </GridLayout>
-        <GridLayout row="3" columns="auto,auto" width="100%" height="8%" marginTop="3%">
+        <GridLayout *ngIf="isRenderingDetail" row="3" columns="auto,auto" width="100%" height="8%" marginTop="3%">
             <StackLayout col="0" height="100%" width="50%" borderWidth="0">
                 <!-- <Button *ngIf="addToCartButton" class="addToCartButton" text="ADD TO CART"
                     (tap)="onAddToCart()"></Button> -->

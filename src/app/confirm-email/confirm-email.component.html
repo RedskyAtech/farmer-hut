@@ -15,23 +15,16 @@
         </StackLayout>
         <StackLayout row="2" width="80%" height="10%">
             <Label class="description-label" textWrap="true"
-                text="To confirm your email, you need to enter your registered email. We will send the OTP to your email"></Label>
+                text="To confirm your email, you need to enter your otp."></Label>
         </StackLayout>
         <StackLayout row="3" width="80%" height="10%">
-            <!-- <TextField [hint]="phoneHint" (textChange)="onPhoneTextChanged($event)" keyboardType="phone" secure="false"
-                maxLength="10" [borderColor]="phoneBorderColor" returnKeyType="done"
-                 autocorrect="false" (focus)="onPhoneFocus($event)"
-                (blur)="onBlur($event)" class="input input-border input-field">
-            </TextField> -->
-
-            <TextField [hint]="emailHint" (textChange)="onEmailTextChanged($event)" keyboardType="email" secure="false"
-                [borderColor]="emailBorderColor" returnKeyType="done" 
-                autocorrect="false" class="input input-border input-field">
+            <TextField [hint]="otpHint" (textChange)="onOtpTextChanged($event)" secure="false"
+                [borderColor]="otpBorderColor" returnKeyType="done" autocorrect="false"
+                class="input input-border input-field">
             </TextField>
-
         </StackLayout>
         <StackLayout row="4" width="80%" height="10%">
-            <Button class="button" text="Send OTP" (tap)="onSendOtp()"></Button>
+            <Button class="button" text="Confirm OTP" (tap)="onSubmit()"></Button>
         </StackLayout>
     </GridLayout>
 </Page>

@@ -20,10 +20,15 @@ export class ViewOrdersComponent implements OnInit {
     orderedProducts;
     order: Order;
     status: string;
+    isRenderingMessage: boolean;
+    isRenderingOrders: boolean;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
         this.orderedProducts = [];
         this.order = new Order();
+        this.isRenderingMessage = false;
+        this.isRenderingOrders = false;
+
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
             localstorage.getItem("adminId") != null &&
@@ -36,6 +41,7 @@ export class ViewOrdersComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             if (res.data.length != 0) {
+                                this.isRenderingOrders = true;
                                 for (var i = 0; i < res.data.length; i++) {
                                     if (res.data[i].status == "pending") {
                                         var status = "Pending...";
@@ -49,6 +55,9 @@ export class ViewOrdersComponent implements OnInit {
                                         status: status
                                     })
                                 }
+                            }
+                            else {
+                                this.isRenderingMessage = true;
                             }
                         }
                     }

@@ -18,6 +18,18 @@
                 </GridLayout>
             </GridLayout>
         </CardView>
+        <CardView #rejectReasonDialog modal size="lg" duration="100" backgroundColor="transparent">
+            <GridLayout rows="auto,auto" width="80%" height="30%" borderRadius="20" backgroundColor="white">
+                <GridLayout row="0" marginTop="10%" height="60%" width="90%">
+                    <ScrollView>
+                        <Label class="labelDetail" [text]="reason" textWrap="true"></Label>
+                    </ScrollView>
+                </GridLayout>
+                <StackLayout row="1" width="50%" height="30%" verticalAlignment="middle">
+                    <Button class="cancel-button" text="Cancel" (tap)="onCancelReason()"></Button>
+                </StackLayout>
+            </GridLayout>
+        </CardView>
         <GridLayout rows="auto,auto,auto" width="100%" height="100%">
             <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
                 <StackLayout col="0" verticalAlignment="middle" width=" 15%">
@@ -36,7 +48,7 @@
                         <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
                             marginTop="10%" marginBottom="10%" columns="auto,auto">
                             <StackLayout col="0" height="100%" width="20%">
-                                <Image class="productImage" [src]="item.image"></Image>
+                                <Image class="productImage" stretch="aspectFit" [src]="item.image"></Image>
                             </StackLayout>
                             <GridLayout col="1" width="80%" height="100%" rows="auto,auto">
                                 <GridLayout columns="auto,auto,auto,auto" row="0" height="40%" width="100%">
@@ -80,7 +92,7 @@
                 </GridView>
             </GridLayout>
 
-            <GridLayout row="2" height="40%" width="100%" rows="auto,auto,auto,auto,auto">
+            <GridLayout *ngIf="isRenderingUserDetail" row="2" height="40%" width="100%" rows="auto,auto,auto,auto,auto">
                 <GridLayout row="0" height="14%" width="90%" columns="auto,auto" marginTop="2%">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Name : "></Label>
@@ -116,7 +128,10 @@
                 <GridLayout row="4" width="100%" height="20%" columns="auto,auto">
                     <StackLayout col="1" width="100%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
-                        <Button class="cancelOrderButton" [text]="cancelButtonText" (tap)="onCancelOrder()"></Button>
+                        <Button *ngIf="isCancelButton" class="cancelOrderButton" [text]="cancelButtonText"
+                            (tap)="onCancelOrder()"></Button>
+                        <Button *ngIf="isReasonButton" class="cancelOrderButton" text="View Reason"
+                            (tap)="onReason()"></Button>
                     </StackLayout>
                 </GridLayout>
             </GridLayout>

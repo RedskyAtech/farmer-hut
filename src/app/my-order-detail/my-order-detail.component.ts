@@ -18,6 +18,7 @@ import * as Toast from 'nativescript-toast';
 export class MyOrderDetailComponent implements OnInit {
 
     @ViewChild('cancelOrderDialog') cancelOrderDialog: ModalComponent;
+    @ViewChild('rejectReasonDialog') rejectReasonDialog: ModalComponent;
 
     orderedProducts = [];
     userName: string;
@@ -30,6 +31,10 @@ export class MyOrderDetailComponent implements OnInit {
     orderStatus: string;
     order: Order;
     cancelButtonText: string;
+    reason: string;
+    isReasonButton: boolean;
+    isCancelButton: boolean;
+    isRenderingUserDetail: boolean;
 
     constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private http: HttpClient) {
         this.userName = "";
@@ -38,6 +43,9 @@ export class MyOrderDetailComponent implements OnInit {
         this.totalAmount = "";
         this.order = new Order();
         this.cancelButtonText = "Cancel your order";
+        this.reason = "";
+        this.isCancelButton = false;
+        this.isReasonButton = false;
 
         this.route.queryParams.subscribe(params => {
             if (params["orderId"] != "") {
@@ -52,13 +60,28 @@ export class MyOrderDetailComponent implements OnInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            this.address = res.data.address.line1;
+                            this.address = res.data.deliveryAddress.line1;
                             this.userName = res.data.name;
                             this.phoneNumber = res.data.phone;
                             this.totalAmount = res.data.grandTotal;
                             this.orderStatus = res.data.status;
-                            if (this.orderStatus == "cancelled") {
+                            this.reason = res.data.reason;
+                            this.isRenderingUserDetail = true;
+                            if (this.orderStatus == "pending") {
+                                this.cancelButtonText = "Cancel your order";
+                                this.isCancelButton = true;
+                            }
+                            else if (this.orderStatus == "cancelled") {
                                 this.cancelButtonText = "Cancelled";
+                                this.isCancelButton = true;
+                            }
+                            else if (this.orderStatus == "delivered") {
+                                this.isCancelButton = true;
+                                this.cancelButtonText = "Delivered";
+                            }
+                            else {
+                                this.isReasonButton = true;
+                                this.isCancelButton = false;
                             }
 
                             if (res.data.length != 0) {
@@ -85,8 +108,15 @@ export class MyOrderDetailComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    onReason() {
+        this.rejectReasonDialog.show();
+    }
+    onCancelReason() {
+        this.rejectReasonDialog.hide();
+    }
+
     onBack() {
-        this.router.navigate(['/myOrders']);
+        this.router.navigate(['/profile']);
     }
 
     onCancelOrder() {

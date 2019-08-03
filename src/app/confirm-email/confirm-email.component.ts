@@ -6,6 +6,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import * as localstorage from "nativescript-localstorage";
 import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+import * as Toast from 'nativescript-toast';
 
 @Component({
     selector: "ns-confirmEmail",
@@ -15,56 +16,43 @@ import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 })
 export class ConfirmEmailComponent implements OnInit {
 
-    phoneBorderColor = "white";
-    phoneHint = "Phone number";
-    phone = "";
-    emailBorderColor = "white";
-    emailHint = "Email";
-    email: string;
+    otpBorderColor = "white";
+    otpHint;
+    otp: string;
     user: User;
 
     constructor(private router: Router, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
-        this.email = "";
+        this.otpHint = "Enter OTP"
+        this.otp = "";
         this.user = new User();
     }
 
     ngOnInit(): void {
     }
 
-    onPhoneTextChanged(args) {
-        this.phoneBorderColor = "#E98A02"
-        this.phone = args.object.text.toLowerCase();
+    onOtpTextChanged(args) {
+        this.otpBorderColor = "#E98A02"
+        this.otp = args.object.text.toLowerCase();
     }
-    onEmailTextChanged(args) {
-        this.emailBorderColor = "#E98A02"
-        this.email = args.object.text.toLowerCase();
-    }
-    onSendOtp() {
-        // if (this.phone == "") {
-        //     alert("Please enter phone number!!!");
-        // }
-        // else if (this.phone.length < 10) {
-        //     alert("Please enter ten digit phone number!!!");
-        // }
-        if (this.email == "") {
-            alert("Please enter email!!!");
+    onSubmit() {
+        if (this.otp == "") {
+            alert("Please enter otp!!!");
+        }
+        else if (this.otp.length < 6) {
+            alert("Please enter six digit otp!!!");
         }
         else {
-            this.user.email = this.email;
+            this.user.otp = this.otp;
+            this.user.regToken = localstorage.getItem("regToken");
             this.userService.showLoadingState(true);
             this.http
-                .post(Values.BASE_URL + "users/forgotPassword", this.user)
+                .post(Values.BASE_URL + "users/verifyRegOtp", this.user)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            localstorage.setItem('tempToken', res.data.tempToken);
                             this.userService.showLoadingState(false);
-                            let navigationExtras: NavigationExtras = {
-                                queryParams: {
-                                    "email": this.email,
-                                },
-                            };
-                            this.router.navigate(['./register'], navigationExtras);
+                            this.router.navigate(['./login']);
+                            Toast.makeText("Registered successfully!!!").show();
                         }
                     }
                 }, error => {

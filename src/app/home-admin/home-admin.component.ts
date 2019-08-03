@@ -24,24 +24,49 @@ export class HomeAdminComponent implements OnInit {
     addButtonText: string;
     product: Product;
     category: Category;
+    sliderImage1: string;
+    sliderImage2: string;
+    sliderImage3: string;
+    sliderImage4: string;
+    selectedPage: number;
+    isRenderingSlider: boolean;
+    isRenderingProducts: boolean;
 
     constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {
         this.addButtonText = "Add Product";
         this.product = new Product();
         this.products = [];
         this.category = new Category();
+        this.sliderImage1 = "";
+        this.sliderImage2 = "";
+        this.sliderImage3 = "";
+        this.sliderImage4 = "";
+        this.selectedPage = 0;
+        this.isRenderingProducts = false;
+        this.isRenderingSlider = false;
+
+        setInterval(() => {
+            setTimeout(() => {
+                this.selectedPage++;
+            }, 6000)
+            if (this.selectedPage == 3) {
+                setTimeout(() => {
+                    this.selectedPage = 0;
+                }, 6000);
+            }
+        }, 6000);
 
         this.route.queryParams.subscribe(params => {
             if (params["index"] == "1" && params["index"] != undefined) {
                 this.tabSelectedIndex = 1;
                 this.addButtonText = "Add Category";
-
             } else {
                 this.tabSelectedIndex = 0;
                 this.addButtonText = "Add Product";
             }
         });
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
+            this.userService.showLoadingState(true);
             this.getProducts();
         }
     }
@@ -49,14 +74,41 @@ export class HomeAdminComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    updateSlider() {
+        this.http
+            .get(Values.BASE_URL + "files")
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data[0].images[0].url) {
+                            this.sliderImage1 = res.data[0].images[0].url;
+                        }
+                        if (res.data[0].images[1].url) {
+                            this.sliderImage2 = res.data[0].images[1].url;
+                        }
+                        if (res.data[0].images[2].url) {
+                            this.sliderImage3 = res.data[0].images[2].url;
+                        }
+                        if (res.data[0].images[3].url) {
+                            this.sliderImage4 = res.data[0].images[3].url;
+                        }
+                        this.isRenderingSlider = true;
+                        // this.pullRefreshPage.refreshing = false;
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
+    }
+
     getProducts() {
-        this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + "products")
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
                         for (var i = 0; i < res.data.length; i++) {
                             this.products.push({
                                 _id: res.data[i]._id,
@@ -78,7 +130,6 @@ export class HomeAdminComponent implements OnInit {
     }
 
     getCategories() {
-        this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + "categories")
             .subscribe((res: any) => {
@@ -93,7 +144,8 @@ export class HomeAdminComponent implements OnInit {
                                 name: res.data[i].name,
                             })
                         }
-                        this.userService.showLoadingState(false);
+                        this.isRenderingProducts = true;
+                        this.updateSlider();
                     }
                 }
             }, error => {
@@ -172,6 +224,7 @@ export class HomeAdminComponent implements OnInit {
                     if (res.isSuccess == true) {
                         this.userService.showLoadingState(false);
                         this.products = [];
+                        this.productCategories = [];
                         this.getProducts();
                     }
                 }
@@ -191,6 +244,7 @@ export class HomeAdminComponent implements OnInit {
                     if (res.isSuccess == true) {
                         this.userService.showLoadingState(false);
                         this.products = [];
+                        this.productCategories = [];
                         this.getProducts();
                     }
                 }

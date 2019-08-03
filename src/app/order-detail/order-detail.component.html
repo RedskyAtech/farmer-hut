@@ -4,8 +4,7 @@
             <GridLayout width="80%" height="30%" borderRadius="20" backgroundColor="white">
                 <GridLayout rows="auto,auto" width="100%" height="100%">
                     <StackLayout row="0" height="60%" width="90%" verticalAlignment="middle">
-                        <Label class="confirmDialogLabel" textWrap="true"
-                            text="Are you sure you want to confirm this order!"></Label>
+                        <Label class="confirmDialogLabel" textWrap="true" [text]="confirmDialogText"></Label>
                     </StackLayout>
                     <GridLayout row="1" columns="auto,auto" height="40%" width="90%" verticalAlignment="middle">
                         <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
@@ -20,13 +19,19 @@
             </GridLayout>
         </CardView>
         <CardView #rejectOrderDialog modal size="lg" duration="100" backgroundColor="transparent">
-            <GridLayout width="80%" height="30%" borderRadius="20" backgroundColor="white">
-                <GridLayout rows="auto,auto" width="100%" height="100%">
-                    <StackLayout row="0" height="60%" width="90%" verticalAlignment="middle">
+            <GridLayout width="80%" height="40%" borderRadius="20" backgroundColor="white">
+                <GridLayout rows="auto,auto,auto" width="100%" height="100%">
+                    <StackLayout row="0" height="40%" width="90%" verticalAlignment="middle">
                         <Label class="confirmDialogLabel" textWrap="true"
-                            text="Are you sure you want to confirm this order!"></Label>
+                            text="Are you sure you want to reject this order!"></Label>
                     </StackLayout>
-                    <GridLayout row="1" columns="auto,auto" height="40%" width="90%" verticalAlignment="middle">
+                    <StackLayout row="1" height="30%" width="90%" verticalAlignment="middle">
+                        <TextField [hint]="reasonHint" (textChange)="onReasonTextChanged($event)" returnKeyType="done"
+                            [borderColor]="reasonBorderColor" autocorrect="false"
+                            class="input input-border input-field">
+                        </TextField>
+                    </StackLayout>
+                    <GridLayout row="2" columns="auto,auto" height="30%" width="90%" verticalAlignment="middle">
                         <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
                             <Button class="confirm-button" text="Reject" (tap)="onReject()"></Button>
                         </StackLayout>
@@ -35,6 +40,18 @@
                         </StackLayout>
                     </GridLayout>
                 </GridLayout>
+            </GridLayout>
+        </CardView>
+        <CardView #rejectReasonDialog modal size="lg" duration="100" backgroundColor="transparent">
+            <GridLayout rows="auto,auto" width="80%" height="30%" borderRadius="20" backgroundColor="white">
+                <GridLayout row="0" marginTop="10%" height="60%" width="90%">
+                    <ScrollView>
+                        <Label class="labelDetail" [text]="reason" textWrap="true"></Label>
+                    </ScrollView>
+                </GridLayout>
+                <StackLayout row="1" width="50%" height="30%" verticalAlignment="middle">
+                    <Button class="cancel-button" text="Cancel" (tap)="onCancelReason()"></Button>
+                </StackLayout>
             </GridLayout>
         </CardView>
         <GridLayout rows="auto,auto,auto" width="100%" height="100%">
@@ -46,8 +63,6 @@
                     <Label class="pageHeading" text="Order detail"></Label>
                 </StackLayout>
             </GridLayout>
-
-
             <GridLayout row="1" width="100%" height="52%">
                 <GridView [items]="orderedProducts" colWidth="90%" rowHeight="30%" width="100%" height="100%"
                     backgroundColor="transparent">
@@ -55,7 +70,7 @@
                         <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
                             marginTop="10%" marginBottom="10%" columns="auto,auto">
                             <StackLayout col="0" height="100%" width="20%">
-                                <Image class="productImage" [src]="item.image"></Image>
+                                <Image class="productImage" stretch="aspectFit" [src]="item.image"></Image>
                             </StackLayout>
                             <GridLayout col="1" width="80%" height="100%" rows="auto,auto">
                                 <GridLayout columns="auto,auto,auto,auto" row="0" height="40%" width="100%">
@@ -99,7 +114,8 @@
                 </GridView>
             </GridLayout>
 
-            <GridLayout row="2" height="40%" width="100%" rows="auto,auto,auto,auto,auto,auto">
+            <GridLayout *ngIf="isRenderingUserDetail" row="2" height="40%" width="100%"
+                rows="auto,auto,auto,auto,auto,auto">
                 <GridLayout row="0" height="12%" width="90%" columns="auto,auto" marginTop="2%">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Name : "></Label>
@@ -135,7 +151,8 @@
                 <GridLayout row="4" width="100%" height="17%" columns="auto,auto">
                     <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
-                        <Button *ngIf="isRejectButton" class="rejectOrderButton" [text]="rejectButtonText" (tap)="onRejectOrder()"></Button>
+                        <Button *ngIf="isRejectButton" class="rejectOrderButton" [text]="rejectButtonText"
+                            (tap)="onRejectOrder()"></Button>
                     </StackLayout>
                     <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
@@ -144,32 +161,10 @@
                     </StackLayout>
                 </GridLayout>
                 <StackLayout row="5" height="15%" width="90%" verticalAlignment="middle">
-                    <Button class="trackOrderButton" text="Track here" (tap)="onTrack()"></Button>
+                    <Button *ngIf="isTrackButton" class="trackOrderButton" text="Track here" (tap)="onTrack()"></Button>
+                    <Button *ngIf="isReasonButton" class="trackOrderButton" text="View Reason"
+                        (tap)="onReason()"></Button>
                 </StackLayout>
-                <!-- <GridLayout row="3" width="90%" height="12%" columns="auto,auto">
-                    <StackLayout col="0" width="40%" height="100%">
-                        <Label class="labelHeading" text="City : "></Label>
-                    </StackLayout>
-                    <StackLayout col="1" width="60%" height="100%">
-                        <Label class="labelDetail" textWrap="true" text="Abohar"></Label>
-                    </StackLayout>
-                </GridLayout>
-                <GridLayout row="4" width="90%" height="12%" columns="auto,auto">
-                    <StackLayout col="0" width="40%" height="100%">
-                        <Label class="labelHeading" text="District : "></Label>
-                    </StackLayout>
-                    <StackLayout col="1" width="60%" height="100%">
-                        <Label class="labelDetail" textWrap="true" text="Fazilka"></Label>
-                    </StackLayout>
-                </GridLayout>
-                <GridLayout row="5" width="90%" height="12%" columns="auto,auto">
-                    <StackLayout col="0" width="40%" height="100%">
-                        <Label class="labelHeading" text="State : "></Label>
-                    </StackLayout>
-                    <StackLayout col="1" width="60%" height="100%">
-                        <Label class="labelDetail" textWrap="true" text="Punjab"></Label>
-                    </StackLayout>
-                </GridLayout> -->
             </GridLayout>
         </GridLayout>
     </GridLayout>

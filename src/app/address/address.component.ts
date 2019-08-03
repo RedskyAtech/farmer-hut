@@ -12,6 +12,7 @@ import * as localstorage from "nativescript-localstorage";
 import { Address } from "../models/address.model";
 import * as Toast from 'nativescript-toast';
 import { UserService } from "../services/user.service";
+import { DeliveryAddress } from "../models/delivery-address.model";
 let directions = new Directions();
 
 @Component({
@@ -48,6 +49,8 @@ export class AddressComponent implements OnInit {
         this.user = new User();
         this.user.address = new Address();
         this.user.address.location = new Location();
+        this.user.deliveryAddress = new DeliveryAddress();
+        this.user.deliveryAddress.location = new Location();
         this.address = "";
         // this.route.queryParams.subscribe(params => {
         //     this.city = params["city"];
@@ -113,28 +116,48 @@ export class AddressComponent implements OnInit {
     // }
 
     addAddress(id: string) {
-        this.user.address.line1 = this.address;
-        this.user.address.location.latitude = this.latitude;
-        this.user.address.location.longitude = this.longitude;
-
-        this.http
-            .put(Values.BASE_URL + "users/update/" + id, this.user)
-            .subscribe((res: any) => {
-                if (res != "" && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        Toast.makeText("Address added successfully!!!", "long").show();
-                        if (this.from == "cart") {
+        if (this.from == "cart") {
+            this.user.deliveryAddress.line1 = this.address;
+            this.user.deliveryAddress.location.latitude = this.latitude;
+            this.user.deliveryAddress.location.longitude = this.longitude;
+            this.http
+                .put(Values.BASE_URL + "users/update/" + id, this.user)
+                .subscribe((res: any) => {
+                    if (res != "" && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            Toast.makeText("Delivery address added successfully!!!", "long").show();
                             this.router.navigate(['./cart']);
-                        } else {
-                            this.router.navigate(['./profile']);
                         }
                     }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                alert(error.error.error);
-            });
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    alert(error.error.error);
+                });
+        } else {
+            this.user.address.line1 = this.address;
+            this.user.address.location.latitude = this.latitude;
+            this.user.address.location.longitude = this.longitude;
+            this.http
+                .put(Values.BASE_URL + "users/update/" + id, this.user)
+                .subscribe((res: any) => {
+                    if (res != "" && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            Toast.makeText("Address added successfully!!!", "long").show();
+                            // if (this.from == "cart") {
+                            //     this.router.navigate(['./cart']);
+                            // }
+                            // else {
+                            //     this.router.navigate(['./profile']);
+                            // }
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    alert(error.error.error);
+                });
+        }
     }
 
     onSubmit() {
@@ -171,7 +194,7 @@ export class AddressComponent implements OnInit {
                     //     from: { // optional, default 'current location'
                     //         lat: location.latitude,
                     //         lng: location.longitude
-                            
+
                     //     },
                     //     // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
                     //     //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",

@@ -13,24 +13,23 @@
         </StackLayout>
         <StackLayout row="2" width="80%" height="10%">
             <TextField [hint]="addressHint" [text]="address" (textChange)="onAddressTextChanged($event)" secure="false"
-                [borderColor]="addressBorderColor" returnKeyType="done" 
-                autocorrect="false" class="input input-border input-field">
+                [borderColor]="addressBorderColor" returnKeyType="done" autocorrect="false"
+                class="input input-border input-field">
             </TextField>
         </StackLayout>
         <StackLayout row="3" width="80%" height="10%">
             <TextField [text]="city" secure="false" [borderColor]="cityBorderColor" returnKeyType="done"
-                 autocorrect="false" class="input input-border input-field">
+                autocorrect="false" class="input input-border input-field">
             </TextField>
         </StackLayout>
         <StackLayout row="4" width="80%" height="10%">
             <TextField [text]="district" secure="false" returnKeyType="done" [borderColor]="districtBorderColor"
-               autocorrect="false" class="input input-border input-field">
+                autocorrect="false" class="input input-border input-field">
             </TextField>
         </StackLayout>
         <StackLayout row="5" width="80%" height="10%">
             <TextField [text]="state" editable="false" secure="false" returnKeyType="done"
-                [borderColor]="stateBorderColor"  autocorrect="false"
-                class="input input-border input-field">
+                [borderColor]="stateBorderColor" autocorrect="false" class="input input-border input-field">
             </TextField>
         </StackLayout>
         <!-- <StackLayout row="6" width="80%" height="10%">
@@ -43,10 +42,10 @@
             <Button class="button" text="Add Address" (tap)="onSubmit()"></Button>
         </StackLayout>
         <StackLayout row="7" width="80%" height="10%">
-            <StackLayout height="100%" horizontalAlignment="center" orientation="horizontal" (tap)="onMap()">
-                <Label class="footer-label" text="Choose your current location from map"></Label>
-                <Image class="map" verticalAlignment="top" src="res://map"></Image>
-            </StackLayout>
+            <!-- <StackLayout height="100%" horizontalAlignment="center" orientation="horizontal" (tap)="onMap()"> -->
+            <Button class="mapButton" text="Choose your current location from map" (tap)="onMap()"></Button>
+            <!-- <Image class="map" verticalAlignment="top" src="res://map"></Image> -->
+            <!-- </StackLayout> -->
         </StackLayout>
     </GridLayout>
 </Page>

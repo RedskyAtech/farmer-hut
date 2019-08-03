@@ -18,7 +18,6 @@
         <GridLayout row="1" height="90%" width="100%">
             <GridView [items]="similarProducts" colWidth="90%" rowHeight="25%" width="100%" height="100%"
                 backgroundColor="transparent">
-
                 <ng-template let-item="item" let-i="index" let-odd="odd">
                     <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%" marginRight="5%"
                         marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">
@@ -27,7 +26,7 @@
                         </StackLayout>
                         <GridLayout row="1" columns="auto,auto" width="100%" height="80%">
                             <StackLayout col="0" height="100%" width="40%">
-                                <Image [src]="item.image" stretch="fill" marginTop="10%" width="70%" height="90%">
+                                <Image [src]="item.image" stretch="aspectFit" width="100vw" height="100vh">
                                 </Image>
                             </StackLayout>
                             <GridLayout col="1" rows="auto,auto,auto" height="100%" width="60%">

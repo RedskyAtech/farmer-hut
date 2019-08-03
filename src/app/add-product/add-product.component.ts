@@ -182,6 +182,7 @@ export class AddProductComponent implements OnInit {
         this.detailDescriptionBorderColor = "white";
         this.productName = args.object.text;
     }
+
     onWeightTextChanged(args) {
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
@@ -191,6 +192,7 @@ export class AddProductComponent implements OnInit {
         this.detailDescriptionBorderColor = "white";
         this.weight = args.object.text;
     }
+
     onPriceTextChanged(args) {
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
@@ -200,6 +202,7 @@ export class AddProductComponent implements OnInit {
         this.detailDescriptionBorderColor = "white";
         this.price = args.object.text;
     }
+
     onDetailHeadingTextChanged(args) {
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
@@ -209,6 +212,7 @@ export class AddProductComponent implements OnInit {
         this.detailDescriptionBorderColor = "white";
         this.detailHeading = args.object.text;
     }
+
     onDetailDescriptionTextChanged(args) {
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
@@ -289,7 +293,6 @@ export class AddProductComponent implements OnInit {
         this.selectDimensionDialog.hide();
     }
 
-
     onAddProduct() {
         if (this.productImage == "res://image_icon") {
             alert("Please select product image!!!");
@@ -297,14 +300,8 @@ export class AddProductComponent implements OnInit {
         else if (this.brandName == "") {
             alert("Please enter brand name!!!");
         }
-        else if (!(this.brandName.match("^[a-zA-Z ]*$"))) {
-            alert("Brand name contains characters only!!!");
-        }
         else if (this.productName == "") {
             alert("Please enter product name!!!")
-        }
-        else if (!(this.productName.match("^[a-zA-Z ]*$"))) {
-            alert("Product name contains characters only!!!");
         }
         else if (this.weight == "") {
             alert("Please enter weight!!!");

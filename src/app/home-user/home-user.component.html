@@ -15,86 +15,93 @@
                 <Label color="#E98A02" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
-        <GridLayout row="1" height="20%" width="100%">
+        <GridLayout *ngIf="isRenderingSlider" row="1" height="25%" width="100%">
             <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
                 android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="100%"
                 width="100%" indicatorColor="#E98A02" android:indicatorAnimation="drop"
-                indicatorColorUnselected="white">
+                indicatorColorUnselected="#D4D4D4">
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <Image stretch="fill" [src]="sliderImage1"></Image>
+                        <Image stretch="aspectFill" [src]="sliderImage1"></Image>
                     </StackLayout>
                 </CarouselItem>
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <Image stretch="fill" [src]="sliderImage2"></Image>
+                        <Image stretch="aspectFill" [src]="sliderImage2"></Image>
                     </StackLayout>
                 </CarouselItem>
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <Image stretch="fill" [src]="sliderImage3"></Image>
+                        <Image stretch="aspectFill" [src]="sliderImage3"></Image>
                     </StackLayout>
                 </CarouselItem>
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <Image stretch="fill" [src]="sliderImage4"></Image>
+                        <Image stretch="aspectFill" [src]="sliderImage4"></Image>
                     </StackLayout>
                 </CarouselItem>
             </Carousel>
         </GridLayout>
-        <TabView row="2" [(ngModel)]="tabSelectedIndex" [selectedIndex]="tabSelectedIndex" width="100%" height="72%"
-            selectedTabTextColor="white" tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
-            androidSelectedTabHighlightColor="white" tabBackgroundColor="transparent"
+        <TabView row="2" *ngIf="isRenderingTabView" [(ngModel)]="tabSelectedIndex" [selectedIndex]="tabSelectedIndex"
+            width="100%" height="67%" selectedTabTextColor="white" tabTextColor="#E98A02" tabTextFontSize="14"
+            androidOffscreenTabLimit='2' androidSelectedTabHighlightColor="#E98A02" tabBackgroundColor="transparent"
             (selectedIndexChanged)="onSelectedIndexChanged($event)">
             <StackLayout *tabItem="{title: 'Products'}">
-                <GridLayout rows="auto">
-                    <GridLayout row="0" height="100%" width="100%">
-                        <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
-                            backgroundColor="transparent">
-                            <ng-template let-item="item" let-i="index" let-odd="odd">
-                                <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
-                                    marginRight="5%" marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">
-                                    <StackLayout row="0" horizontalAlignment="center" height="20%" borderRadius="10">
-                                        <Label class="brand-name" [text]="item.brandName"></Label>
-                                    </StackLayout>
-                                    <GridLayout row="1" columns="auto,auto" width="100%" height="80%">
-                                        <StackLayout col="0" height="100%" width="40%">
-                                            <Image [src]="item.image" stretch="fill" marginTop="10%" width="70%"
-                                                height="90%"></Image>
+                <PullToRefresh (refresh)="refreshPage($event)">
+                    <GridLayout rows="auto">
+                        <GridLayout row="0" height="100%" width="100%">
+                            <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
+                                backgroundColor="transparent">
+                                <ng-template let-item="item" let-i="index" let-odd="odd">
+                                    <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
+                                        marginRight="5%" marginTop="5" marginBottom="5" borderRadius="10"
+                                        rows="auto,auto">
+                                        <StackLayout row="0" horizontalAlignment="center" height="20%"
+                                            borderRadius="10">
+                                            <Label class="brand-name" [text]="item.brandName"></Label>
                                         </StackLayout>
-                                        <GridLayout col="1" rows="auto,auto,auto" height="100%" width="60%">
-                                            <StackLayout row="0" height="40%" width="100%" verticalAlignment="middle">
-                                                <Label class="product-name" textWrap="true" [text]="item.name"></Label>
+                                        <GridLayout row="1" columns="auto,auto" width="100%" height="80%">
+                                            <StackLayout col="0" height="100%" width="40%">
+                                                <Image [src]="item.image" stretch="aspectFit" width="100vw"
+                                                    height="100vh">
+                                                </Image>
                                             </StackLayout>
-                                            <GridLayout row="1" columns="auto,auto" width="100%" height="25%">
-                                                <StackLayout col="0" height="100%" width="50%">
-                                                    <Label width="100%" color="#E98A02" fontSize="14"
-                                                        [text]="item.weight"></Label>
-                                                </StackLayout>
-                                                <StackLayout col="1" height="100%" width="50%">
-                                                    <Label width="100%" color="#E98A02" fontSize="14"
-                                                        [text]="item.price"></Label>
-                                                </StackLayout>
-                                            </GridLayout>
-                                            <GridLayout row="2" columns="auto,auto" width="100%" height="35%">
-                                                <StackLayout col="0" height="100%" width="50%"
+                                            <GridLayout col="1" rows="auto,auto,auto" height="100%" width="60%">
+                                                <StackLayout row="0" height="40%" width="100%"
                                                     verticalAlignment="middle">
-                                                    <Button class="addCartButton" text="Add to cart"
-                                                        (tap)="onAddCart(item)"></Button>
+                                                    <Label class="product-name" textWrap="true"
+                                                        [text]="item.name"></Label>
                                                 </StackLayout>
-                                                <StackLayout col="1" height="100%" width="50%"
-                                                    verticalAlignment="middle">
-                                                    <Button class="viewDetailButton" text="View detail"
-                                                        (tap)="onViewDetail(item)"></Button>
-                                                </StackLayout>
+                                                <GridLayout row="1" columns="auto,auto" width="100%" height="25%">
+                                                    <StackLayout col="0" height="100%" width="50%">
+                                                        <Label width="100%" color="#E98A02" fontSize="14"
+                                                            [text]="item.weight"></Label>
+                                                    </StackLayout>
+                                                    <StackLayout col="1" height="100%" width="50%">
+                                                        <Label width="100%" color="#E98A02" fontSize="14"
+                                                            [text]="item.price"></Label>
+                                                    </StackLayout>
+                                                </GridLayout>
+                                                <GridLayout row="2" columns="auto,auto" width="100%" height="35%">
+                                                    <StackLayout col="0" height="100%" width="50%"
+                                                        verticalAlignment="middle">
+                                                        <Button class="addCartButton" text="Add to cart"
+                                                            (tap)="onAddCart(item)"></Button>
+                                                    </StackLayout>
+                                                    <StackLayout col="1" height="100%" width="50%"
+                                                        verticalAlignment="middle">
+                                                        <Button class="viewDetailButton" text="View detail"
+                                                            (tap)="onViewDetail(item)"></Button>
+                                                    </StackLayout>
+                                                </GridLayout>
                                             </GridLayout>
                                         </GridLayout>
                                     </GridLayout>
-                                </GridLayout>
-                            </ng-template>
-                        </GridView>
+                                </ng-template>
+                            </GridView>
+                        </GridLayout>
                     </GridLayout>
-                </GridLayout>
+                </PullToRefresh>
             </StackLayout>
             <StackLayout *tabItem="{title: 'Similar Products'}">
                 <GridLayout rows="auto">
@@ -106,8 +113,8 @@
                                     marginRight="8%" marginTop="10" marginBottom="10" borderRadius="10"
                                     rows="auto,auto">
                                     <StackLayout row="0" width="100%" height="80%" borderRadius="10">
-                                        <Image [src]="item.image" stretch="fill" marginTop="10%" width="60%"
-                                            height="90%" (tap)="onCategory(item)"></Image>
+                                        <Image [src]="item.image" stretch="aspectFit" marginTop="10%" width="100vw"
+                                            height="100vh" (tap)="onCategory(item)"></Image>
                                     </StackLayout>
                                     <StackLayout row="1" horizontalAlignment="center" height="20%" borderRadius="10">
                                         <Label class="product-name" [text]="item.name"></Label>

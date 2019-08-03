@@ -16,8 +16,13 @@
     font-weight: 500;
 }
 .productImage{
-    width:80%;
-    height:100%;
+    width:100vw;
+    height:100vh;
+}
+.labelDetail{
+    color:#E98A02;
+    font-size: 16;
+    text-align: left;
 }
 .fullName{
     font-size: 16;
@@ -120,6 +125,24 @@
     border-width:1;
 }
 .no-button:highlighted{
+    background-color: #E98A02;
+    border-color:white;
+    color:white;
+}
+.cancel-button{
+    border-radius: 10;
+    background-color:white;
+    text-transform: initial;
+    color:#E98A02;
+    height:50%;
+    width:90%;
+    padding:0;
+    font-size:12;
+    font-weight:500;
+    border-color: #E98A02;
+    border-width:1;
+}
+.cancel-button:highlighted{
     background-color: #E98A02;
     border-color:white;
     color:white;

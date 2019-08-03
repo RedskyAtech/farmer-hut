@@ -33,19 +33,24 @@ export class HomeUserComponent implements OnInit {
     cartCount: number;
     category: Category;
     tabSelectedIndex: number;
+    isRenderingSlider: boolean;
+    isRenderingTabView: boolean;
+    pullRefreshPage;
 
     constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {
-        this.sliderImage1 = "res://image_icon";
-        this.sliderImage2 = "res://image_icon";
-        this.sliderImage3 = "res://image_icon";
-        this.sliderImage4 = "res://image_icon";
-
+        this.sliderImage1 = "";
+        this.sliderImage2 = "";
+        this.sliderImage3 = "";
+        this.sliderImage4 = "";
+        this.isRenderingSlider = false;
+        this.isRenderingTabView = false;
         this.product = new Product();
         this.cart = new Cart();
         this.cart.product = new Product();
         this.category = new Category();
-
         this.products = [];
+
+        this.userService.showLoadingState(false);
 
         this.route.queryParams.subscribe(params => {
             if (params["index"] == "1" && params["index"] != undefined) {
@@ -59,57 +64,65 @@ export class HomeUserComponent implements OnInit {
         setInterval(() => {
             setTimeout(() => {
                 this.selectedPage++;
-            }, 2000)
+            }, 6000)
             if (this.selectedPage == 3) {
                 setTimeout(() => {
                     this.selectedPage = 0;
-                }, 2000);
+                }, 6000);
             }
-        }, 2000);
+        }, 6000);
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
-            this.updateSlider();
             this.userService.showLoadingState(true);
-            this.http
-                .get(Values.BASE_URL + "products?status=enabled")
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            for (var i = 0; i < res.data.length; i++) {
-                                this.products.push({
-                                    _id: res.data[i]._id,
-                                    status: res.data[i].status,
-                                    image: res.data[i].image.url,
-                                    brandName: res.data[i].brand,
-                                    name: res.data[i].name,
-                                    weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                    price: "Rs " + res.data[i].price.value,
-                                })
-                            }
-                            if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
-                                this.getCategory();
-                            }
-                        }
-                    }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    console.log(error.error.error);
-                });
+            this.getProducts();
         }
 
+    }
+
+    refreshPage(args) {
+        this.pullRefreshPage = args.object;
+        this.pullRefreshPage.refreshing = true;
+        this.getProducts();
     }
 
     ngOnInit(): void {
     }
 
+    getProducts() {
+        this.http
+            .get(Values.BASE_URL + "products?status=enabled")
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        for (var i = 0; i < res.data.length; i++) {
+                            this.products.push({
+                                _id: res.data[i]._id,
+                                status: res.data[i].status,
+                                image: res.data[i].image.url,
+                                brandName: res.data[i].brand,
+                                name: res.data[i].name,
+                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
+                                price: "Rs " + res.data[i].price.value,
+                            })
+                        }
+                        if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
+                            this.getCategory();
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                this.pullRefreshPage.refreshing = false;
+                console.log(error.error.error);
+            });
+    }
+
     getCategory() {
-        this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + "categories?status=active")
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
                         for (var i = 0; i < res.data.length; i++) {
                             this.productCategories.push({
                                 _id: res.data[i]._id,
@@ -117,11 +130,13 @@ export class HomeUserComponent implements OnInit {
                                 name: res.data[i].name,
                             })
                         }
+                        this.isRenderingTabView = true;
                         this.updateCartCount();
                     }
                 }
             }, error => {
                 this.userService.showLoadingState(false);
+                this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
     }
@@ -140,41 +155,44 @@ export class HomeUserComponent implements OnInit {
     }
 
     updateSlider() {
-        this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + "files")
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.userService.showLoadingState(false);
+                        this.isRenderingSlider = true;
                         this.sliderImage1 = res.data[0].images[0].url;
                         this.sliderImage2 = res.data[0].images[1].url;
                         this.sliderImage3 = res.data[0].images[2].url;
                         this.sliderImage4 = res.data[0].images[3].url;
                     }
+                    this.pullRefreshPage.refreshing = false;
                 }
             }, error => {
                 this.userService.showLoadingState(false);
+                this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
     }
 
     updateCartCount() {
-        this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
                         if (res.data.products.length != 0) {
+                            console.log(res.data.products.length);
                             this.isCartCount = true;
                             this.cartCount = res.data.products.length;
                         }
+                        this.updateSlider();
                     }
                 }
             }, error => {
                 this.userService.showLoadingState(false);
+                this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
     }
@@ -214,7 +232,6 @@ export class HomeUserComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
                         if (res.data.products.length != 0) {
                             for (var i = 0; i < res.data.products.length; i++) {
                                 if (product._id == res.data.products[i]._id) {
@@ -242,15 +259,12 @@ export class HomeUserComponent implements OnInit {
     }
 
     updateCart() {
-        console.log(localstorage.getItem("cartId"));
-        console.log(this.cart);
         this.userService.showLoadingState(true);
         this.http
             .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
                         Toast.makeText("Product is added to cart!!!", "long").show();
                         this.updateCartCount();
                     }

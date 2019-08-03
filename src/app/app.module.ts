@@ -13,7 +13,6 @@ import { RegisterComponent } from "./register/register.component";
 import { ProfileComponent } from "./profile/profile.component";
 import { HomeUserComponent } from "./home-user/home-user.component";
 import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
-import { ConfirmOtpComponent } from "./confirm-otp/confirm-otp.component";
 import { MyOrderDetailComponent } from "./my-order-detail/my-order-detail.component";
 import { ViewOrdersComponent } from "./view-orders/view-orders.component";
 import { UserService } from "./services/user.service";
@@ -32,6 +31,7 @@ import { AddSliderComponent } from "./add-slider/add-slider.component";
 import { MyOrdersComponent } from "./my-orders/my-orders.component";
 import { ConfirmEmailComponent } from "./confirm-email/confirm-email.component";
 import { OrderHistoryComponent } from "./order-history/order-history.component";
+import { SetPasswordComponent } from "./set-password/set-password.component";
 
 @NgModule({
     bootstrap: [
@@ -53,7 +53,7 @@ import { OrderHistoryComponent } from "./order-history/order-history.component";
         ProfileComponent,
         HomeUserComponent,
         ForgotPasswordComponent,
-        ConfirmOtpComponent,
+        SetPasswordComponent,
         MyOrdersComponent,
         MyOrderDetailComponent,
         ViewOrdersComponent,

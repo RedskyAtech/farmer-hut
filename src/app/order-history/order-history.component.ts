@@ -19,11 +19,15 @@ export class OrderHistoryComponent implements OnInit {
     address: string;
     status: string;
     userType: string;
+    isRenderingMessage: boolean;
+    isRenderingHistory: boolean;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";
+        this.isRenderingHistory = false;
+        this.isRenderingMessage = false;
 
         if (localstorage.getItem("userType") != null) {
             this.userType = localstorage.getItem("userType");
@@ -75,6 +79,7 @@ export class OrderHistoryComponent implements OnInit {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
                                 if (res.data.length != 0) {
+                                    this.isRenderingHistory = true;
                                     for (var i = 0; i < res.data.length; i++) {
                                         if (res.data[i].status == "delivered") {
                                             var status = "Delivered";
@@ -92,6 +97,9 @@ export class OrderHistoryComponent implements OnInit {
                                         })
                                     }
                                 }
+                                else {
+                                    this.isRenderingMessage = true;
+                                }
                             }
                         }
                     }, error => {
@@ -108,6 +116,7 @@ export class OrderHistoryComponent implements OnInit {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
                                 if (res.data.length != 0) {
+                                    this.isRenderingHistory = true;
                                     for (var i = 0; i < res.data.length; i++) {
                                         if (res.data[i].status == "delivered") {
                                             var status = "Delivered";
@@ -124,6 +133,9 @@ export class OrderHistoryComponent implements OnInit {
                                             status: status
                                         })
                                     }
+                                }
+                                else {
+                                    this.isRenderingMessage = true;
                                 }
                             }
                         }

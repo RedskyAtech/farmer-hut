@@ -7,6 +7,7 @@ import * as Toast from 'nativescript-toast';
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
+registerElement("PullToRefresh", () => require("nativescript-pulltorefresh").PullToRefresh);
 
 @Component({
     selector: "ns-app",
