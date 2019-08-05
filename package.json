@@ -1,11 +1,11 @@
 {
   "nativescript": {
     "id": "org.nativescript.farmershut",
-    "tns-android": {
-      "version": "5.4.0"
-    },
     "tns-ios": {
       "version": "5.4.2"
+    },
+    "tns-android": {
+      "version": "5.4.0"
     }
   },
   "description": "NativeScript Application",
