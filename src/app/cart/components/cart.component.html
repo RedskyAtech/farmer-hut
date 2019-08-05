@@ -1,0 +1,150 @@
+<Page>
+    <GridLayout class="page">
+        <CardView #placeOrderDialog modal size="lg" duration="100" backgroundColor="transparent">
+            <GridLayout #dialog width="80%" height="30%" borderRadius="20" backgroundColor="white"
+                (loaded)="onDialogLoaded($event)">
+                <GridLayout rows="auto,auto" width="100%" height="100%">
+                    <StackLayout row="0" height="60%" width="90%" verticalAlignment="middle">
+                        <Label class="confirmDialogLabel" textWrap="true"
+                            text="Are you sure you want to place this order!"></Label>
+                    </StackLayout>
+                    <GridLayout row="1" columns="auto,auto" height="40%" width="90%" verticalAlignment="middle">
+                        <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle">
+                            <Button class="confirm-button" text="Confirm" (tap)="onConfirm()"></Button>
+                        </StackLayout>
+                        <StackLayout col="1" width="50%" height="100%" verticalAlignment="middle">
+                            <Button class="cancel-button" text="Cancel" (tap)="onOrderCancel()"></Button>
+                        </StackLayout>
+                    </GridLayout>
+                </GridLayout>
+            </GridLayout>
+        </CardView>
+        <CardView #viewAddressDialog modal size="lg" duration="100" backgroundColor="transparent">
+            <GridLayout #dialog width="80%" height="40%" borderRadius="20" backgroundColor="white"
+                (loaded)="onDialogLoaded($event)">
+                <GridLayout rows="auto,auto,auto,auto,auto" width="100%" height="100%">
+                    <StackLayout row="0" height="10%" width="90%" verticalAlignment="middle">
+                        <Label fontSize="16" color="black" textWrap="true" text="Address"></Label>
+                    </StackLayout>
+                    <ScrollView row="1" height="30%" width="90%">
+                        <Label fontSize="16" color="#E98A02" textWrap="true" [text]="address"></Label>
+                    </ScrollView>
+                    <StackLayout row="2" height="10%" width="90%" verticalAlignment="middle">
+                        <Label fontSize="16" color="black" textWrap="true" text="Map address"></Label>
+                    </StackLayout>
+                    <ScrollView row="3" height="30%" width="90%">
+                        <Label fontSize="16" color="#E98A02" textWrap="true" [text]="mapAddress"></Label>
+                    </ScrollView>
+                    <GridLayout row="4" height="20%" width="90%" verticalAlignment="middle">
+                        <Button class="cancel-button" text="Cancel" (tap)="onAddressCancel()"></Button>
+                    </GridLayout>
+                </GridLayout>
+            </GridLayout>
+        </CardView>
+
+        <GridLayout rows="auto,auto,auto" width="100%" height="100%">
+            <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
+                <StackLayout col="0" verticalAlignment="middle" width=" 20%">
+                    <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+                </StackLayout>
+                <StackLayout col="1" verticalAlignment="middle" width=" 60%">
+                    <Label class="pageHeading" text="Cart"></Label>
+                </StackLayout>
+            </GridLayout>
+            <GridLayout row="1" width="100%" height="67%">
+                <GridView [items]="cartProducts" colWidth="90%" rowHeight="35%" width="100%" height="100%"
+                    backgroundColor="transparent">
+                    <ng-template let-item="item" let-odd="odd">
+                        <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
+                            marginTop="10%" marginBottom="10%" rows="auto,auto,auto">
+                            <GridLayout row="0" width="100%" height="40%" columns="auto,auto">
+                                <StackLayout col="0" height="100%" width="20%">
+                                    <Image class="productImage" [src]="item.image"></Image>
+                                </StackLayout>
+                                <GridLayout col="1" rows="auto,auto" height="100%" width=" 80%">
+                                    <GridLayout row="0" columns="auto,auto,auto,auto" height="40%" width=" 100%">
+                                        <StackLayout col="0" verticalAlignment="bottom">
+                                            <Label class="fullName" [text]="item.fullName"></Label>
+                                        </StackLayout>
+                                        <StackLayout col="1" verticalAlignment="bottom">
+                                            <Label class="fullName" text=" ("></Label>
+                                        </StackLayout>
+                                        <StackLayout col="2" verticalAlignment="bottom">
+                                            <Label class="quantity" [text]="item.weight"></Label>
+                                        </StackLayout>
+                                        <StackLayout col="3" verticalAlignment="bottom">
+                                            <Label class="fullName" text=")"></Label>
+                                        </StackLayout>
+                                    </GridLayout>
+                                    <StackLayout row="1" height="60%">
+                                        <Label class="price" [text]="item.price"></Label>
+                                    </StackLayout>
+                                </GridLayout>
+                            </GridLayout>
+                            <GridLayout row="1" height="40%" width="100%" columns="auto,auto">
+                                <GridLayout col="0" height="100%" width="50%" rows="auto,auto">
+                                    <StackLayout row="0" height="40%" horizontalAlignment="center"
+                                        verticalAlignment="middle">
+                                        <Label class="heading" text="Select Quantity"></Label>
+                                    </StackLayout>
+                                    <StackLayout row="1" height="60%" horizontalAlignment="center"
+                                        verticalAlignment="middle" orientation="horizontal">
+                                        <StackLayout backgroundColor="#E98A02" height="20" width="20" borderRadius="15"
+                                            (tap)=onMinus(item)>
+                                            <Image class="plusMinus" src="res://minus"></Image>
+                                        </StackLayout>
+                                        <StackLayout height="20" width="20" marginLeft="10" marginRight="10">
+                                            <Label class="quantity" [text]="item.quantity"></Label>
+                                        </StackLayout>
+                                        <StackLayout backgroundColor="#E98A02" height="20" width="20" borderRadius="15"
+                                            (tap)=onPlus(item)>
+                                            <Image class="plusMinus" src="res://plus"></Image>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </GridLayout>
+                                <GridLayout col="1" height="100%" width="50%" rows="auto,auto">
+                                    <StackLayout row="0" height="40%" horizontalAlignment="center"
+                                        verticalAlignment="middle">
+                                        <Label class="heading" text="Total Price"></Label>
+                                    </StackLayout>
+                                    <StackLayout row="1" height="60%" horizontalAlignment="center"
+                                        verticalAlignment="middle">
+                                        <Label class="detail" [text]="item.totalPrice"></Label>
+                                    </StackLayout>
+                                </GridLayout>
+                            </GridLayout>
+                            <StackLayout row="2" height="20%" marginRight="5%" horizontalAlignment="right">
+                                <!-- <Label class="removeItem" text="REMOVE ITEM" (tap)="onRemoveItem(item)"></Label> -->
+                                <Button class="removeItemButton" text="Remove item" (tap)="onRemoveItem(item)"></Button>
+                            </StackLayout>
+                        </GridLayout>
+                    </ng-template>
+                </GridView>
+            </GridLayout>
+            <GridLayout *ngIf="isRendering" row="2" width="100%" height="25%" rows="auto,auto,auto,auto">
+                <GridLayout row="0" width="90%" height="25%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%" verticalAlignment="middle">
+                        <Label class="labelHeading" text="Total amount : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%" verticalAlignment="middle">
+                        <Label class="labelDetail" [text]="totalAmount"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <StackLayout row="1" height="25%" width="100%">
+                    <Button class="orderItemButton" text="ORDER ITEM" (tap)="onOrderItem()"></Button>
+                </StackLayout>
+                <StackLayout row="2" width="90%" height="25%" horizontalAlignment="center" verticalAlignment="middle">
+                    <Label class="labelHeading" textWrap="true" textAlignment="center" text="Delivery address"></Label>
+                </StackLayout>
+                <GridLayout row="3" height="25%" width="90%" columns="auto,auto">
+                    <StackLayout col="0" width="47%" height="100%" verticalAlignment="middle">
+                        <Button class="viewAddressButton" text="View" (tap)="onViewAddress()"></Button>
+                    </StackLayout>
+                    <StackLayout col="1" width="47%" marginLeft="6%" height="100%" verticalAlignment="middle">
+                        <Button class="enterAddressButton" [text]="addressButtonText" (tap)="onAddress()"></Button>
+                    </StackLayout>
+                </GridLayout>
+            </GridLayout>
+        </GridLayout>
+    </GridLayout>
+</Page>

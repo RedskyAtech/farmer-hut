@@ -1,0 +1,71 @@
+.page{
+    background-image: url("res://app_background");
+    background-size: cover;
+    background-color: black;
+    width:100%;
+    height:100%;
+}
+.pageHeading{
+    color:#E98A02;
+    font-size: 20;
+    text-align: center;
+    font-weight: 500;
+}
+.brand-name{
+    font-size:16;
+    color:#E98A02;
+    font-weight:500;
+}
+.product-name{
+    font-size:14;
+    color:black;
+    font-weight:500;
+    text-align:center;
+}
+.product-heading{
+    font-size:14;
+    color:#E98A02;
+    font-weight:500;
+}
+.profileButton{
+    width:30;
+    height:30;
+}
+.cartButton{
+    height:30;
+    width:30;
+}
+.addCartButton{
+    border-color:#E98A02;
+    border-width:1;
+    color:#E98A02;
+    font-size: 14;
+    text-transform: initial;
+    text-align: center;
+    height:80%;
+    width:95%;
+    padding:0;
+    background-color: white;
+}
+.addCartButton:highlighted{
+    background-color: #E98A02;
+    border-color: white;
+    color:white;
+}
+.viewDetailButton{
+    border-color:white;
+    border-width:1;
+    color:white;
+    font-size: 14;
+    text-transform: initial;
+    text-align: center;
+    height:80%;
+    width:95%;
+    padding:0;
+    background-color: #E98A02;
+}
+.viewDetailButton:highlighted{
+    background-color: white;
+    border-color: #E98A02;
+    color:#E98A02;
+}

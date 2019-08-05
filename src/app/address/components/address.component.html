@@ -1,0 +1,52 @@
+<Page actionBarHidden="true">
+    <GridLayout class="page" rows="auto,auto,auto,auto,auto,auto,auto,auto,auto">
+        <GridLayout row="0" width="100%" marginTop="10" height="20%" columns="auto,auto,auto">
+            <StackLayout col="0" height="50%" verticalAlignment="top" width="20%">
+                <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+            </StackLayout>
+            <StackLayout col="1" height="100%" width="60%">
+                <Image class="appLogo" src="res://logo"></Image>
+            </StackLayout>
+        </GridLayout>
+        <StackLayout row="1" width="100%" height="10%">
+            <Label class="appLabel" text="Farmers Hut"></Label>
+        </StackLayout>
+        <StackLayout row="2" width="80%" height="10%">
+            <TextField [hint]="addressHint" [text]="address" (textChange)="onAddressTextChanged($event)" secure="false"
+                [borderColor]="addressBorderColor" returnKeyType="done" autocorrect="false"
+                class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="3" width="80%" height="10%">
+            <TextField [hint]="mapAddressHint" [text]="mapAddress" editable="false"
+                (textChange)="onMapAddressTextChanged($event)" secure="false" [borderColor]="mapAddressBorderColor"
+                returnKeyType="done" autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="4" width="80%" height="10%">
+            <TextField [text]="city" secure="false" [borderColor]="cityBorderColor" returnKeyType="done"
+                autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <StackLayout row="5" width="80%" height="10%">
+            <TextField [text]="district" secure="false" returnKeyType="done" [borderColor]="districtBorderColor"
+                autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout>
+        <!-- <StackLayout row="6" width="80%" height="10%">
+            <TextField [hint]="pincodeHint" (textChange)="onPincodeTextChanged($event)" keyboardType="number"
+                secure="false" returnKeyType="done" [borderColor]="pincodeBorderColor"
+                 autocorrect="false" class="input input-border input-field">
+            </TextField>
+        </StackLayout> -->
+        <StackLayout row="6" width="80%" height="10%">
+            <Button class="button" text="Add Address" (tap)="onAddAddress()"></Button>
+        </StackLayout>
+        <StackLayout row="7" width="80%" height="10%">
+            <!-- <StackLayout height="100%" horizontalAlignment="center" orientation="horizontal" (tap)="onMap()"> -->
+            <Button class="mapButton" text="Choose your current location from map" (tap)="onMap()"></Button>
+            <!-- <Image class="map" verticalAlignment="top" src="res://map"></Image> -->
+            <!-- </StackLayout> -->
+        </StackLayout>
+    </GridLayout>
+</Page>
