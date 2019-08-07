@@ -27,7 +27,7 @@ const routes: Routes = [
     { path: "similarProductAdmin", loadChildren: "~/app/similar-productAdmin/similar-productAdmin.module#SimilarProductAdminModule" },
     { path: "addCategory", loadChildren: "~/app/add-category/add-category.module#AddCategoryModule" },
     { path: "addSlider", loadChildren: "~/app/add-slider/add-slider.module#AddSliderModule" },
-    { path: "confirmEmail", loadChildren: "~/app/confirm-email/confirm-email.module#ConfirmEmailModule" },
+    { path: "confirmPhone", loadChildren: "~/app/confirm-phone/confirm-phone.module#ConfirmPhoneModule" },
     { path: "orderHistory", loadChildren: "~/app/order-history/order-history.module#OrderHistoryModule" },
 ];
 
