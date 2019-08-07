@@ -6,13 +6,13 @@ import { NativeScriptHttpClientModule } from "nativescript-angular/http-client";
 import { NativeScriptCommonModule } from "nativescript-angular/common";
 import { GridViewModule } from 'nativescript-grid-view/angular';
 import { NgModalModule } from "../modals/ng-modal";
-import { ConfirmEmailRoutingModule } from "./confirm-email-routing.module";
-import { ConfirmEmailComponent } from "./components/confirm-email.component";
+import { ConfirmPhoneComponent } from "./components/confirm-phone.component";
+import { ConfirmPhoneRoutingModule } from "./confirm-phone-routing.module";
 
 @NgModule({
     imports: [
         HttpModule,
-        ConfirmEmailRoutingModule,
+        ConfirmPhoneRoutingModule,
         GridViewModule,
         NgModalModule,
         NativeScriptHttpModule,
@@ -21,11 +21,11 @@ import { ConfirmEmailComponent } from "./components/confirm-email.component";
         NativeScriptHttpClientModule
     ],
     declarations: [
-        ConfirmEmailComponent
+        ConfirmPhoneComponent
     ],
     schemas: [
         NO_ERRORS_SCHEMA
     ]
 })
 
-export class ConfirmEmailModule { }
+export class ConfirmPhoneModule { }

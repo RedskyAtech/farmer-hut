@@ -9,12 +9,12 @@ import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import * as Toast from 'nativescript-toast';
 
 @Component({
-    selector: "ns-confirmEmail",
+    selector: "ns-confirmPhone",
     moduleId: module.id,
-    templateUrl: "./confirm-email.component.html",
-    styleUrls: ["./confirm-email.component.css"]
+    templateUrl: "./confirm-phone.component.html",
+    styleUrls: ["./confirm-phone.component.css"]
 })
-export class ConfirmEmailComponent implements OnInit {
+export class ConfirmPhoneComponent implements OnInit {
 
     otpBorderColor = "white";
     otpHint;

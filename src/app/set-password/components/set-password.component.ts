@@ -74,7 +74,7 @@ export class SetPasswordComponent implements OnInit {
             this.user.newPassword = this.password;
             this.user.tempToken = localstorage.getItem("tempToken");
             this.http
-                .post(Values.BASE_URL + "users/verifyOtp", this.user)
+                .post(Values.BASE_URL + "users/verifySms", this.user)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {

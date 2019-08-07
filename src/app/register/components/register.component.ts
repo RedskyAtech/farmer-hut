@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import * as Toast from 'nativescript-toast';
 import { User } from "~/app/models/user.model";
@@ -6,6 +6,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import * as localstorage from "nativescript-localstorage";
+import { ModalComponent } from "~/app/modals/modal.component";
 
 @Component({
     selector: "ns-register",
@@ -14,6 +15,8 @@ import * as localstorage from "nativescript-localstorage";
     styleUrls: ["./register.component.css"]
 })
 export class RegisterComponent implements OnInit {
+
+    @ViewChild('userVerifyDialog') userVerifyDialog: ModalComponent;
 
     nameBorderColor = "white";
     emailBorderColor = "white";
@@ -81,6 +84,7 @@ export class RegisterComponent implements OnInit {
     }
 
     onRegister() {
+        // this.userVerifyDialog.show();
         if (this.name == "") {
             alert("Please enter name!!!");
         }
@@ -110,16 +114,15 @@ export class RegisterComponent implements OnInit {
             if (this.email != "") {
                 this.user.email = this.email;
             }
-
             this.http
                 .post(Values.BASE_URL + "users", this.user)
                 .subscribe((res: any) => {
+                    console.log(res);
                     if (res != "" && res != undefined) {
                         if (res.isSuccess == true) {
-                            console.log(res);
                             this.userService.showLoadingState(false);
                             localstorage.setItem('regToken', res.data.regToken);
-                            this.routerExtensions.navigate(['./confirmEmail']);
+                            this.routerExtensions.navigate(['./confirmPhone']);
                         }
                     }
                 }, error => {
@@ -127,6 +130,28 @@ export class RegisterComponent implements OnInit {
                     alert(error.error.error);
                 });
         }
+    }
+
+    onVerify() {
+        this.http
+            .post(Values.BASE_URL + "users", this.user)
+            .subscribe((res: any) => {
+                if (res != "" && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        this.userVerifyDialog.hide();
+                        localstorage.setItem('regToken', res.data.regToken);
+                        this.routerExtensions.navigate(['./confirmPhone']);
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                alert(error.error.error);
+            });
+    }
+
+    onCancel() {
+        this.userVerifyDialog.hide();
     }
 
     onLogin() {

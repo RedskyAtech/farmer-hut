@@ -47,3 +47,44 @@
     color:white;
     text-align: right;
 }
+.userDialogLabel{
+    font-size: 16;
+    text-align:center;
+    font-weight:500;
+}
+.verify-button{
+    border-radius: 10;
+    background-color:#E98A02;
+    text-transform: initial;
+    color:white;
+    height:50%;
+    width:90%;
+    padding:0;
+    font-size:12;
+    font-weight:500;
+    border-color: white;
+    border-width:1;
+}
+.verify-button:highlighted{
+    background-color: white;
+    border-color:#E98A02;
+    color:#E98A02;
+}
+.cancel-button{
+    border-radius: 10;
+    background-color:white;
+    text-transform: initial;
+    color:#E98A02;
+    height:50%;
+    width:90%;
+    padding:0;
+    font-size:12;
+    font-weight:500;
+    border-color: #E98A02;
+    border-width:1;
+}
+.cancel-button:highlighted{
+    background-color: #E98A02;
+    border-color:white;
+    color:white;
+}

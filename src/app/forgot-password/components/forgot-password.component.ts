@@ -24,6 +24,7 @@ export class ForgotPasswordComponent implements OnInit {
 
     constructor(private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
         this.email = "";
+        this.phone = "";
         this.user = new User();
     }
 
@@ -39,21 +40,22 @@ export class ForgotPasswordComponent implements OnInit {
         this.email = args.object.text.toLowerCase();
     }
     onSendOtp() {
-        // if (this.phone == "") {
-        //     alert("Please enter phone number!!!");
-        // }
-        // else if (this.phone.length < 10) {
-        //     alert("Please enter ten digit phone number!!!");
-        // }
-        if (this.email == "") {
-            alert("Please enter email!!!");
+        if (this.phone == "") {
+            alert("Please enter phone number!!!");
         }
+        else if (this.phone.length < 10) {
+            alert("Please enter ten digit phone number!!!");
+        }
+        // if (this.email == "") {
+        //     alert("Please enter email!!!");
+        // }
         else {
-            this.user.email = this.email;
+            // this.user.email = this.email;
             this.userService.showLoadingState(true);
             this.http
-                .post(Values.BASE_URL + "users/forgotPassword", this.user)
+                .post(Values.BASE_URL + `users/sendSms?phone=${this.phone}`, {})
                 .subscribe((res: any) => {
+                    alert(res);
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             localstorage.setItem('tempToken', res.data.tempToken);
