@@ -7,7 +7,7 @@
 }
 .brand-name{
     font-size:16;
-    color:#E98A02;
+    color:#00C012;
     font-weight:500;
     text-align: center;
 }
@@ -21,7 +21,7 @@
     font-weight:500;
 }
 .pageHeading{
-    color:#E98A02;
+    color:#00C012;
     font-size: 24;
     text-align: center;
     font-weight: 500;
@@ -42,13 +42,13 @@
     border-width:1;
     border-radius:10;
     border-color:white;
-    background-color: #E98A02;
+    background-color: #00C012;
 }
 .addProductButton:highlighted{
     background-color: transparent;
     z-index:500;
-    border-color: #E98A02;
-    color:#E98A02;
+    border-color: #00C012;
+    color:#00C012;
 }
 
 .inactiveButton{
@@ -80,7 +80,7 @@
     height:80%;
     width:95%;
     padding:0;
-    background-color: #E98A02;
+    background-color: #00C012;
     color:white;
     border-color: white;
     z-index:0;
@@ -88,6 +88,6 @@
 .editButton:highlighted{
     background-color: transparent;
     z-index:500;
-    color:#E98A02;
-    border-color: #E98A02;
+    color:#00C012;
+    border-color: #00C012;
 }

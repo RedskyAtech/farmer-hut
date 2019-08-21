@@ -8,6 +8,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from "../../services/user.service";
 import { Category } from "../../models/category.model";
+import { session, Request } from 'nativescript-background-http';
 
 @Component({
     selector: "ns-homeAdmin",
@@ -109,7 +110,7 @@ export class HomeAdminComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        for (var i = 0; i < res.data.length; i++) {
+                        for (var i = this.products.length; i < res.data.length; i++) {
                             this.products.push({
                                 _id: res.data[i]._id,
                                 status: res.data[i].status,
@@ -215,78 +216,95 @@ export class HomeAdminComponent implements OnInit {
     }
 
     onProductInactive(product: Product) {
-        this.product.status = "disabled";
-        this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "products/update/" + product._id, this.product)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.products = [];
-                        this.productCategories = [];
-                        this.getProducts();
-                    }
-                }
-            }, error => {
-                alert(error.error.error);
-            });
+        // this.userService.showLoadingState(true);
+
+
+
+
+
+        // var formBody: FormData = new FormData();
+        // formBody.append('status', 'disabled')
+        // console.log(formBody);
+        // let headers = {
+        //     'Content-Type': 'application/multipart/form-data'
+        // }
+
+        // this.http
+        //     .put(Values.BASE_URL + "products/update/" + product._id, formBody, { headers: headers })
+        //     .subscribe((res: any) => {
+        //         console.trace('RES:::', res)
+        //         if (res != null && res != undefined) {
+        //             if (res.isSuccess == true) {
+        //                 this.userService.showLoadingState(false);
+        //                 this.products = [];
+        //                 this.productCategories = [];
+        //                 this.getProducts();
+        //             }
+        //         }
+        //     }, error => {
+        //         this.userService.showLoadingState(false);
+        //         console.log(error.error);
+        //     });
 
     }
 
     onProductActive(product: Product) {
-        this.product.status = "enabled";
-        this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "products/update/" + product._id, this.product)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.products = [];
-                        this.productCategories = [];
-                        this.getProducts();
-                    }
-                }
-            }, error => {
-                alert(error.error.error);
-            });
+    //     this.userService.showLoadingState(true);
+    //     var formBody: FormData = new FormData();
+    //     formBody.append('status', 'enabled')
+    //     this.http
+    //         .put(Values.BASE_URL + "products/update/" + product._id, formBody)
+    //         .subscribe((res: any) => {
+    //             if (res != null && res != undefined) {
+    //                 if (res.isSuccess == true) {
+    //                     this.userService.showLoadingState(false);
+    //                     this.products = [];
+    //                     this.productCategories = [];
+    //                     this.getProducts();
+    //                 }
+    //             }
+    //         }, error => {
+    //             alert(error.error.error);
+    //         });
     }
 
     onCategoryInactive(category: Category) {
-        this.category.status = "inactive";
-        this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "categories/update/" + category._id, this.category)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.productCategories = [];
-                        this.getCategories();
-                    }
-                }
-            }, error => {
-                alert(error.error.error);
-            });
+    //     // this.category.status = "inactive";
+    //     this.userService.showLoadingState(true);
+    //     var formBody: FormData = new FormData();
+    //     formBody.append('status', 'inactive')
+    //     this.http
+    //         .put(Values.BASE_URL + "categories/update/" + category._id, formBody)
+    //         .subscribe((res: any) => {
+    //             if (res != null && res != undefined) {
+    //                 if (res.isSuccess == true) {
+    //                     this.userService.showLoadingState(false);
+    //                     this.productCategories = [];
+    //                     this.getCategories();
+    //                 }
+    //             }
+    //         }, error => {
+    //             alert(error.error.error);
+    //         });
     }
 
     onCategoryActive(category: Category) {
-        this.category.status = "active";
-        this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "categories/update/" + category._id, this.category)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.productCategories = [];
-                        this.getCategories();
-                    }
-                }
-            }, error => {
-                alert(error.error.error);
-            });
+        // this.userService.showLoadingState(true);
+        // var formBody: FormData = new FormData();
+        // formBody.append('status', 'active')
+        // this.http
+        //     .put(Values.BASE_URL + "categories/update/" + category._id, formBody)
+        //     .subscribe((res: any) => {
+        //         if (res != null && res != undefined) {
+        //             if (res.isSuccess == true) {
+        //                 this.userService.showLoadingState(false);
+        //                 this.productCategories = [];
+        //                 this.getCategories();
+        //             }
+        //         }
+        //     }, error => {
+        //         alert(error.error.error);
+        //     });
     }
 
 }

@@ -7,6 +7,7 @@ import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import * as localstorage from "nativescript-localstorage";
 import { ModalComponent } from "~/app/modals/modal.component";
+import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: "ns-register",
@@ -17,6 +18,7 @@ import { ModalComponent } from "~/app/modals/modal.component";
 export class RegisterComponent implements OnInit {
 
     @ViewChild('userVerifyDialog') userVerifyDialog: ModalComponent;
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     nameBorderColor = "white";
     emailBorderColor = "white";
@@ -24,7 +26,7 @@ export class RegisterComponent implements OnInit {
     passwordBorderColor = "white";
     rePasswordBorderColor = "white";
     nameHint = "Full name";
-    emailHint = "Email";
+    emailHint = "Email (optional)";
     phoneHint = "Phone number";
     passwordHint = "Password";
     rePasswordHint = "Repeat password";
@@ -34,16 +36,18 @@ export class RegisterComponent implements OnInit {
     password = "";
     rePassword = "";
     user: User;
+    errorMessage: string;
 
-    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private router: Router, private http: HttpClient, private userService: UserService) {
         this.user = new User();
+        this.errorMessage = "";
     }
 
     ngOnInit(): void {
     }
 
     onNameTextChanged(args) {
-        this.nameBorderColor = "#E98A02";
+        this.nameBorderColor = "#00C012";
         this.emailBorderColor = "white";
         this.phoneBorderColor = "white";
         this.passwordBorderColor = "white";
@@ -52,7 +56,7 @@ export class RegisterComponent implements OnInit {
     }
     onEmailTextChanged(args) {
         this.nameBorderColor = "white";
-        this.emailBorderColor = "#E98A02";
+        this.emailBorderColor = "#00C012";
         this.phoneBorderColor = "white";
         this.passwordBorderColor = "white";
         this.rePasswordBorderColor = "white";
@@ -61,7 +65,7 @@ export class RegisterComponent implements OnInit {
     onPhoneTextChanged(args) {
         this.nameBorderColor = "white";
         this.emailBorderColor = "white";
-        this.phoneBorderColor = "#E98A02"
+        this.phoneBorderColor = "#00C012"
         this.passwordBorderColor = "white";
         this.rePasswordBorderColor = "white";
         this.phone = args.object.text.toLowerCase();
@@ -70,7 +74,7 @@ export class RegisterComponent implements OnInit {
         this.nameBorderColor = "white";
         this.emailBorderColor = "white";
         this.phoneBorderColor = "white";
-        this.passwordBorderColor = "#E98A02"
+        this.passwordBorderColor = "#00C012"
         this.rePasswordBorderColor = "white";
         this.password = args.object.text.toLowerCase();
     }
@@ -79,32 +83,49 @@ export class RegisterComponent implements OnInit {
         this.emailBorderColor = "white";
         this.phoneBorderColor = "white";
         this.passwordBorderColor = "white";
-        this.rePasswordBorderColor = "#E98A02"
+        this.rePasswordBorderColor = "#00C012"
         this.rePassword = args.object.text.toLowerCase();
+    }
+    onOK() {
+        this.warningDialog.hide();
     }
 
     onRegister() {
         // this.userVerifyDialog.show();
         if (this.name == "") {
-            alert("Please enter name!!!");
+            this.errorMessage = "Please enter name.";
+            this.warningDialog.show();
+            // alert("Please enter name!!!");
         }
         else if (!(this.name.match("^[a-zA-Z ]*$"))) {
-            alert("Name contains characters only!!!");
+            this.errorMessage = "Name contains characters only.";
+            this.warningDialog.show();
+            // alert("Name contains characters only!!!");
         }
         else if (this.phone == "") {
-            alert("Please enter phone number!!!");
+            this.errorMessage = "Please enter phone number.";
+            this.warningDialog.show();
+            // alert("Please enter phone number!!!");
         }
         else if (this.phone.length < 10) {
-            alert("Please enter ten digit phone number!!!");
+            this.errorMessage = "Please enter ten digit phone number.";
+            this.warningDialog.show();
+            // alert("Please enter ten digit phone number!!!");
         }
         else if (this.password == "") {
-            alert("Please enter password!!!");
+            this.errorMessage = "Please enter password.";
+            this.warningDialog.show();
+            // alert("Please enter password!!!");
         }
         else if (this.rePassword == "") {
-            alert("Please enter repeat password!!!");
+            this.errorMessage = "Please enter repeat password.";
+            this.warningDialog.show();
+            // alert("Please enter repeat password!!!");
         }
         else if (this.password != this.rePassword) {
-            alert("Password and repeat password should be same!!!");
+            this.errorMessage = "Password and repeat password should be same.";
+            this.warningDialog.show();
+            // alert("Password and repeat password should be same!!!");
         }
         else {
             this.userService.showLoadingState(true);
@@ -117,12 +138,18 @@ export class RegisterComponent implements OnInit {
             this.http
                 .post(Values.BASE_URL + "users", this.user)
                 .subscribe((res: any) => {
-                    console.log(res);
                     if (res != "" && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             localstorage.setItem('regToken', res.data.regToken);
-                            this.routerExtensions.navigate(['./confirmPhone']);
+                            let navigationExtras: NavigationExtras = {
+                                queryParams: {
+                                    "name": this.name,
+                                    "phone": this.phone,
+                                    "password": this.password
+                                },
+                            };
+                            this.router.navigate(['./confirmPhone'], navigationExtras);
                         }
                     }
                 }, error => {
@@ -141,7 +168,7 @@ export class RegisterComponent implements OnInit {
                         this.userService.showLoadingState(false);
                         this.userVerifyDialog.hide();
                         localstorage.setItem('regToken', res.data.regToken);
-                        this.routerExtensions.navigate(['./confirmPhone']);
+                        this.router.navigate(['./confirmPhone']);
                     }
                 }
             }, error => {
@@ -155,6 +182,6 @@ export class RegisterComponent implements OnInit {
     }
 
     onLogin() {
-        this.routerExtensions.navigate(['./login']);
+        this.router.navigate(['./login']);
     }
 }

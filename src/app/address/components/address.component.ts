@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import * as geolocation from "nativescript-geolocation";
 import { Accuracy } from "tns-core-modules/ui/enums";
@@ -13,6 +13,7 @@ import { Address } from "../../models/address.model";
 import * as Toast from 'nativescript-toast';
 import { UserService } from "../../services/user.service";
 import { DeliveryAddress } from "../../models/delivery-address.model";
+import { ModalComponent } from "~/app/modals/modal.component";
 let directions = new Directions();
 
 @Component({
@@ -22,12 +23,13 @@ let directions = new Directions();
     styleUrls: ["./address.component.css"]
 })
 export class AddressComponent implements OnInit {
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     addressBorderColor = "white";
     mapAddressBorderColor = "white";
-    cityBorderColor = "#E98A02";
-    districtBorderColor = "#E98A02";
-    stateBorderColor = "#E98A02";
+    cityBorderColor = "#00C012";
+    districtBorderColor = "#00C012";
+    stateBorderColor = "#00C012";
     // pincodeBorderColor = "white";
     addressHint = "Address (House/Street/Town)";
     mapAddressHint = "Map Address";
@@ -46,6 +48,7 @@ export class AddressComponent implements OnInit {
     userId: string;
     from: string;
     adminId: string;
+    errorMessage: string;
 
     constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router, private userService: UserService) {
         this.user = new User();
@@ -62,6 +65,7 @@ export class AddressComponent implements OnInit {
         // });
         this.city = "Abohar";
         this.district = "Fazilka";
+        this.errorMessage = "";
 
         this.route.queryParams.subscribe(params => {
             if (params["from"] != "") {
@@ -80,17 +84,21 @@ export class AddressComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    onOK() {
+        this.warningDialog.hide();
+    }
+
     onAddressTextChanged(args) {
-        this.addressBorderColor = "#E98A02";
+        this.addressBorderColor = "#00C012";
         this.address = args.object.text;
     }
     onMapAddressTextChanged(args) {
-        this.mapAddressBorderColor = "#E98A02";
+        this.mapAddressBorderColor = "#00C012";
         this.mapAddress = args.object.text;
     }
     // onCityTextChanged(args) {
     //     this.addressBorderColor = "white";
-    //     this.cityBorderColor = "#E98A02";
+    //     this.cityBorderColor = "#00C012";
     //     this.districtBorderColor = "white";
     //     this.stateBorderColor = "white";
     //     this.pincodeBorderColor = "white";
@@ -99,7 +107,7 @@ export class AddressComponent implements OnInit {
     // onDistrictTextChanged(args) {
     //     this.addressBorderColor = "white";
     //     this.cityBorderColor = "white";
-    //     this.districtBorderColor = "#E98A02";
+    //     this.districtBorderColor = "#00C012";
     //     this.stateBorderColor = "white";
     //     this.pincodeBorderColor = "white";
     //     this.district = args.object.text.toLowerCase();
@@ -108,7 +116,7 @@ export class AddressComponent implements OnInit {
     //     this.addressBorderColor = "white";
     //     this.cityBorderColor = "white";
     //     this.districtBorderColor = "white";
-    //     this.stateBorderColor = "#E98A02";
+    //     this.stateBorderColor = "#00C012";
     //     this.pincodeBorderColor = "white";
     //     this.state = args.object.text.toLowerCase();
     // }
@@ -117,7 +125,7 @@ export class AddressComponent implements OnInit {
     //     this.cityBorderColor = "white";
     //     this.districtBorderColor = "white";
     //     this.stateBorderColor = "white";
-    //     this.pincodeBorderColor = "#E98A02";
+    //     this.pincodeBorderColor = "#00C012";
     //     this.pincode = args.object.text.toLowerCase();
     // }
 
@@ -171,10 +179,14 @@ export class AddressComponent implements OnInit {
 
     onAddAddress() {
         if (this.address == "") {
-            alert("Please enter address!!!");
+            this.errorMessage = "Please enter address.";
+            this.warningDialog.show();
+            // alert("Please enter address!!!");
         }
         else if (this.mapAddress == "") {
-            alert("Please select map address!!!");
+            this.errorMessage = "Please select map address.";
+            this.warningDialog.show();
+            // alert("Please select map address!!!");
         }
         else {
             this.userService.showLoadingState(true);

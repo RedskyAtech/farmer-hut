@@ -24,22 +24,31 @@ import * as Toast from 'nativescript-toast';
 export class AddSliderComponent implements OnInit {
 
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     sliderImage: string;
     private imageCropper: ImageCropper;
     imageUrl: any;
     product: Product;
+    showAddButton: boolean;
+    errorMessage: string;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
-        this.sliderImage = "res://image_icon";
+        this.sliderImage = "res://add_image_icon";
         this.product = new Product();
         this.product.image = new Image();
         this.userService.showLoadingState(false);
+        this.showAddButton = false;
+        this.errorMessage = "";
     }
 
     ngOnInit(): void {
+    }
+
+    onOK() {
+        this.warningDialog.hide();
     }
 
     onBack() {
@@ -87,8 +96,11 @@ export class AddSliderComponent implements OnInit {
                     image.fromAsset(selected).then((source) => {
                         that.imageCropper.show(source, { lockSquare: true }).then((args) => {
                             if (args.image !== null) {
-                                that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
+                                that.imageUrl = args.image.toBase64String('png', 10);
+                                that.imageUrl = that.imageUrl.replace(/\=/g, "");
+                                that.imageUrl = 'data:image/png;base64,' + that.imageUrl;
                                 that.sliderImage = that.imageUrl;
+                                that.showAddButton = true;
                             }
                         })
                             .catch(function (e) {
@@ -113,8 +125,11 @@ export class AddSliderComponent implements OnInit {
                             source.fromAsset(imageAsset).then((source) => {
                                 this.imageCropper.show(source, { lockSquare: true }).then((args) => {
                                     if (args.image !== null) {
-                                        that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
+                                        that.imageUrl = args.image.toBase64String('png', 10);
+                                        that.imageUrl = that.imageUrl.replace(/\=/g, "");
+                                        that.imageUrl = 'data:image/png;base64,' + that.imageUrl;
                                         that.sliderImage = that.imageUrl;
+                                        that.showAddButton = true;
                                     }
                                 })
                                     .catch(function (e) {
@@ -132,35 +147,41 @@ export class AddSliderComponent implements OnInit {
     }
 
     onAddToSlider() {
-        this.product.image.url = this.imageUrl;
-        if (this.product.image.url != null) {
-            this.userService.showLoadingState(true);
-            this.http
-                .get(Values.BASE_URL + "files")
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            var id = res.data[0]._id;
-                            this.http
-                                .put(Values.BASE_URL + "files/update/" + id, this.product)
-                                .subscribe((res: any) => {
-                                    if (res != null && res != undefined) {
-                                        if (res.isSuccess == true) {
-                                            this.userService.showLoadingState(false);
-                                            Toast.makeText("Image is added successfully!!!", "long").show();
-                                            this.router.navigate(['./homeAdmin']);
+        if (this.imageUrl == null) {
+            this.warningDialog.show();
+            this.errorMessage = "Please select slider image.";
+        }
+        else {
+            this.product.image.url = this.imageUrl;
+            if (this.product.image.url != null) {
+                this.userService.showLoadingState(true);
+                this.http
+                    .get(Values.BASE_URL + "files")
+                    .subscribe((res: any) => {
+                        if (res != null && res != undefined) {
+                            if (res.isSuccess == true) {
+                                var id = res.data[0]._id;
+                                this.http
+                                    .put(Values.BASE_URL + "files/update/" + id, this.product)
+                                    .subscribe((res: any) => {
+                                        if (res != null && res != undefined) {
+                                            if (res.isSuccess == true) {
+                                                this.userService.showLoadingState(false);
+                                                Toast.makeText("Image is added successfully!!!", "long").show();
+                                                this.router.navigate(['./homeAdmin']);
+                                            }
                                         }
-                                    }
-                                }, error => {
-                                    this.userService.showLoadingState(false);
-                                    alert(error.error.error);
-                                });
+                                    }, error => {
+                                        this.userService.showLoadingState(false);
+                                        alert(error.error.error);
+                                    });
+                            }
                         }
-                    }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    console.log(error.error.error);
-                });
+                    }, error => {
+                        this.userService.showLoadingState(false);
+                        console.log(error.error.error);
+                    });
+            }
         }
     }
 }

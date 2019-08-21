@@ -10,7 +10,7 @@
     width:30;
 }
 .pageHeading{
-    color:#E98A02;
+    color:#00C012;
     font-size: 24;
     text-align: center;
     font-weight: 500;
@@ -21,7 +21,7 @@
 }
 .orderIdDetail{
     font-size: 18;
-    color:#E98A02;
+    color:#00C012;
 }
 .status{
     font-size: 20;
@@ -38,12 +38,12 @@
     padding:0;
     background-color: transparent;
     z-index:0;
-    border-color: #E98A02;
+    border-color: #00C012;
     border-width: 1;
     border-radius:5;
 }
 .viewDetailButton:highlighted{
-    background-color: #E98A02;
+    background-color: #00C012;
     color:white;
     border-color:white;
 }

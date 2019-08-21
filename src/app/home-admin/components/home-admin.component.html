@@ -15,7 +15,7 @@
             <GridLayout col="0" width="70%" height="100%">
                 <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
                     android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="80%"
-                    width="90%" indicatorColor="#E98A02" android:indicatorAnimation="drop"
+                    width="90%" indicatorColor="#00C012" android:indicatorAnimation="drop"
                     indicatorColorUnselected="#D4D4D4">
                     <CarouselItem>
                         <StackLayout width="100%" height="100%">
@@ -44,10 +44,10 @@
             </GridLayout>
         </GridLayout>
         <TabView *ngIf="isRenderingProducts" row="2" [selectedIndex]="tabSelectedIndex" width="100%" height="67%"
-            selectedTabTextColor="white" tabTextColor="#E98A02" tabTextFontSize="14" androidOffscreenTabLimit='2'
-            androidSelectedTabHighlightColor="#E98A02" tabBackgroundColor="transparent"
+            selectedTabTextColor="white" tabTextColor="#00C012" tabTextFontSize="14" androidOffscreenTabLimit='2'
+            androidSelectedTabHighlightColor="#00C012" tabBackgroundColor="transparent"
             (selectedIndexChanged)="onSelectedIndexChanged($event)">
-            <StackLayout *tabItem="{title: 'Products'}">
+            <StackLayout *tabItem="{title: 'Farmer\'s Hut   Products'}">
                 <GridLayout rows="auto">
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
@@ -69,22 +69,21 @@
                                             <Image [src]="item.image" stretch="aspectFit" width="100vw" height="100vh">
                                             </Image>
                                         </StackLayout>
-                                        <GridLayout col="1" rows="auto,auto,auto" height="100%" width="60%">
+                                        <GridLayout col="1" rows="auto,auto,auto,auto" height="100%" width="60%">
                                             <StackLayout row="0" height="20%" width="100%" verticalAlignment="middle">
                                                 <Label class="product-name" textWrap="true" [text]="item.name"></Label>
                                             </StackLayout>
-                                            <StackLayout row="1" height="20%" width="100%"
-                                            verticalAlignment="middle">
-                                            <Label class="product-heading" textWrap="true"
-                                                [text]="item.heading"></Label>
-                                        </StackLayout>
+                                            <StackLayout row="1" height="20%" width="100%" verticalAlignment="middle">
+                                                <Label class="product-heading" textWrap="true"
+                                                    [text]="item.heading"></Label>
+                                            </StackLayout>
                                             <GridLayout row="2" columns="auto,auto" width="100%" height="25%">
                                                 <StackLayout col="0" height="100%" width="40%">
-                                                    <Label width="100%" color="#E98A02" fontSize="14"
+                                                    <Label width="100%" color="#00C012" fontSize="14"
                                                         [text]="item.weight"></Label>
                                                 </StackLayout>
                                                 <StackLayout col="1" height="100%" width="60%">
-                                                    <Label width="100%" color="#E98A02" fontSize="14"
+                                                    <Label width="100%" color="#00C012" fontSize="14"
                                                         [text]="item.price"></Label>
                                                 </StackLayout>
                                             </GridLayout>
@@ -92,17 +91,17 @@
                                                 <StackLayout col="0" height="100%" width="50%"
                                                     verticalAlignment="middle">
                                                     <Button class="inactiveButton" text="Inactive"
-                                                        [backgroundColor]="item.status=='disabled'?'#E98A02':'white'"
-                                                        [color]="item.status=='disabled'?'white':'#E98A02'"
-                                                        [borderColor]="item.status=='disabled'?'white':'#E98A02'"
+                                                        [backgroundColor]="item.status=='disabled'?'#00C012':'white'"
+                                                        [color]="item.status=='disabled'?'white':'#00C012'"
+                                                        [borderColor]="item.status=='disabled'?'white':'#00C012'"
                                                         (tap)="onProductInactive(item)"></Button>
                                                 </StackLayout>
                                                 <StackLayout col="1" height="100%" width="50%"
                                                     verticalAlignment="middle">
                                                     <Button class="activeButton" text="Active"
-                                                        [backgroundColor]="item.status=='enabled'?'#E98A02':'white'"
-                                                        [color]="item.status=='enabled'?'white':'#E98A02'"
-                                                        [borderColor]="item.status=='enabled'?'white':'#E98A02'"
+                                                        [backgroundColor]="item.status=='enabled'?'#00C012':'white'"
+                                                        [color]="item.status=='enabled'?'white':'#00C012'"
+                                                        [borderColor]="item.status=='enabled'?'white':'#00C012'"
                                                         (tap)="onProductActive(item)"></Button>
                                                 </StackLayout>
                                             </GridLayout>
@@ -114,7 +113,7 @@
                     </GridLayout>
                 </GridLayout>
             </StackLayout>
-            <StackLayout *tabItem="{title: 'Similar Products'}">
+            <StackLayout *tabItem="{title: 'Other Brands Products'}">
                 <GridLayout rows="auto">
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="productCategories" colWidth="40%" rowHeight="45%" width="100%" height="100%"
@@ -137,16 +136,16 @@
                                     <GridLayout row="3" width="90%" height="15%" columns="auto,auto">
                                         <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
                                             <Button class="inactiveButton" text="Inactive"
-                                                [backgroundColor]="item.status=='inactive'?'#E98A02':'white'"
-                                                [color]="item.status=='inactive'?'white':'#E98A02'"
-                                                [borderColor]="item.status=='inactive'?'white':'#E98A02'"
+                                                [backgroundColor]="item.status=='inactive'?'#00C012':'white'"
+                                                [color]="item.status=='inactive'?'white':'#00C012'"
+                                                [borderColor]="item.status=='inactive'?'white':'#00C012'"
                                                 (tap)="onCategoryInactive(item)"></Button>
                                         </StackLayout>
                                         <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
                                             <Button class="activeButton" text="Active"
-                                                [backgroundColor]="item.status=='active'?'#E98A02':'white'"
-                                                [color]="item.status=='active'?'white':'#E98A02'"
-                                                [borderColor]="item.status=='active'?'white':'#E98A02'"
+                                                [backgroundColor]="item.status=='active'?'#00C012':'white'"
+                                                [color]="item.status=='active'?'white':'#00C012'"
+                                                [borderColor]="item.status=='active'?'white':'#00C012'"
                                                 (tap)="onCategoryActive(item)"></Button>
                                         </StackLayout>
                                     </GridLayout>

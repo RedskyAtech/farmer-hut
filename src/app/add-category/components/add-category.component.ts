@@ -12,6 +12,9 @@ import { HttpClient } from "@angular/common/http";
 import { Image } from "~/app/models/image.model";
 import { ModalComponent } from "../../../app/modals/modal.component";
 import { UserService } from "../../../app/services/user.service";
+import { registerElement } from "nativescript-angular/element-registry";
+import { session, Request } from 'nativescript-background-http';
+import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
 
 @Component({
     selector: "ns-addCategory",
@@ -23,8 +26,9 @@ import { UserService } from "../../../app/services/user.service";
 export class AddCategoryComponent implements OnInit {
 
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
-    categoryImage: string = "res://image_icon";
+    categoryImage: string = "res://add_image_icon";
     categoryBorderColor: string;
     categoryHint = "Category name";
     categoryName = "";
@@ -33,6 +37,12 @@ export class AddCategoryComponent implements OnInit {
     category: Category;
     categoryId: string;
     type: string;
+    showAddButton: boolean;
+    errorMessage: string;
+    file: any;
+    url: string;
+    name: string;
+    extension: string;
 
     constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
         this.categoryBorderColor = "white"
@@ -40,6 +50,10 @@ export class AddCategoryComponent implements OnInit {
         this.imageUrl = null;
         this.category = new Category();
         this.category.image = new Image();
+        this.showAddButton = true;
+        this.errorMessage = "";
+        this.userService.showLoadingState(false);
+        this.extension = 'jpg';
 
         this.route.queryParams.subscribe(params => {
             if (params["categoryId"] != undefined) {
@@ -60,7 +74,7 @@ export class AddCategoryComponent implements OnInit {
                             this.userService.showLoadingState(false);
                             this.categoryImage = res.data.image.url;
                             this.categoryName = res.data.name
-                            this.categoryBorderColor = "#E98A02";
+                            this.categoryBorderColor = "#00C012";
                         }
                     }
                 }, error => {
@@ -70,6 +84,10 @@ export class AddCategoryComponent implements OnInit {
     }
 
     ngOnInit(): void {
+    }
+
+    onOK() {
+        this.warningDialog.hide();
     }
 
     onBack() {
@@ -82,8 +100,11 @@ export class AddCategoryComponent implements OnInit {
     }
 
     onCategoryTextChanged(args) {
-        this.categoryBorderColor = "#E98A02";
+        this.categoryBorderColor = "#00C012";
         this.categoryName = args.object.text;
+        if (this.imageUrl != null) {
+            this.showAddButton = true;
+        }
     }
 
     onUploadImage() {
@@ -103,12 +124,18 @@ export class AddCategoryComponent implements OnInit {
             })
             .then(selection => {
                 selection.forEach(function (selected) {
+                    that.showAddButton = true;
                     var image = new ImageSource();
                     image.fromAsset(selected).then((source) => {
-                        that.imageCropper.show(source, { lockSquare: true }).then((args) => {
+                        that.imageCropper.show(source, { lockSquare: true }).then((args: any) => {
                             if (args.image !== null) {
-                                that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
-                                that.categoryImage = that.imageUrl;
+                                var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
+                                var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                args.image.saveToFile(file.path, 'jpg');
+                                that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+                                that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+                                that.categoryImage = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
                             }
                         })
                             .catch(function (e) {
@@ -128,13 +155,18 @@ export class AddCategoryComponent implements OnInit {
             permissions.requestPermission([android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE])
                 .then(() => {
                     camera.takePicture({ width: 512, height: 512, keepAspectRatio: true })
-                        .then((imageAsset) => {
+                        .then((selected) => {
                             let source = new ImageSource();
-                            source.fromAsset(imageAsset).then((source) => {
+                            source.fromAsset(selected).then((source) => {
                                 this.imageCropper.show(source, { lockSquare: true }).then((args) => {
                                     if (args.image !== null) {
-                                        that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
-                                        that.categoryImage = that.imageUrl;
+                                        var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
+                                        var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                        args.image.saveToFile(file.path, 'jpg');
+                                        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+                                        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+                                        that.categoryImage = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
                                     }
                                 })
                                     .catch(function (e) {
@@ -152,58 +184,118 @@ export class AddCategoryComponent implements OnInit {
     }
 
     onAddCategory() {
-        if (this.categoryName == "") {
-            alert("Please enter category name!!!")
+        if (this.file == null) {
+            this.errorMessage = "Please select category image.";
+            this.warningDialog.show();
+            // alert("Please select category image!!!");
         }
-        else if (this.imageUrl == "") {
-            alert("Please select category image!!!");
+        else if (this.categoryName == "") {
+            this.errorMessage = "Please enter category name.";
+            this.warningDialog.show();
+            // alert("Please enter category name!!!")
         }
         else {
-            this.category.name = this.categoryName;
-            this.category.image.url = this.imageUrl;
+            // this.category.name = this.categoryName;
+            // this.category.image.url = this.imageUrl;
             this.userService.showLoadingState(true);
-
+            var that = this;
+            var mimeType = "image/" + this.extension;
+            var uploadSession = session('image-upload');
             if (this.type == "edit") {
-                this.http
-                    .put(Values.BASE_URL + "categories/update/" + this.categoryId, this.category)
-                    .subscribe((res: any) => {
-                        if (res != null && res != undefined) {
-                            if (res.isSuccess == true) {
-                                this.userService.showLoadingState(false);
-                                let navigationExtras: NavigationExtras = {
-                                    queryParams: {
-                                        "index": "1"
-                                    },
-                                };
-                                this.router.navigate(['./homeAdmin'], navigationExtras);
-                            }
-                        }
-                    }, error => {
-                        this.userService.showLoadingState(false);
-                        alert(error.error.error);
-                    });
+                var request = {
+                    url: Values.BASE_URL + "categories/update/",
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/octet-stream",
+                        "File-Name": that.name
+                    },
+                    description: "{'uploading':" + that.name + "}"
+                }
+                const params = [
+                    { name: "file", filename: that.file, mimeType: mimeType },
+                    { name: "name", value: that.categoryName },
+                ]
+                console.log(params);
+                console.log(request);
+                var task = uploadSession.multipartUpload(params, request);
+                that.userService.showLoadingState(false);
+                task.on("Responded", this.respondedEvent);
+                task.on("Error", this.errorEvent);
+                task.on("Complete", this.completeEvent);
+                // this.http
+                //     .put(Values.BASE_URL + "categories/update/" + this.categoryId, this.category)
+                //     .subscribe((res: any) => {
+                //         if (res != null && res != undefined) {
+                //             if (res.isSuccess == true) {
+                //                 this.userService.showLoadingState(false);
+                //                 let navigationExtras: NavigationExtras = {
+                //                     queryParams: {
+                //                         "index": "1"
+                //                     },
+                //                 };
+                //                 this.router.navigate(['./homeAdmin'], navigationExtras);
+                //             }
+                //         }
+                //     }, error => {
+                //         this.userService.showLoadingState(false);
+                //         alert(error.error.error);
+                //     });
             }
             else {
-                this.http
-                    .post(Values.BASE_URL + "categories/", this.category)
-                    .subscribe((res: any) => {
-                        if (res != null && res != undefined) {
-                            if (res.isSuccess == true) {
-                                this.userService.showLoadingState(false);
-                                let navigationExtras: NavigationExtras = {
-                                    queryParams: {
-                                        "index": "1"
-                                    },
-                                };
-                                this.router.navigate(['./homeAdmin'], navigationExtras);
-                            }
-                        }
-                    }, error => {
-                        this.userService.showLoadingState(false);
-                        alert(error.error.error);
-                    });
+                var request = {
+                    url: Values.BASE_URL + "categories",
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/octet-stream",
+                        "File-Name": that.name
+                    },
+                    description: "{'uploading':" + that.name + "}"
+                }
+                const params = [
+                    { name: "file", filename: that.file, mimeType: mimeType },
+                    { name: "name", value: that.categoryName },
+                ]
+                console.log(params);
+                console.log(request);
+                var task = uploadSession.multipartUpload(params, request);
+                that.userService.showLoadingState(false);
+                task.on("Responded", this.respondedEvent);
+                task.on("Error", this.errorEvent);
+                task.on("Complete", this.completeEvent);
+
+                // this.http
+                //     .post(Values.BASE_URL + "categories/", this.category)
+                //     .subscribe((res: any) => {
+                //         if (res != null && res != undefined) {
+                //             if (res.isSuccess == true) {
+                //                 this.userService.showLoadingState(false);
+                //                 let navigationExtras: NavigationExtras = {
+                //                     queryParams: {
+                //                         "index": "1"
+                //                     },
+                //                 };
+                //                 this.router.navigate(['./homeAdmin'], navigationExtras);
+                //             }
+                //         }
+                //     }, error => {
+                //         this.userService.showLoadingState(false);
+                //         alert(error.error.error);
+                //     });
             }
         }
+    }
+
+    respondedEvent(e) {
+        console.log("RESPONSE: " + e.data);
+    }
+
+    errorEvent(e) {
+        console.log("Error is: " + JSON.stringify(e));
+    }
+
+    completeEvent(e) {
+        var that = this;
+        console.log("Completed :" + JSON.stringify(e));
     }
 
     onOutsideClick() {

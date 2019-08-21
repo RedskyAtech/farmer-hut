@@ -7,7 +7,7 @@
 }
 .brand-name{
     font-size:16;
-    color:#E98A02;
+    color:#00C012;
     font-weight:500;
 }
 .backButton{
@@ -26,11 +26,11 @@
 }
 .product-heading{
     font-size:16;
-    color:#E98A02;
+    color:#00C012;
     font-weight:500;
 }
 .pageHeading{
-    color:#E98A02;
+    color:#00C012;
     font-size: 24;
     text-align: center;
     font-weight: 500;
@@ -40,9 +40,9 @@
     height:30;
 }
 .addCartButton{
-    border-color:#E98A02;
+    border-color:#00C012;
     border-width:1;
-    color:#E98A02;
+    color:#00C012;
     font-size: 14;
     text-transform: initial;
     text-align: center;
@@ -53,7 +53,7 @@
     /* z-index:500; */
 }
 .addCartButton:highlighted{
-    background-color: #E98A02;
+    background-color: #00C012;
     border-color: white;
     color:white;
 }
@@ -67,11 +67,11 @@
     height:80%;
     width:95%;
     padding:0;
-    background-color: #E98A02;
+    background-color: #00C012;
 }
 .viewDetailButton:highlighted{
     background-color: transparent;
     z-index:500;
-    border-color: #E98A02;
-    color:#E98A02;
+    border-color: #00C012;
+    color:#00C012;
 }

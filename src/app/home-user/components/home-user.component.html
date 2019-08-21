@@ -12,13 +12,13 @@
             </StackLayout>
             <StackLayout *ngIf="isCartCount" col="2" verticalAlignment="middle" width="20" height="20"
                 backgroundColor="white" borderRadius="10" marginBottom="15" marginLeft="15">
-                <Label color="#E98A02" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
+                <Label color="#00C012" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
         <GridLayout *ngIf="isRenderingSlider" row="1" height="25%" width="100%">
             <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
                 android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="100%"
-                width="100%" indicatorColor="#E98A02" android:indicatorAnimation="drop"
+                width="100%" indicatorColor="#00C012" android:indicatorAnimation="drop"
                 indicatorColorUnselected="#D4D4D4">
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
@@ -43,11 +43,11 @@
             </Carousel>
         </GridLayout>
         <TabView row="2" *ngIf="isRenderingTabView" [(ngModel)]="tabSelectedIndex" [selectedIndex]="tabSelectedIndex"
-            width="100%" height="67%" selectedTabTextColor="white" tabTextColor="#E98A02" tabTextFontSize="14"
-            androidOffscreenTabLimit='2' androidSelectedTabHighlightColor="#E98A02" tabBackgroundColor="transparent"
+            width="100%" height="67%" selectedTabTextColor="white" tabTextColor="#00C012" tabTextFontSize="14"
+            androidOffscreenTabLimit='2' androidSelectedTabHighlightColor="#00C012" tabBackgroundColor="transparent"
             (selectedIndexChanged)="onSelectedIndexChanged($event)">
-            <StackLayout *tabItem="{title: 'Products'}">
-                <PullToRefresh (refresh)="refreshPage($event)">
+            <StackLayout *tabItem="{title: 'Farmer\'s Hut   Products'}">
+                <!-- <PullToRefresh (refresh)="refreshPage($event)"> -->
                     <GridLayout rows="auto">
                         <GridLayout row="0" height="100%" width="100%">
                             <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
@@ -79,11 +79,11 @@
                                                 </StackLayout>
                                                 <GridLayout row="2" columns="auto,auto" width="100%" height="25%">
                                                     <StackLayout col="0" height="100%" width="50%">
-                                                        <Label width="100%" color="#E98A02" fontSize="14"
+                                                        <Label width="100%" color="#00C012" fontSize="14"
                                                             [text]="item.weight"></Label>
                                                     </StackLayout>
                                                     <StackLayout col="1" height="100%" width="50%">
-                                                        <Label width="100%" color="#E98A02" fontSize="14"
+                                                        <Label width="100%" color="#00C012" fontSize="14"
                                                             [text]="item.price"></Label>
                                                     </StackLayout>
                                                 </GridLayout>
@@ -106,9 +106,9 @@
                             </GridView>
                         </GridLayout>
                     </GridLayout>
-                </PullToRefresh>
+                <!-- </PullToRefresh> -->
             </StackLayout>
-            <StackLayout *tabItem="{title: 'Similar Products'}">
+            <StackLayout *tabItem="{title: 'Other Brand Products'}">
                 <GridLayout rows="auto">
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="productCategories" colWidth="35%" rowHeight="40%" width="100%" height="100%"

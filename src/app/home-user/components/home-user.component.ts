@@ -79,11 +79,11 @@ export class HomeUserComponent implements OnInit {
 
     }
 
-    refreshPage(args) {
-        this.pullRefreshPage = args.object;
-        this.pullRefreshPage.refreshing = true;
-        this.getProducts();
-    }
+    // refreshPage(args) {
+    //     this.pullRefreshPage = args.object;
+    //     this.pullRefreshPage.refreshing = true;
+    //     this.getProducts();
+    // }
 
     ngOnInit(): void {
     }
@@ -184,7 +184,6 @@ export class HomeUserComponent implements OnInit {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         if (res.data.products.length != 0) {
-                            console.log(res.data.products.length);
                             this.isCartCount = true;
                             this.cartCount = res.data.products.length;
                         }

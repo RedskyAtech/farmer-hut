@@ -116,7 +116,7 @@ export class MyOrderDetailComponent implements OnInit {
     }
 
     onBack() {
-        this.router.navigate(['/profile']);
+        this.router.navigate(['/myOrders']);
     }
 
     onCancelOrder() {

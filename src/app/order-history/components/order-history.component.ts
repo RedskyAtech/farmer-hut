@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import * as localstorage from "nativescript-localstorage";
+import * as application from "tns-core-modules/application";
 
 @Component({
     selector: "ns-orderHistory",
@@ -28,6 +29,11 @@ export class OrderHistoryComponent implements OnInit {
         this.status = "Delivered";
         this.isRenderingHistory = false;
         this.isRenderingMessage = false;
+
+        application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
+            this.router.navigate(['/profile']);
+            return;
+        });
 
         if (localstorage.getItem("userType") != null) {
             this.userType = localstorage.getItem("userType");

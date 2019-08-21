@@ -6,7 +6,7 @@
     height:100%;
 }
 .pageHeading{
-    color:#E98A02;
+    color:#00C012;
     font-size: 20;
     text-align: center;
     font-weight: 500;
@@ -17,7 +17,7 @@
 }
 .brand-name{
     font-size:16;
-    color:#E98A02;
+    color:#00C012;
     font-weight:500;
     width:100%;
     text-align: center;
@@ -29,7 +29,7 @@
 }
 .product-heading{
     font-size:14;
-    color:#E98A02;
+    color:#00C012;
     font-weight:500;
 }
 .addButton{
@@ -44,13 +44,13 @@
     border-width:1;
     border-radius:10;
     border-color:white;
-    background-color: #E98A02;
+    background-color: #00C012;
 }
 .addButton:highlighted{
     background-color: transparent;
     z-index:500;
-    border-color: #E98A02;
-    color:#E98A02;
+    border-color: #00C012;
+    color:#00C012;
 }
 
 .inactiveButton{
@@ -63,7 +63,7 @@
     padding:0;
 }
 /* .addCartButton:highlighted{
-    background-color: #E98A02;
+    background-color: #00C012;
     border-color: white;
     color:white;
 } */
@@ -78,8 +78,8 @@
 }
 /* .viewDetailButton:highlighted{
     background-color: transparent;
-    border-color: #E98A02;
-    color:#E98A02;
+    border-color: #00C012;
+    color:#00C012;
 } */
 
 .editButton{
@@ -90,13 +90,13 @@
     height:80%;
     width:95%;
     padding:0;
-    background-color: #E98A02;
+    background-color: #00C012;
     color:white;
     border-color: white;
 }
 .editButton:highlighted{
     background-color: transparent;
     z-index:500;
-    color:#E98A02;
-    border-color: #E98A02;
+    color:#00C012;
+    border-color: #00C012;
 }

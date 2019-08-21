@@ -8,9 +8,13 @@ import * as localstorage from "nativescript-localstorage";
 import { UserService } from "../../services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { HttpInterceptingHandler } from "@angular/common/http/src/module";
+import { Color } from "tns-core-modules/color/color";
+
+declare const android: any;
+declare const CGSizeMake: any;
 
 @Component({
-    selector: "ns-register",
+    selector: "ns-login",
     moduleId: module.id,
     templateUrl: "./login.component.html",
     styleUrls: ["./login.component.css"]
@@ -18,6 +22,7 @@ import { HttpInterceptingHandler } from "@angular/common/http/src/module";
 export class LoginComponent implements OnInit {
 
     @ViewChild('userVerifyDialog') userVerifyDialog: ModalComponent;
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     phoneBorderColor = "white";
     passwordBorderColor = "white";
@@ -27,6 +32,7 @@ export class LoginComponent implements OnInit {
     password = "";
     user: User;
     userToken: string;
+    errorMessage: string;
 
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.user = new User();
@@ -36,19 +42,20 @@ export class LoginComponent implements OnInit {
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
             this.routerExtensions.navigate(['./homeAdmin']);
         }
+        this.errorMessage = "";
     }
 
     ngOnInit(): void {
     }
 
     onPhoneTextChanged(args) {
-        this.phoneBorderColor = "#E98A02"
+        this.phoneBorderColor = "#00C012"
         this.passwordBorderColor = "white";
         this.phone = args.object.text.toLowerCase();
     }
     onPasswordTextChanged(args) {
         this.phoneBorderColor = "white";
-        this.passwordBorderColor = "#E98A02"
+        this.passwordBorderColor = "#00C012"
         this.password = args.object.text.toLowerCase();
     }
 
@@ -56,14 +63,24 @@ export class LoginComponent implements OnInit {
         this.routerExtensions.navigate(['./forgotPassword']);
     }
 
+    onOK() {
+        this.warningDialog.hide();
+    }
+
     onLogin() {
         if (this.phone == "") {
-            alert("Please enter phone number!!!");
+            this.errorMessage = "Please enter phone number.";
+            this.warningDialog.show();
+            // alert("Please enter phone number!!!");
         }
         else if (this.phone.length < 10) {
-            alert("Please enter ten digit phone number!!!");
+            this.errorMessage = "Please enter ten digit phone number.";
+            this.warningDialog.show();
+            // alert("Please enter ten digit phone number!!!");
         }
         else if (this.password == "") {
+            this.errorMessage = "Please enter password.";
+            this.warningDialog.show();
             alert("Please enter password!!!");
         }
         else {
@@ -154,6 +171,42 @@ export class LoginComponent implements OnInit {
 
     onRegister() {
         this.routerExtensions.navigate(['./register']);
+    }
+
+
+    protected get shadowColor(): Color {
+        return new Color('#888888')
+    }
+
+    protected get shadowOffset(): number {
+        return 2.0
+    }
+
+    onDialogLoaded(args: any) {
+        var dialog = <any>args.object;
+
+        setTimeout(() => {
+            if (dialog.android) {
+                let nativeGridMain = dialog.android;
+                var shape = new android.graphics.drawable.GradientDrawable();
+                shape.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+                shape.setColor(android.graphics.Color.parseColor('white'));
+                shape.setCornerRadius(20)
+                nativeGridMain.setBackgroundDrawable(shape);
+                nativeGridMain.setElevation(20)
+            } else if (dialog.ios) {
+                let nativeGridMain = dialog.ios;
+
+                nativeGridMain.layer.shadowColor = this.shadowColor.ios.CGColor;
+                nativeGridMain.layer.shadowOffset = CGSizeMake(0, this.shadowOffset);
+                nativeGridMain.layer.shadowOpacity = 0.5
+                nativeGridMain.layer.shadowRadius = 5.0
+                nativeGridMain.layer.shadowRadius = 5.0
+            }
+
+            // this.changeDetector.detectChanges();
+        }, 400)
+
     }
 
 }

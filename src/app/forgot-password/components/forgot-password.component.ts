@@ -1,10 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { UserService } from "../../services/user.service";
 import { User } from "~/app/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import * as localstorage from "nativescript-localstorage";
+import { ModalComponent } from "~/app/modals/modal.component";
 
 @Component({
     selector: "ns-forgotPassword",
@@ -13,6 +14,7 @@ import * as localstorage from "nativescript-localstorage";
     styleUrls: ["./forgot-password.component.css"]
 })
 export class ForgotPasswordComponent implements OnInit {
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     phoneBorderColor = "white";
     phoneHint = "Phone number";
@@ -21,30 +23,40 @@ export class ForgotPasswordComponent implements OnInit {
     emailHint = "Email";
     email: string;
     user: User;
+    errorMessage: string;
 
     constructor(private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
         this.email = "";
         this.phone = "";
         this.user = new User();
+        this.errorMessage = "";
     }
 
     ngOnInit(): void {
     }
 
+    onOK() {
+        this.warningDialog.hide();
+    }
+
     onPhoneTextChanged(args) {
-        this.phoneBorderColor = "#E98A02"
+        this.phoneBorderColor = "#00C012"
         this.phone = args.object.text.toLowerCase();
     }
     onEmailTextChanged(args) {
-        this.emailBorderColor = "#E98A02"
+        this.emailBorderColor = "#00C012"
         this.email = args.object.text.toLowerCase();
     }
     onSendOtp() {
         if (this.phone == "") {
-            alert("Please enter phone number!!!");
+            this.errorMessage = "Please enter phone number.";
+            this.warningDialog.show();
+            // alert("Please enter phone number!!!");
         }
         else if (this.phone.length < 10) {
-            alert("Please enter ten digit phone number!!!");
+            this.errorMessage = "Please enter ten digit phone number.";
+            this.warningDialog.show();
+            // alert("Please enter ten digit phone number!!!");
         }
         // if (this.email == "") {
         //     alert("Please enter email!!!");
@@ -55,7 +67,6 @@ export class ForgotPasswordComponent implements OnInit {
             this.http
                 .post(Values.BASE_URL + `users/sendSms?phone=${this.phone}`, {})
                 .subscribe((res: any) => {
-                    alert(res);
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             localstorage.setItem('tempToken', res.data.tempToken);

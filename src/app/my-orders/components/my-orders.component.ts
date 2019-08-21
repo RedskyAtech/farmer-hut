@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import * as localstorage from "nativescript-localstorage";
+import * as application from "tns-core-modules/application";
 
 @Component({
     selector: "ns-myOrderDetail",
@@ -74,6 +75,11 @@ export class MyOrdersComponent implements OnInit {
                     console.log(error.error.error);
                 });
         }
+
+        application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
+            this.router.navigate(['/profile']);
+            return;
+        });
     }
 
     ngOnInit(): void {

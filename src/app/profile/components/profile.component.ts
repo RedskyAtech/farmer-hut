@@ -41,6 +41,17 @@ export class ProfileComponent implements OnInit {
         this.address = "";
         this.mapAddress = "";
 
+        application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
+            if (localstorage.getItem("userType") == "user") {
+                this.router.navigate(['/homeUser']);
+                return;
+            }
+            else {
+                this.router.navigate(['/homeAdmin']);
+                return;
+            }
+        });
+
         if (localstorage.getItem("userType") == "admin") {
             this.ordersButtonText = "View Orders";
             this.historyButtonText = "Order History";

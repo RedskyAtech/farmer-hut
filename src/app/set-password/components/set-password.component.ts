@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import * as Toast from 'nativescript-toast';
 import { UserService } from "../../services/user.service";
@@ -6,6 +6,7 @@ import { User } from "~/app/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import * as localstorage from "nativescript-localstorage";
+import { ModalComponent } from "~/app/modals/modal.component";
 
 @Component({
     selector: "ns-setPassword",
@@ -14,6 +15,7 @@ import * as localstorage from "nativescript-localstorage";
     styleUrls: ["./set-password.component.css"]
 })
 export class SetPasswordComponent implements OnInit {
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     otpBorderColor = "white";
     passwordBorderColor = "white";
@@ -25,48 +27,64 @@ export class SetPasswordComponent implements OnInit {
     password = "";
     rePassword = "";
     user: User;
+    errorMessage: string;
 
     constructor(private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
         this.user = new User();
+        this.errorMessage = "";
     }
 
     ngOnInit(): void {
     }
 
     onOtpTextChanged(args) {
-        this.otpBorderColor = "#E98A02"
+        this.otpBorderColor = "#00C012"
         this.passwordBorderColor = "white";
         this.rePasswordBorderColor = "white";
         this.otp = args.object.text.toLowerCase();
     }
     onPasswordTextChanged(args) {
         this.otpBorderColor = "white";
-        this.passwordBorderColor = "#E98A02"
+        this.passwordBorderColor = "#00C012"
         this.rePasswordBorderColor = "white";
         this.password = args.object.text.toLowerCase();
     }
     onRePassTextChanged(args) {
         this.otpBorderColor = "white";
         this.passwordBorderColor = "white";
-        this.rePasswordBorderColor = "#E98A02"
+        this.rePasswordBorderColor = "#00C012"
         this.rePassword = args.object.text.toLowerCase();
+    }
+
+    onOK() {
+        this.warningDialog.hide();
     }
 
     onDone() {
         if (this.otp == "") {
-            alert("Please enter OTP!!!");
+            this.errorMessage = "Please enter OTP.";
+            this.warningDialog.show();
+            // alert("Please enter OTP!!!");
         }
         else if (this.otp.length < 6) {
-            alert("Please enter six digit otp!!!");
+            this.errorMessage = "Please enter six digit otp.";
+            this.warningDialog.show();
+            // alert("Please enter six digit otp!!!");
         }
         else if (this.password == "") {
-            alert("Please enter password!!!");
+            this.errorMessage = "Please enter password.";
+            this.warningDialog.show();
+            // alert("Please enter password!!!");
         }
         else if (this.rePassword == "") {
-            alert("Please enter repeat password!!!");
+            this.errorMessage = "Please enter repeat password";
+            this.warningDialog.show();
+            // alert("Please enter repeat password!!!");
         }
         else if (this.password != this.rePassword) {
-            alert("Password and repeat password should be same!!!");
+            this.errorMessage = "Password and repeat password should be same";
+            this.warningDialog.show();
+            // alert("Password and repeat password should be same!!!");
         }
         else {
             this.userService.showLoadingState(true);

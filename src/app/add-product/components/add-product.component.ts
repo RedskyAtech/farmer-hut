@@ -7,7 +7,8 @@ import { Product } from "~/app/models/product.model";
 import { Heading } from "~/app/models/heading.model";
 import { Image } from "~/app/models/image.model";
 import { HttpClient } from "@angular/common/http";
-import { ImageSource } from "tns-core-modules/image-source/image-source";
+import { ImageSource, fromBase64 } from "tns-core-modules/image-source/image-source";
+import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
 import { CardView } from "nativescript-cardview";
 import { registerElement } from "nativescript-angular/element-registry";
 import { ImageCropper } from 'nativescript-imagecropper';
@@ -18,7 +19,8 @@ import { Category } from "~/app/models/category.model";
 import { Price } from "~/app/models/price.model";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { UserService } from "~/app/services/user.service";
-
+import { session, Request } from 'nativescript-background-http';
+import * as Toast from 'nativescript-toast';
 
 registerElement("CardView", () => CardView);
 
@@ -35,6 +37,7 @@ export class AddProductComponent implements OnInit {
 
     @ViewChild('selectDimensionDialog') selectDimensionDialog: ModalComponent;
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
+    @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     productImage: string | ImageSource;
     brandBorderColor: string;
@@ -64,6 +67,12 @@ export class AddProductComponent implements OnInit {
     similarProductId: string;
     type: string;
     classType: string;
+    showAddButton: boolean;
+    errorMessage: string;
+    file: any;
+    name: string;
+    extension: string;
+    shouldImageUpdate: string;
 
     private imageCropper: ImageCropper;
 
@@ -80,7 +89,7 @@ export class AddProductComponent implements OnInit {
         this.product.category = new Category();
         this.product.dimensions = [];
         this.product.price = new Price();
-        this.productImage = "res://image_icon";
+        this.productImage = "res://add_image_icon";
 
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
@@ -88,6 +97,13 @@ export class AddProductComponent implements OnInit {
         this.priceBorderColor = "white";
         this.detailHeadingBorderColor = "white";
         this.detailDescriptionBorderColor = "white";
+        this.showAddButton = true;
+        this.errorMessage = "";
+
+        this.extension = 'jpg';
+        this.shouldImageUpdate = "true";
+
+        this.userService.showLoadingState(false);
 
         this.route.queryParams.subscribe(params => {
             if (params["productId"] != undefined) {
@@ -113,13 +129,15 @@ export class AddProductComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                this.productImage = res.data.image.url;
+                                // this.productImage = res.data.image.url;
                                 this.brandName = res.data.brand;
                                 this.productName = res.data.name;
                                 this.detailHeading = res.data.heading.title;
                                 this.detailDescription = res.data.heading.description;
                                 this.weight = res.data.dimensions[0].value;
                                 this.price = res.data.price.value;
+                                // this.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                // this.shouldImageUpdate="false";
                             }
                         }
                     }, error => {
@@ -137,13 +155,15 @@ export class AddProductComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                this.productImage = res.data.image.url;
+                                // this.productImage = res.data.image.url;
                                 this.brandName = res.data.brand;
                                 this.productName = res.data.name;
                                 this.detailHeading = res.data.heading.title;
                                 this.detailDescription = res.data.heading.description;
                                 this.weight = res.data.dimensions[0].value;
                                 this.price = res.data.price.value;
+                                // this.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                // this.shouldImageUpdate="false";
                             }
                         }
                     }, error => {
@@ -161,7 +181,7 @@ export class AddProductComponent implements OnInit {
     }
 
     onBrandTextChanged(args) {
-        this.brandBorderColor = "#E98A02";
+        this.brandBorderColor = "#00C012";
         this.nameBorderColor = "white";
         this.weightBorderColor = "white";
         this.priceBorderColor = "white";
@@ -172,7 +192,7 @@ export class AddProductComponent implements OnInit {
 
     onNameTextChanged(args) {
         this.brandBorderColor = "white";
-        this.nameBorderColor = "#E98A02";
+        this.nameBorderColor = "#00C012";
         this.weightBorderColor = "white";
         this.priceBorderColor = "white";
         this.detailHeadingBorderColor = "white";
@@ -183,7 +203,7 @@ export class AddProductComponent implements OnInit {
     onWeightTextChanged(args) {
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
-        this.weightBorderColor = "#E98A02";
+        this.weightBorderColor = "#00C012";
         this.priceBorderColor = "white";
         this.detailHeadingBorderColor = "white";
         this.detailDescriptionBorderColor = "white";
@@ -194,7 +214,7 @@ export class AddProductComponent implements OnInit {
         this.brandBorderColor = "white";
         this.nameBorderColor = "white";
         this.weightBorderColor = "white";
-        this.priceBorderColor = "#E98A02";
+        this.priceBorderColor = "#00C012";
         this.detailHeadingBorderColor = "white";
         this.detailDescriptionBorderColor = "white";
         this.price = args.object.text;
@@ -205,7 +225,7 @@ export class AddProductComponent implements OnInit {
         this.nameBorderColor = "white";
         this.weightBorderColor = "white";
         this.priceBorderColor = "white";
-        this.detailHeadingBorderColor = "#E98A02";
+        this.detailHeadingBorderColor = "#00C012";
         this.detailDescriptionBorderColor = "white";
         this.detailHeading = args.object.text;
     }
@@ -216,7 +236,7 @@ export class AddProductComponent implements OnInit {
         this.weightBorderColor = "white";
         this.priceBorderColor = "white";
         this.detailHeadingBorderColor = "white";
-        this.detailDescriptionBorderColor = "#E98A02";
+        this.detailDescriptionBorderColor = "#00C012";
         this.detailDescription = args.object.text;
     }
 
@@ -237,12 +257,17 @@ export class AddProductComponent implements OnInit {
             })
             .then(selection => {
                 selection.forEach(function (selected) {
-                    var image = new ImageSource();
-                    image.fromAsset(selected).then((source) => {
-                        that.imageCropper.show(source, { lockSquare: true }).then((args) => {
+                    let source = new ImageSource();
+                    source.fromAsset(selected).then((source) => {
+                        that.imageCropper.show(source, { lockSquare: true }).then((args: any) => {
                             if (args.image !== null) {
-                                that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
-                                that.productImage = that.imageUrl;
+                                var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
+                                var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                args.image.saveToFile(file.path, 'jpg');
+                                that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+                                that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+                                that.productImage = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
                             }
                         })
                             .catch(function (e) {
@@ -251,6 +276,7 @@ export class AddProductComponent implements OnInit {
                     }).catch((err) => {
                         console.log("Error -> " + err.message);
                     });
+
                 });
             });
     }
@@ -262,13 +288,18 @@ export class AddProductComponent implements OnInit {
             permissions.requestPermission([android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE])
                 .then(() => {
                     camera.takePicture({ width: 512, height: 512, keepAspectRatio: true })
-                        .then((imageAsset) => {
+                        .then((selected) => {
                             let source = new ImageSource();
-                            source.fromAsset(imageAsset).then((source) => {
-                                this.imageCropper.show(source, { lockSquare: true }).then((args) => {
+                            source.fromAsset(selected).then((source) => {
+                                this.imageCropper.show(source, { lockSquare: true }).then((args: any) => {
                                     if (args.image !== null) {
-                                        that.imageUrl = 'data:image/png;base64,' + args.image.toBase64String('png', 100);
-                                        that.productImage = that.imageUrl;
+                                        var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
+                                        var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                        args.image.saveToFile(file.path, 'jpg');
+                                        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+                                        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+                                        that.productImage = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
                                     }
                                 })
                                     .catch(function (e) {
@@ -285,109 +316,178 @@ export class AddProductComponent implements OnInit {
         }
     }
 
+    onOK() {
+        this.warningDialog.hide();
+    }
+
     onOutsideClick() {
         this.photoUploadDialog.hide();
         this.selectDimensionDialog.hide();
     }
 
     onAddProduct() {
-        if (this.productImage == "res://image_icon") {
-            alert("Please select product image!!!");
+        if (this.productImage == null) {
+            this.errorMessage = "Please select product image.";
+            this.warningDialog.show();
+            // alert("Please select product image!!!");
         }
         else if (this.brandName == "") {
-            alert("Please enter brand name!!!");
+            this.errorMessage = "Please enter brand name.";
+            this.warningDialog.show();
+            // alert("Please enter brand name!!!");
         }
         else if (this.productName == "") {
-            alert("Please enter product name!!!")
+            this.errorMessage = "Please enter product name.";
+            this.warningDialog.show();
+            // alert("Please enter product name!!!")
         }
         else if (this.weight == "") {
-            alert("Please enter weight!!!");
+            this.errorMessage = "Please enter weight.";
+            this.warningDialog.show();
+            // alert("Please enter weight!!!");
         }
         else if (this.price == "") {
-            alert("Please enter price!!!");
-        }
-        else if (this.imageUrl == "") {
-            alert("Please select product image!!!");
+            this.errorMessage = "Please enter price.";
+            this.warningDialog.show();
+            // alert("Please enter price!!!");
         }
         else {
             this.userService.showLoadingState(true);
-            this.product.brand = this.brandName;
-            this.product.name = this.productName;
-            this.product.image.url = this.imageUrl;
-            this.product.dimensions.push({ 'value': this.weight, 'unit': this.weightDimension });
-            this.product.price.value = this.price;
-            this.product.price.currency = this.currency;
-            this.product.heading.title = this.detailHeading;
-            this.product.heading.description = this.detailDescription;
-            if (this.type == "edit") {
-                if (this.classType == "similarProduct") {
-                    this.http
-                        .put(Values.BASE_URL + "similarProducts/update/" + this.similarProductId, this.product)
-                        .subscribe((res: any) => {
-                            if (res != null && res != undefined) {
-                                if (res.isSuccess == true) {
-                                    this.userService.showLoadingState(false);
-                                    this.router.navigate(['./similarProductAdmin']);
-                                }
-                            }
-                        }, error => {
-                            alert(error.error.error);
-                        });
+            var that = this;
+            var mimeType = "image/" + this.extension;
+            var uploadSession = session('image-upload');
+            if (that.type == "edit") {
+                if (that.classType == "similarProduct") {
+                    var request = {
+                        url: Values.BASE_URL + "similarProducts/update/" + that.similarProductId,
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/octet-stream",
+                            "File-Name": that.name
+                        },
+                        description: "{'uploading':" + that.name + "}"
+                    }
+                    const params = [
+                        { name: "file", filename: that.file, mimeType: mimeType },
+                        { name: "name", value: that.productName },
+                        { name: "brand", value: that.brandName },
+                        { name: "price.value", value: that.price },
+                        { name: "price.currency", value: that.currency },
+                        { name: "heading.title", value: that.detailHeading },
+                        { name: "heading.description", value: that.detailDescription },
+                        { name: "dimensions[value]", value: that.weight },
+                        { name: "dimensions[unit]", value: that.weightDimension },
+                        // { name: "shouldImageUpdate", value: that.shouldImageUpdate }
+                    ]
+                    var task = uploadSession.multipartUpload(params, request);
+                    that.userService.showLoadingState(false);
+                    task.on("responded", this.respondedEvent);
+                    task.on("error", this.errorEvent);
+                    task.on("complete", this.completeEvent);
                 }
                 else {
-                    this.http
-                        .put(Values.BASE_URL + "products/update/" + this.productId, this.product)
-                        .subscribe((res: any) => {
-                            if (res != null && res != undefined) {
-                                if (res.isSuccess == true) {
-                                    this.userService.showLoadingState(false);
-                                    this.router.navigate(['./homeAdmin']);
-                                }
-                            }
-                        }, error => {
-                            this.userService.showLoadingState(false);
-                            alert(error.error.error);
-                        });
+                    var request = {
+                        url: Values.BASE_URL + "products/update/" + that.productId,
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/octet-stream",
+                            "File-Name": that.name
+                        },
+                        description: "{'uploading':" + that.name + "}"
+                    }
+                    const params = [
+                        { name: "file", filename: that.file, mimeType: mimeType },
+                        { name: "name", value: that.productName },
+                        { name: "brand", value: that.brandName },
+                        { name: "price.value", value: that.price },
+                        { name: "price.currency", value: that.currency },
+                        { name: "heading.title", value: that.detailHeading },
+                        { name: "heading.description", value: that.detailDescription },
+                        { name: "dimensions[value]", value: that.weight },
+                        { name: "dimensions[unit]", value: that.weightDimension },
+                        // { name: "shouldImageUpdate", value: that.shouldImageUpdate }
+                    ]
+                    console.log(params);
+                    var task = uploadSession.multipartUpload(params, request);
+                    that.userService.showLoadingState(false);
+                    task.on("responded", this.respondedEvent);
+                    task.on("error", this.errorEvent);
+                    task.on("complete", this.completeEvent);
                 }
             } else {
-                if (this.classType == "similarProduct") {
+                if (that.classType == "similarProduct") {
                     if (localStorage.getItem("categoryId") != null && localStorage.getItem("categoryId") != undefined) {
                         var categoryId = localStorage.getItem("categoryId");
-                        this.product.category._id = categoryId;
                     }
-                    console.log(this.product);
-                    this.http
-                        .post(Values.BASE_URL + "similarProducts", this.product)
-                        .subscribe((res: any) => {
-                            if (res != null && res != undefined) {
-                                if (res.isSuccess == true) {
-                                    console.log(res);
-                                    this.userService.showLoadingState(false);
-                                    this.router.navigate(['./similarProductAdmin']);
-                                }
-                            }
-                        }, error => {
-                            this.userService.showLoadingState(false);
-                            alert(error.error.error);
-                        });
+                    var request = {
+                        url: Values.BASE_URL + "similarProducts",
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/octet-stream",
+                            "File-Name": that.name
+                        },
+                        description: "{'uploading':" + that.name + "}"
+                    }
+                    const params = [
+                        { name: "file", filename: that.file, mimeType: mimeType },
+                        { name: "category._id", value: categoryId },
+                        { name: "name", value: that.productName },
+                        { name: "brand", value: that.brandName },
+                        { name: "price.value", value: that.price },
+                        { name: "price.currency", value: that.currency },
+                        { name: "heading.title", value: that.detailHeading },
+                        { name: "heading.description", value: that.detailDescription },
+                        { name: "dimensions[value]", value: that.weight },
+                        { name: "dimensions[unit]", value: that.weightDimension }
+                    ]
+                    var task = uploadSession.multipartUpload(params, request);
+                    task.on("responded", this.respondedEvent);
+                    that.userService.showLoadingState(false);
+                    task.on("error", this.errorEvent);
+                    task.on("complete", this.completeEvent);
                 }
                 else {
-                    this.http
-                        .post(Values.BASE_URL + "products", this.product)
-                        .subscribe((res: any) => {
-                            if (res != null && res != undefined) {
-                                if (res.isSuccess == true) {
-                                    this.userService.showLoadingState(false);
-                                    this.router.navigate(['./homeAdmin']);
-                                }
-                            }
-                        }, error => {
-                            this.userService.showLoadingState(false);
-                            alert(error.error.error);
-                        });
+                    var request = {
+                        url: Values.BASE_URL + "products",
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/octet-stream",
+                            "File-Name": that.name
+                        },
+                        description: "{'uploading':" + that.name + "}"
+                    }
+                    const params = [
+                        { name: "file", filename: that.file, mimeType: mimeType },
+                        { name: "name", value: that.productName },
+                        { name: "brand", value: that.brandName },
+                        { name: "price.value", value: that.price },
+                        { name: "price.currency", value: that.currency },
+                        { name: "heading.title", value: that.detailHeading },
+                        { name: "heading.description", value: that.detailDescription },
+                        { name: "dimensions[value]", value: that.weight },
+                        { name: "dimensions[unit]", value: that.weightDimension }
+                    ]
+                    var task = uploadSession.multipartUpload(params, request);
+                    task.on("responded", this.respondedEvent);
+                    task.on("error", this.errorEvent);
+                    task.on("complete", this.completeEvent);
                 }
             }
         }
+    }
+
+    respondedEvent(e) {
+        var that = this;
+        console.log("RESPONSE: " + e.data);
+        that.userService.showLoadingState(false);
+    }
+
+    errorEvent(e) {
+        console.log("Error is: " + JSON.stringify(e));
+    }
+
+    completeEvent(e) {
+        console.log("Completed :" + JSON.stringify(e));
     }
 
     onWeightDimension() {

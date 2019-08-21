@@ -10,7 +10,7 @@
     width:30;
 }
 .pageHeading{
-    color:#E98A02;
+    color:#00C012;
     font-size: 24;
     text-align: center;
     font-weight: 500;
@@ -25,7 +25,7 @@
 }
 .quantity{
     font-size: 16;
-    color:#E98A02;
+    color:#00C012;
 }
 .price{
     font-size: 22;
@@ -40,7 +40,7 @@
 }
 .quantityDetail{
     font-size: 16;
-    color:#E98A02;
+    color:#00C012;
     font-weight: 500;
     text-align: center;
 }
@@ -60,7 +60,7 @@
     font-weight: 500;
 }
 .labelDetail{
-    color:#E98A02;
+    color:#00C012;
     font-size: 16;
     text-align: left;
 }
@@ -73,7 +73,7 @@
     font-weight: 500;
 }
 .addToCartButton:highlighted{
-    background-color: #E98A02;
+    background-color: #00C012;
     color:white;
 }
 .addedCartButton{
@@ -85,7 +85,7 @@
     font-weight: 500;
 }
 .confirmOrderButton{
-    background-color: #E98A02;
+    background-color: #00C012;
     color: white;
     width: 90%;
     height: 90%;
@@ -99,13 +99,13 @@
 .confirmOrderButton:highlighted{
     background-color: transparent;
     z-index:500;
-    color:#E98A02;
-    border-color:#E98A02;
+    color:#00C012;
+    border-color:#00C012;
 }
 .rejectOrderButton{
     background-color: transparent;
     z-index:500;
-    color: #E98A02;
+    color: #00C012;
     width: 90%;
     height: 90%;
     font-size: 20;
@@ -113,15 +113,15 @@
     font-weight: 500;
     border-width:1;
     border-radius:10;
-    border-color: #E98A02;
+    border-color: #00C012;
 }
 .rejectOrderButton:highlighted{
-    background-color: #E98A02;
+    background-color: #00C012;
     color:white;
     border-color:white;
 }
 .trackOrderButton{
-    background-color: #E98A02;
+    background-color: #00C012;
     color: white;
     width: 40%;
     height: 80%;
@@ -135,8 +135,8 @@
 .trackOrderButton:highlighted{
     background-color: transparent;
     z-index:500;
-    color:#E98A02;
-    border-color:#E98A02;
+    color:#00C012;
+    border-color:#00C012;
 }
 .confirmDialogLabel{
     color:#1B1B1B;
@@ -146,7 +146,7 @@
 }
 .confirm-button{
     border-radius: 10;
-    background-color:#E98A02;
+    background-color:#00C012;
     text-transform: initial;
     color:white;
     height:50%;
@@ -159,29 +159,29 @@
 }
 .confirm-button:highlighted{
     background-color: white;
-    border-color:#E98A02;
-    color:#E98A02;
+    border-color:#00C012;
+    color:#00C012;
 }
 .cancel-button{
     border-radius: 10;
     background-color:white;
     text-transform: initial;
-    color:#E98A02;
+    color:#00C012;
     height:50%;
     width:90%;
     padding:0;
     font-size:12;
     font-weight:500;
-    border-color: #E98A02;
+    border-color: #00C012;
     border-width:1;
 }
 .cancel-button:highlighted{
-    background-color: #E98A02;
+    background-color: #00C012;
     border-color:white;
     color:white;
 }
 .input-field{
-    placeholder-color:#E98A02;
+    placeholder-color:#00C012;
     border-bottom-width: 1;
     height:40;
     color:black;

@@ -14,7 +14,7 @@
     width:30;
 }
 .appLabel{
-    color:#E98A02;
+    color:#00C012;
     font-size: 36;
     text-align: center;
     font-weight: 500;
@@ -29,19 +29,19 @@
     text-align: center;
     height:40;
     padding:0;
-    background-color: #E98A02;
+    background-color: #00C012;
 }
 .button:highlighted{
     background-color: transparent;
     z-index:500;
-    border-color: #E98A02;
-    color:#E98A02;
+    border-color: #00C012;
+    color:#00C012;
 }
 .mapButton{
-    border-color:#E98A02;
+    border-color:#00C012;
     border-width:1;
     border-radius:10;
-    color:#E98A02;
+    color:#00C012;
     font-size: 12;
     text-transform: initial;
     text-align: center;
@@ -51,7 +51,7 @@
     z-index:500;
 }
 .mapButton:highlighted{
-    background-color: #E98A02;    
+    background-color: #00C012;    
     border-color: white;
     color:white;
 }
@@ -59,7 +59,7 @@
     placeholder-color:white;
     border-bottom-width: 1;
     height:40;
-    color:#E98A02;
+    color:#00C012;
 }
 .footer-label{
     color:white;
@@ -68,4 +68,22 @@
 .map{
     width:20;
     height:20;  
+}
+.ok-button{
+    border-radius: 10;
+    background-color:#00C012;
+    text-transform: initial;
+    color:white;
+    height:80%;
+    width:50%;
+    padding:0;
+    font-size:12;
+    font-weight:500;
+    border-color: white;
+    border-width:1;
+}
+.ok-button:highlighted{
+    background-color: white;
+    border-color:#00C012;
+    color:#00C012;
 }

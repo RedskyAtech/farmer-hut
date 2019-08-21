@@ -61,7 +61,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
         this.isTrackButton = false;
         this.isRenderingUserDetail = false;
         this.reasonHint = "Enter reason";
-        this.reasonBorderColor = "#E98A02";
+        this.reasonBorderColor = "#00C012";
         this.reason = "";
         this.isReasonButton = false;
         this.order = new Order();
@@ -157,12 +157,12 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     }
 
     onReasonTextChanged(args) {
-        this.reasonBorderColor = "#E98A02";
+        this.reasonBorderColor = "#00C012";
         this.reason = args.object.text.toLowerCase();
     }
 
     onBack() {
-        this.router.navigate(['/profile']);
+        this.router.navigate(['/viewOrders']);
     }
 
     onConfirmOrder() {
@@ -179,7 +179,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     onRejectOrder() {
         if (this.orderStatus != "rejected" && this.orderStatus != "delivered") {
             this.rejectOrderDialog.show();
-            this.reasonBorderColor = "#E98A02";
+            this.reasonBorderColor = "#00C012";
         }
     }
 

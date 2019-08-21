@@ -39,7 +39,7 @@ export class CartComponent implements OnInit {
     mapAddress: string;
     addressButtonText: string;
 
-    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private router: Router, private http: HttpClient, private userService: UserService) {
         this.cartProducts = [];
         this.cart = new Cart();
         this.cart.product = new Product();
