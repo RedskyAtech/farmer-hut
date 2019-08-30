@@ -12,6 +12,7 @@ import { UserService } from '../../services/user.service';
 import { Cart } from "~/app/models/cart.model";
 import { Product } from "~/app/models/product.model";
 import { Order } from "~/app/models/order.model";
+import { NavigationService } from "~/app/services/navigation.service";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -39,7 +40,7 @@ export class CartComponent implements OnInit {
     mapAddress: string;
     addressButtonText: string;
 
-    constructor(private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService) {
         this.cartProducts = [];
         this.cart = new Cart();
         this.cart.product = new Product();
@@ -48,7 +49,10 @@ export class CartComponent implements OnInit {
         this.isRendering = false;
         this.mapAddress = "";
         this.address = "";
+        this.navigationService.backTo = "homeUser";
+    }
 
+    ngOnInit(): void {
         if (localstorage.getItem("cartId") != null &&
             localstorage.getItem("cartId") != undefined &&
             localstorage.getItem("userToken") != null &&
@@ -59,12 +63,10 @@ export class CartComponent implements OnInit {
         }
     }
 
-    ngOnInit(): void {
-
-    }
-
     onBack() {
-        this.router.navigate(['/homeUser']);
+        this.routerExtensions.navigate(['/homeUser'], {
+            clearHistory: true,
+        });
     }
 
     onRemoveItem(product: Product) {
@@ -272,7 +274,12 @@ export class CartComponent implements OnInit {
                 "from": "cart"
             },
         };
-        this.router.navigate(['/address'], navigationExtras);
+        this.routerExtensions.navigate(['/address'], {
+            queryParams: {
+                "from": "cart"
+            },
+            clearHistory: true
+        });
     }
 
     onOrderItem() {
@@ -311,7 +318,9 @@ export class CartComponent implements OnInit {
                 if (res != "" && res != undefined) {
                     if (res.isSuccess == true) {
                         this.placeOrderDialog.hide();
-                        this.router.navigate(['/homeUser']);
+                        this.routerExtensions.navigate(['/homeUser'], {
+                            clearHistory: true,
+                        });
                         Toast.makeText("Order successfully placed!!!", "long").show();
                         this.userService.showLoadingState(true);
                     }

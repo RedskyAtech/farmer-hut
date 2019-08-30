@@ -7,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { Order } from "~/app/models/order.model";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-cart",
@@ -23,12 +24,15 @@ export class ViewOrdersComponent implements OnInit {
     isRenderingMessage: boolean;
     isRenderingOrders: boolean;
 
-    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.orderedProducts = [];
         this.order = new Order();
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
+        this.navigationService.backTo = "profile";
+    }
 
+    ngOnInit(): void {
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
             localstorage.getItem("adminId") != null &&
@@ -68,11 +72,10 @@ export class ViewOrdersComponent implements OnInit {
         }
     }
 
-    ngOnInit(): void {
-    }
-
     onBack() {
-        this.router.navigate(['/profile']);
+        this.routerExtensions.navigate(['/profile'], {
+            clearHistory: true,
+        });
     }
 
     onViewDetail(id: string) {
@@ -81,6 +84,11 @@ export class ViewOrdersComponent implements OnInit {
                 "orderId": id
             },
         };
-        this.router.navigate(['/orderDetail'], navigationExtras);
+        this.routerExtensions.navigate(['/orderDetail'], {
+            queryParams: {
+                "orderId": id
+            },
+            clearHistory: true,
+        });
     }
 }

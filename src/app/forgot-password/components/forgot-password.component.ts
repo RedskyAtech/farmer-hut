@@ -6,6 +6,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import * as localstorage from "nativescript-localstorage";
 import { ModalComponent } from "~/app/modals/modal.component";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-forgotPassword",
@@ -25,11 +26,12 @@ export class ForgotPasswordComponent implements OnInit {
     user: User;
     errorMessage: string;
 
-    constructor(private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient, private navigationService: NavigationService) {
         this.email = "";
         this.phone = "";
         this.user = new User();
         this.errorMessage = "";
+        this.navigationService.backTo = "login";
     }
 
     ngOnInit(): void {
@@ -71,7 +73,9 @@ export class ForgotPasswordComponent implements OnInit {
                         if (res.isSuccess == true) {
                             localstorage.setItem('tempToken', res.data.tempToken);
                             this.userService.showLoadingState(false);
-                            this.routerExtensions.navigate(['./setPassword']);
+                            this.routerExtensions.navigate(['./setPassword'], {
+                                clearHistory: true,
+                            });
                         }
                     }
                 }, error => {
@@ -82,6 +86,8 @@ export class ForgotPasswordComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./login'])
+        this.routerExtensions.navigate(['./login'], {
+            clearHistory: true,
+        })
     }
 }

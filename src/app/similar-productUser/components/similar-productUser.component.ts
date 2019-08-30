@@ -7,6 +7,8 @@ import * as Toast from 'nativescript-toast';
 import { Cart } from "~/app/models/cart.model";
 import { UserService } from "~/app/services/user.service";
 import { Product } from "~/app/models/product.model";
+import { RouterExtensions } from "nativescript-angular/router";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-similarProductUser",
@@ -24,7 +26,7 @@ export class SimilarProductUserComponent implements OnInit {
     isCartCount: boolean;
     cart: Cart;
 
-    constructor(private router: Router, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
         this.product = new Product();
         this.cart = new Cart();
         this.cart.product = new Product();
@@ -33,6 +35,7 @@ export class SimilarProductUserComponent implements OnInit {
                 this.categoryId = params["categoryId"];
             }
         });
+        this.navigationService.backTo = "homeUser";
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             this.getSimilarProducts();
@@ -98,7 +101,13 @@ export class SimilarProductUserComponent implements OnInit {
                 "classType": "similarProduct"
             },
         };
-        this.router.navigate(['/productDetail'], navigationExtras);
+        this.routerExtensions.navigate(['/productDetail'], {
+            queryParams: {
+                "productId": product._id,
+                "classType": "similarProduct"
+            },
+            clearHistory: true,
+        });
     }
 
     onBack() {
@@ -107,7 +116,12 @@ export class SimilarProductUserComponent implements OnInit {
                 "index": "1"
             },
         };
-        this.router.navigate(['./homeUser'], navigationExtras);
+        this.routerExtensions.navigate(['./homeUser'], {
+            queryParams: {
+                "index": "1"
+            },
+            clearHistory: true,
+        });
     }
 
     onAddCart(product: Product) {
@@ -167,6 +181,8 @@ export class SimilarProductUserComponent implements OnInit {
     }
 
     onCartClick() {
-        this.router.navigate(['/cart']);
+        this.routerExtensions.navigate(['/cart'], {
+            clearHistory: true,
+        });
     }
 }

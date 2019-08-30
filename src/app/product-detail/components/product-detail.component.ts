@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
 import { Cart } from '~/app/models/cart.model';
 import * as Toast from 'nativescript-toast';
 import { Product } from "../../models/product.model";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-productDetail",
@@ -34,7 +35,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     classType: string;
     isRenderingDetail: boolean;
 
-    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
 
         this.route.queryParams.subscribe(params => {
             this.productId = params["productId"];
@@ -45,6 +46,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         this.cart = new Cart();
         this.cart.product = new Product();
         this.isRenderingDetail = false;
+        this.navigationService.backTo = "homeUser";
 
         if (this.classType == "similarProduct") {
             this.http
@@ -115,11 +117,15 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
 
 
     onBack() {
-        this.router.navigate(['/homeUser']);
+        this.routerExtensions.navigate(['/homeUser'], {
+            clearHistory: true,
+        });
     }
 
     onCartClick() {
-        this.router.navigate(['/cart']);
+        this.routerExtensions.navigate(['/cart'], {
+            clearHistory: true,
+        });
     }
 
     onAddToCart() {
@@ -199,15 +205,66 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     }
 
     onBuyNow() {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "image": this.image,
-                "fullName": this.fullName,
-                "quantity": this.quantity,
-                "price": this.price
-            },
-        };
-        this.router.navigate(['/cart'], navigationExtras);
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "image": this.image,
+        //         "fullName": this.fullName,
+        //         "quantity": this.quantity,
+        //         "price": this.price
+        //     },
+        // };
+        // this.routerExtensions.navigate(['/cart'], {
+        //     queryParams: {
+        //         "image": this.image,
+        //         "fullName": this.fullName,
+        //         "quantity": this.quantity,
+        //         "price": this.price
+        //     },
+        //     clearHistory: true,
+        // });
+
+        this.userService.showLoadingState(true);
+        this.cart.product._id = this.productId;
+
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.userService.showLoadingState(false);
+                        if (res.data.products.length != 0) {
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                if (this.productId == res.data.products[i]._id) {
+                                    var quantity = parseInt(res.data.products[i].quantity) + 1;
+                                    this.cart.product.quantity = quantity.toString();
+                                    this.routerExtensions.navigate(['/cart'], {
+                                        clearHistory: true,
+                                    })
+                                    this.updateCart();
+                                    break;
+                                }
+                                else {
+                                    this.cart.product.quantity = "1";
+                                    this.routerExtensions.navigate(['/cart'], {
+                                        clearHistory: true,
+                                    })
+                                    this.updateCart();
+                                }
+                            }
+                        }
+                        else {
+                            this.cart.product.quantity = "1";
+                            this.routerExtensions.navigate(['/cart'], {
+                                clearHistory: true,
+                            })
+                            this.updateCart();
+                        }
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                console.log(error.error.error);
+            });
     }
 
 }

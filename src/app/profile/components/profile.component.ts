@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy, NgZone } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import * as Toast from 'nativescript-toast';
 import * as application from "tns-core-modules/application";
@@ -8,6 +8,8 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { User } from "~/app/models/user.model";
 import { UserService } from "../../services/user.service";
+import { elementStyleProp } from "@angular/core/src/render3";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-profile",
@@ -15,7 +17,7 @@ import { UserService } from "../../services/user.service";
     templateUrl: "./profile.component.html",
     styleUrls: ["./profile.component.css"]
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 
     city: string;
     district: string;
@@ -31,8 +33,9 @@ export class ProfileComponent implements OnInit {
     ordersButtonText: string;
     feedbackButtonText: string;
     historyButtonText: string;
+    listener: any;
+    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private ngZone: NgZone, private navigationService: NavigationService) {
 
-    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private router: Router, private http: HttpClient, private userService: UserService) {
         this.city = "Abohar";
         this.district = "Fazilka";
         this.state = "Punjab";
@@ -40,28 +43,38 @@ export class ProfileComponent implements OnInit {
         this.phone = "";
         this.address = "";
         this.mapAddress = "";
+    }
 
-        application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
-            if (localstorage.getItem("userType") == "user") {
-                this.router.navigate(['/homeUser']);
-                return;
-            }
-            else {
-                this.router.navigate(['/homeAdmin']);
-                return;
-            }
-        });
-
+    ngOnInit(): void {
         if (localstorage.getItem("userType") == "admin") {
             this.ordersButtonText = "View Orders";
             this.historyButtonText = "Order History";
             this.feedbackButtonText = "View Feedback"
+            this.navigationService.backTo = 'homeAdmin';
         }
         else {
             this.ordersButtonText = "My Orders";
             this.historyButtonText = "Order History"
             this.feedbackButtonText = "Give feedback";
+            this.navigationService.backTo = 'homeUser';
         }
+        // this.ngZone.run(() => {
+        //     application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: application.AndroidActivityBackPressedEventData) => {
+        //         if (localstorage.getItem("userType") == "user") {
+        //             args.cancel = true;
+        //             this.routerExtensions.navigate(['/homeUser'], {
+        //                 clearHistory: true,
+        //             });
+        //         }
+        //         else {
+        //             args.cancel = true;
+        //             this.routerExtensions.navigate(['/homeAdmin'], {
+        //                 clearHistory: true,
+        //             });
+        //         }
+        //     });
+        // });
+
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             this.userService.showLoadingState(true);
@@ -125,16 +138,23 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    ngOnInit(): void {
-
+    ngOnDestroy(): void {
+        // this.ngZone.run(() => {
+        //     application.android.off(application.AndroidApplication.activityBackPressedEvent, (args: application.AndroidActivityBackPressedEventData) => {
+        //     });
+        // });
     }
 
     onBack() {
         if (localstorage.getItem("userType") == "admin") {
-            this.routerExtensions.navigate(['./homeAdmin']);
+            this.routerExtensions.navigate(['./homeAdmin'], {
+                clearHistory: true,
+            });
         }
         else {
-            this.routerExtensions.navigate(['/homeUser'])
+            this.routerExtensions.navigate(['/homeUser'], {
+                clearHistory: true,
+            })
         }
     }
 
@@ -146,24 +166,39 @@ export class ProfileComponent implements OnInit {
                 "state": this.state
             },
         };
-        this.router.navigate(['/address'], navigationExtras);
+        this.routerExtensions.navigate(['/address'], {
+            queryParams: {
+                "city": this.city,
+                "district": this.district,
+                "state": this.state
+            },
+            clearHistory: true,
+        });
     }
 
     onChangePassword() {
-        this.routerExtensions.navigate(['/changePassword']);
+        this.routerExtensions.navigate(['/changePassword'], {
+            clearHistory: true,
+        });
     }
 
     onOrders() {
         if (localstorage.getItem("userType") == "admin") {
-            this.routerExtensions.navigate(['./viewOrders']);
+            this.routerExtensions.navigate(['./viewOrders'], {
+                clearHistory: true,
+            });
         }
         else {
-            this.routerExtensions.navigate(['./myOrders']);
+            this.routerExtensions.navigate(['./myOrders'], {
+                clearHistory: true,
+            });
         }
     }
 
     onHistory() {
-        this.routerExtensions.navigate(['./orderHistory']);
+        this.routerExtensions.navigate(['./orderHistory'], {
+            clearHistory: true,
+        });
     }
 
     onLogout() {
@@ -178,14 +213,20 @@ export class ProfileComponent implements OnInit {
 
     onFeedback() {
         if (localstorage.getItem("userType") == "admin") {
-            this.routerExtensions.navigate(['./viewFeedback']);
+            this.routerExtensions.navigate(['./viewFeedback'], {
+                clearHistory: true,
+            });
         }
         else {
-            this.routerExtensions.navigate(['./giveFeedback']);
+            this.routerExtensions.navigate(['./giveFeedback'], {
+                clearHistory: true,
+            });
         }
     }
 
     onAbout() {
-        this.routerExtensions.navigate(['./aboutUs']);
+        this.routerExtensions.navigate(['./aboutUs'], {
+            clearHistory: true,
+        });
     }
 }

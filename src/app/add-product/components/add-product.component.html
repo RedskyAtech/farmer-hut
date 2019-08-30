@@ -51,20 +51,20 @@
                 </StackLayout>
                 <StackLayout row="1" width="80%" height="10%" marginTop="5%">
                     <TextField [hint]="brandHint" [text]="brandName" (textChange)="onBrandTextChanged($event)"
-                        secure="false" [borderColor]="brandBorderColor" returnKeyType="done" autocorrect="false"
+                        secure="false" padding="0" [borderColor]="brandBorderColor" returnKeyType="done" autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="2" width="80%" height="10%">
                     <TextField [hint]="nameHint" [text]="productName" (textChange)="onNameTextChanged($event)"
-                        secure="false" [borderColor]="nameBorderColor" returnKeyType="done" autocorrect="false"
+                        secure="false" padding="0" [borderColor]="nameBorderColor" returnKeyType="done" autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="3" width="80%" height="10%" orientation="horizontal">
                     <TextField [hint]="weightHint" [text]="weight" width="80%"
                         (textChange)="onWeightTextChanged($event)" maxLength="3" keyboardType="number" secure="false"
-                        [borderColor]="weightBorderColor" returnKeyType="done" autocorrect="false"
+                        [borderColor]="weightBorderColor" padding="0" returnKeyType="done" autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                     <StackLayout class="dimensionContainer">
@@ -81,14 +81,14 @@
                 <StackLayout row="5" width="80%" height="10%">
                     <TextField [hint]="detailHeadingHint" [text]="detailHeading"
                         (textChange)="onDetailHeadingTextChanged($event)" secure="false" returnKeyType="done"
-                        [borderColor]="detailHeadingBorderColor" autocorrect="false"
+                        [borderColor]="detailHeadingBorderColor" padding="0" autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="6" width="80%" height="10%">
                     <TextField [hint]="detailDescriptionHint" [text]="detailDescription"
                         (textChange)="onDetailDescriptionTextChanged($event)" secure="false" returnKeyType="done"
-                        [borderColor]="detailDescriptionBorderColor" autocorrect="false"
+                        [borderColor]="detailDescriptionBorderColor" padding="0" autocorrect="false"
                         class="input input-border input-field">
                     </TextField>
                 </StackLayout>

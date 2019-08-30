@@ -7,7 +7,7 @@ import { Product } from "~/app/models/product.model";
 import { Heading } from "~/app/models/heading.model";
 import { Image } from "~/app/models/image.model";
 import { HttpClient } from "@angular/common/http";
-import { ImageSource, fromBase64 } from "tns-core-modules/image-source/image-source";
+import { ImageSource, fromBase64, fromFile } from "tns-core-modules/image-source/image-source";
 import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
 import { CardView } from "nativescript-cardview";
 import { registerElement } from "nativescript-angular/element-registry";
@@ -21,6 +21,7 @@ import { ModalComponent } from "~/app/modals/modal.component";
 import { UserService } from "~/app/services/user.service";
 import { session, Request } from 'nativescript-background-http';
 import * as Toast from 'nativescript-toast';
+import { NavigationService } from "~/app/services/navigation.service";
 
 registerElement("CardView", () => CardView);
 
@@ -76,7 +77,7 @@ export class AddProductComponent implements OnInit {
 
     private imageCropper: ImageCropper;
 
-    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService) {
 
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
@@ -104,6 +105,7 @@ export class AddProductComponent implements OnInit {
         this.shouldImageUpdate = "true";
 
         this.userService.showLoadingState(false);
+        this.navigationService.backTo = "homeAdmin";
 
         this.route.queryParams.subscribe(params => {
             if (params["productId"] != undefined) {
@@ -129,15 +131,13 @@ export class AddProductComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                // this.productImage = res.data.image.url;
+                                this.productImage = res.data.image.url;
                                 this.brandName = res.data.brand;
                                 this.productName = res.data.name;
                                 this.detailHeading = res.data.heading.title;
                                 this.detailDescription = res.data.heading.description;
                                 this.weight = res.data.dimensions[0].value;
                                 this.price = res.data.price.value;
-                                // this.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-                                // this.shouldImageUpdate="false";
                             }
                         }
                     }, error => {
@@ -155,15 +155,13 @@ export class AddProductComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                // this.productImage = res.data.image.url;
+                                this.productImage = res.data.image.url;
                                 this.brandName = res.data.brand;
                                 this.productName = res.data.name;
                                 this.detailHeading = res.data.heading.title;
                                 this.detailDescription = res.data.heading.description;
                                 this.weight = res.data.dimensions[0].value;
                                 this.price = res.data.price.value;
-                                // this.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-                                // this.shouldImageUpdate="false";
                             }
                         }
                     }, error => {
@@ -177,7 +175,9 @@ export class AddProductComponent implements OnInit {
     }
 
     onBack() {
-        this.router.navigate(['/homeAdmin']);
+        this.routerExtensions.navigate(['/homeAdmin'], {
+            clearHistory: true
+        });
     }
 
     onBrandTextChanged(args) {
@@ -267,7 +267,9 @@ export class AddProductComponent implements OnInit {
                                 that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
                                 that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
                                 that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
-                                that.productImage = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                that.productImage = undefined;
+                                that.productImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                that.shouldImageUpdate = "true";
                             }
                         })
                             .catch(function (e) {
@@ -299,7 +301,9 @@ export class AddProductComponent implements OnInit {
                                         that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
                                         that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
                                         that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
-                                        that.productImage = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                        that.productImage = undefined;
+                                        that.productImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                        that.shouldImageUpdate = "true";
                                     }
                                 })
                                     .catch(function (e) {
@@ -357,62 +361,81 @@ export class AddProductComponent implements OnInit {
             var mimeType = "image/" + this.extension;
             var uploadSession = session('image-upload');
             if (that.type == "edit") {
+                if (that.file == null) {
+                    this.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                    this.shouldImageUpdate = "false";
+                }
                 if (that.classType == "similarProduct") {
                     var request = {
-                        url: Values.BASE_URL + "similarProducts/update/" + that.similarProductId,
+                        url: Values.BASE_URL + "similarProducts",
                         method: "POST",
                         headers: {
                             "Content-Type": "application/octet-stream",
-                            "File-Name": that.name
+                            "File-Name": "my file"
                         },
-                        description: "{'uploading':" + that.name + "}"
+                        description: "{'uploading':" + "my file" + "}"
                     }
+                    var price = that.price.toString();
                     const params = [
                         { name: "file", filename: that.file, mimeType: mimeType },
                         { name: "name", value: that.productName },
                         { name: "brand", value: that.brandName },
-                        { name: "price.value", value: that.price },
+                        { name: "price.value", value: price },
                         { name: "price.currency", value: that.currency },
                         { name: "heading.title", value: that.detailHeading },
                         { name: "heading.description", value: that.detailDescription },
                         { name: "dimensions[value]", value: that.weight },
                         { name: "dimensions[unit]", value: that.weightDimension },
-                        // { name: "shouldImageUpdate", value: that.shouldImageUpdate }
+                        { name: "shouldImageUpdate", value: that.shouldImageUpdate },
+                        { name: "isUpdate", value: "true" },
+                        { name: "product_id", value: that.similarProductId }
                     ]
                     var task = uploadSession.multipartUpload(params, request);
-                    that.userService.showLoadingState(false);
                     task.on("responded", this.respondedEvent);
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
+                    setTimeout(() => {
+                        this.userService.showLoadingState(false);
+                        this.routerExtensions.navigate(['./similarProductAdmin'], {
+                            clearHistory: true,
+                        });
+                    }, 10000);
                 }
                 else {
                     var request = {
-                        url: Values.BASE_URL + "products/update/" + that.productId,
+                        url: Values.BASE_URL + "products",
                         method: "POST",
                         headers: {
                             "Content-Type": "application/octet-stream",
-                            "File-Name": that.name
+                            "File-Name": "my"
                         },
-                        description: "{'uploading':" + that.name + "}"
+                        description: "{'uploading':" + "my" + "}"
                     }
+                    var price = that.price.toString();
                     const params = [
                         { name: "file", filename: that.file, mimeType: mimeType },
                         { name: "name", value: that.productName },
                         { name: "brand", value: that.brandName },
-                        { name: "price.value", value: that.price },
+                        { name: "price.value", value: price },
                         { name: "price.currency", value: that.currency },
                         { name: "heading.title", value: that.detailHeading },
                         { name: "heading.description", value: that.detailDescription },
                         { name: "dimensions[value]", value: that.weight },
                         { name: "dimensions[unit]", value: that.weightDimension },
-                        // { name: "shouldImageUpdate", value: that.shouldImageUpdate }
+                        { name: "shouldImageUpdate", value: that.shouldImageUpdate },
+                        { name: "isUpdate", value: "true" },
+                        { name: "product_id", value: that.productId },
                     ]
-                    console.log(params);
                     var task = uploadSession.multipartUpload(params, request);
-                    that.userService.showLoadingState(false);
                     task.on("responded", this.respondedEvent);
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
+                    setTimeout(() => {
+                        this.userService.showLoadingState(false);
+                        this.routerExtensions.navigate(['./homeAdmin'], {
+                            clearHistory: true,
+                        });
+                    }, 10000);
                 }
             } else {
                 if (that.classType == "similarProduct") {
@@ -442,9 +465,14 @@ export class AddProductComponent implements OnInit {
                     ]
                     var task = uploadSession.multipartUpload(params, request);
                     task.on("responded", this.respondedEvent);
-                    that.userService.showLoadingState(false);
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
+                    setTimeout(() => {
+                        this.userService.showLoadingState(false);
+                        this.routerExtensions.navigate(['./similarProductAdmin'], {
+                            clearHistory: true,
+                        });
+                    }, 10000);
                 }
                 else {
                     var request = {
@@ -471,15 +499,22 @@ export class AddProductComponent implements OnInit {
                     task.on("responded", this.respondedEvent);
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
+                    setTimeout(() => {
+                        this.userService.showLoadingState(false);
+                        this.routerExtensions.navigate(['./homeAdmin'], {
+                            clearHistory: true,
+                        });
+                    }, 10000);
+
                 }
             }
         }
     }
 
     respondedEvent(e) {
-        var that = this;
+        // var that = this;
         console.log("RESPONSE: " + e.data);
-        that.userService.showLoadingState(false);
+        this.userService.showLoadingState(false);
     }
 
     errorEvent(e) {

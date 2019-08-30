@@ -36,11 +36,16 @@ export class LoginComponent implements OnInit {
 
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.user = new User();
+        this.userService.showLoadingState(false);
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
-            this.routerExtensions.navigate(['./homeUser']);
+            this.routerExtensions.navigate(['./homeUser'], {
+                clearHistory: true,
+            });
         }
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
-            this.routerExtensions.navigate(['./homeAdmin']);
+            this.routerExtensions.navigate(['./homeAdmin'], {
+                clearHistory: true,
+            });
         }
         this.errorMessage = "";
     }
@@ -60,7 +65,9 @@ export class LoginComponent implements OnInit {
     }
 
     onForgotPassword() {
-        this.routerExtensions.navigate(['./forgotPassword']);
+        this.routerExtensions.navigate(['./forgotPassword'], {
+            clearHistory: true,
+        });
     }
 
     onOK() {
@@ -111,7 +118,9 @@ export class LoginComponent implements OnInit {
                                     }
                                     localstorage.setItem('userType', res.data.type);
                                     Toast.makeText("Login successfully!!!", "long").show();
-                                    this.routerExtensions.navigate(['./homeAdmin']);
+                                    this.routerExtensions.navigate(['./homeAdmin'], {
+                                        clearHistory: true,
+                                    });
                                 }
                                 else {
                                     localstorage.removeItem('adminToken');
@@ -135,7 +144,9 @@ export class LoginComponent implements OnInit {
                                     }
                                     localstorage.setItem('userType', res.data.type);
                                     Toast.makeText("Login successfully!!!", "long").show();
-                                    this.routerExtensions.navigate(['./homeUser']);
+                                    this.routerExtensions.navigate(['./homeUser'], {
+                                        clearHistory: true,
+                                    });
                                 }
                             }
                         }
@@ -156,7 +167,9 @@ export class LoginComponent implements OnInit {
                         this.userService.showLoadingState(false);
                         this.userVerifyDialog.hide();
                         localstorage.setItem('regToken', res.data.regToken);
-                        this.routerExtensions.navigate(['./confirmPhone']);
+                        this.routerExtensions.navigate(['./confirmPhone'], {
+                            clearHistory: true,
+                        });
                     }
                 }
             }, error => {
@@ -170,7 +183,9 @@ export class LoginComponent implements OnInit {
     }
 
     onRegister() {
-        this.routerExtensions.navigate(['./register']);
+        this.routerExtensions.navigate(['./register'], {
+            clearHistory: true,
+        });
     }
 
 

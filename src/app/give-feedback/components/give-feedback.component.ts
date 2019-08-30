@@ -6,6 +6,7 @@ import { Values } from "~/app/values/values";
 import { Feedback } from "~/app/models/feedback.model";
 import { UserService } from "~/app/services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-giveFeedback",
@@ -23,12 +24,13 @@ export class GiveFeedbackComponent implements OnInit {
     feedback: Feedback;
     errorMessage: string;
 
-    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService) {
         this.feedbackBorderColor = "white";
         this.feedbackHint = "Message";
         this.feedbackMessage = "";
         this.feedback = new Feedback();
         this.errorMessage = "";
+        this.navigationService.backTo = "profile";
     }
 
     ngOnInit(): void {
@@ -69,11 +71,15 @@ export class GiveFeedbackComponent implements OnInit {
                     console.log(error.error.error);
                 });
 
-            this.routerExtensions.navigate(['./profile'])
+            this.routerExtensions.navigate(['./profile'], {
+                clearHistory: true,
+            })
         }
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./profile'])
+        this.routerExtensions.navigate(['./profile'], {
+            clearHistory: true,
+        })
     }
 }

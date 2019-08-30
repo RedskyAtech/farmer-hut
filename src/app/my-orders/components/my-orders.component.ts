@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy, NgZone } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
@@ -6,6 +6,7 @@ import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import * as localstorage from "nativescript-localstorage";
 import * as application from "tns-core-modules/application";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-myOrderDetail",
@@ -14,21 +15,26 @@ import * as application from "tns-core-modules/application";
     styleUrls: ["./my-orders.component.css"]
 })
 
-export class MyOrdersComponent implements OnInit {
+export class MyOrdersComponent implements OnInit, OnDestroy {
 
     orderedProducts;
     address: string;
     status: string;
     isRenderingMessage: boolean;
     isRenderingOrders: boolean;
-    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+    listener: any;
 
+    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private ngZone: NgZone, private navigationService: NavigationService) {
+
+        this.navigationService.backTo = 'profile';
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
+    }
 
+    ngOnInit(): void {
         if (localstorage.getItem("userToken") != null &&
             localstorage.getItem("userToken") != undefined &&
             localstorage.getItem("userId") != null &&
@@ -75,18 +81,20 @@ export class MyOrdersComponent implements OnInit {
                     console.log(error.error.error);
                 });
         }
-
-        application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
-            this.router.navigate(['/profile']);
-            return;
-        });
     }
 
-    ngOnInit(): void {
+    ngOnDestroy(): void {
+        // this.ngZone.run(() => {
+        //     application.android.off(application.AndroidApplication.activityBackPressedEvent, (args: application.AndroidActivityBackPressedEventData) => {
+        //         args.cancel = true;
+        //     });
+        // });
     }
 
     onBack() {
-        this.router.navigate(['/profile']);
+        this.routerExtensions.navigate(['/profile'], {
+            clearHistory: true,
+        });
     }
 
     onViewDetail(id: string) {
@@ -95,6 +103,11 @@ export class MyOrdersComponent implements OnInit {
                 "orderId": id
             },
         };
-        this.router.navigate(['/myOrderDetail'], navigationExtras);
+        this.routerExtensions.navigate(['/myOrderDetail'], {
+            clearHistory: true,
+            queryParams: {
+                "orderId": id
+            }
+        });
     }
 }

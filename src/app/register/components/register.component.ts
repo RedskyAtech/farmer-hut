@@ -38,7 +38,7 @@ export class RegisterComponent implements OnInit {
     user: User;
     errorMessage: string;
 
-    constructor(private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.user = new User();
         this.errorMessage = "";
     }
@@ -149,7 +149,14 @@ export class RegisterComponent implements OnInit {
                                     "password": this.password
                                 },
                             };
-                            this.router.navigate(['./confirmPhone'], navigationExtras);
+                            this.routerExtensions.navigate(['./confirmPhone'], {
+                                queryParams: {
+                                    "name": this.name,
+                                    "phone": this.phone,
+                                    "password": this.password
+                                },
+                                clearHistory: true,
+                            });
                         }
                     }
                 }, error => {
@@ -168,7 +175,9 @@ export class RegisterComponent implements OnInit {
                         this.userService.showLoadingState(false);
                         this.userVerifyDialog.hide();
                         localstorage.setItem('regToken', res.data.regToken);
-                        this.router.navigate(['./confirmPhone']);
+                        this.routerExtensions.navigate(['./confirmPhone'], {
+                            clearHistory: true,
+                        });
                     }
                 }
             }, error => {
@@ -182,6 +191,8 @@ export class RegisterComponent implements OnInit {
     }
 
     onLogin() {
-        this.router.navigate(['./login']);
+        this.routerExtensions.navigate(['./login'], {
+            clearHistory: true,
+        });
     }
 }

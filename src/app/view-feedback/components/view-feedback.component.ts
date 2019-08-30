@@ -6,6 +6,7 @@ import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-viewFeedback",
@@ -18,8 +19,9 @@ export class ViewFeedbackComponent implements OnInit {
 
     feedbacks;
 
-    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.feedbacks = [];
+        this.navigationService.backTo = "profile";
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
             localstorage.getItem("adminId") != null &&
@@ -51,6 +53,8 @@ export class ViewFeedbackComponent implements OnInit {
     }
 
     onBack() {
-        this.router.navigate(['/profile']);
+        this.routerExtensions.navigate(['/profile'], {
+            clearHistory: true,
+        });
     }
 }

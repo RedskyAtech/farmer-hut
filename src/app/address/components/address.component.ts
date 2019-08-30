@@ -14,6 +14,7 @@ import * as Toast from 'nativescript-toast';
 import { UserService } from "../../services/user.service";
 import { DeliveryAddress } from "../../models/delivery-address.model";
 import { ModalComponent } from "~/app/modals/modal.component";
+import { NavigationService } from "~/app/services/navigation.service";
 let directions = new Directions();
 
 @Component({
@@ -50,7 +51,7 @@ export class AddressComponent implements OnInit {
     adminId: string;
     errorMessage: string;
 
-    constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router, private userService: UserService) {
+    constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService) {
         this.user = new User();
         this.user.address = new Address();
         this.user.address.location = new Location();
@@ -72,6 +73,13 @@ export class AddressComponent implements OnInit {
                 this.from = params["from"];
             }
         });
+
+        if (this.from == "cart") {
+            this.navigationService.backTo = "cart";
+        }
+        else {
+            this.navigationService.backTo = "profile";
+        }
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             this.userId = localstorage.getItem("userId");
@@ -142,7 +150,9 @@ export class AddressComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Delivery address added successfully!!!", "long").show();
-                            this.router.navigate(['./cart']);
+                            this.routerExtensions.navigate(['./cart'], {
+                                clearHistory: true,
+                            });
                         }
                     }
                 }, error => {
@@ -161,7 +171,9 @@ export class AddressComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Address added successfully!!!", "long").show();
-                            this.router.navigate(['./profile']);
+                            this.routerExtensions.navigate(['./profile'], {
+                                clearHistory: true,
+                            });
                             // if (this.from == "cart") {
                             //     this.router.navigate(['./cart']);
                             // }
@@ -201,9 +213,13 @@ export class AddressComponent implements OnInit {
 
     onBack() {
         if (this.from == "cart") {
-            this.router.navigate(['./cart']);
+            this.routerExtensions.navigate(['./cart'], {
+                clearHistory: true,
+            });
         } else {
-            this.router.navigate(['./profile']);
+            this.routerExtensions.navigate(['./profile'], {
+                clearHistory: true,
+            });
         }
     }
 

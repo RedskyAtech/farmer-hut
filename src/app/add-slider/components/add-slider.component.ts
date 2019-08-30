@@ -13,6 +13,7 @@ import { UserService } from "../../services/user.service";
 import { Product } from "../../models/product.model";
 import { Image } from "../../models/image.model";
 import * as Toast from 'nativescript-toast';
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-addSlider",
@@ -33,7 +34,7 @@ export class AddSliderComponent implements OnInit {
     showAddButton: boolean;
     errorMessage: string;
 
-    constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
         this.sliderImage = "res://add_image_icon";
@@ -42,6 +43,7 @@ export class AddSliderComponent implements OnInit {
         this.userService.showLoadingState(false);
         this.showAddButton = false;
         this.errorMessage = "";
+        this.navigationService.backTo = "homeAdmin";
     }
 
     ngOnInit(): void {
@@ -52,7 +54,9 @@ export class AddSliderComponent implements OnInit {
     }
 
     onBack() {
-        this.router.navigate(['/homeAdmin']);
+        this.routerExtensions.navigate(['/homeAdmin'], {
+            clearHistory: true,
+        });
     }
 
     onOutsideClick() {
@@ -168,7 +172,9 @@ export class AddSliderComponent implements OnInit {
                                             if (res.isSuccess == true) {
                                                 this.userService.showLoadingState(false);
                                                 Toast.makeText("Image is added successfully!!!", "long").show();
-                                                this.router.navigate(['./homeAdmin']);
+                                                this.routerExtensions.navigate(['./homeAdmin'], {
+                                                    clearHistory: true,
+                                                });
                                             }
                                         }
                                     }, error => {

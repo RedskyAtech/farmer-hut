@@ -41,7 +41,7 @@
             </GridLayout>
 
 
-            <GridLayout row="1" width="100%" height="52%">
+            <GridLayout row="1" width="100%" height="47%">
                 <GridView [items]="orderedProducts" colWidth="90%" rowHeight="30%" width="100%" height="100%"
                     backgroundColor="transparent">
                     <ng-template let-item="item" let-odd="odd">
@@ -92,8 +92,9 @@
                 </GridView>
             </GridLayout>
 
-            <GridLayout *ngIf="isRenderingUserDetail" row="2" height="40%" width="100%" rows="auto,auto,auto,auto,auto">
-                <GridLayout row="0" height="14%" width="90%" columns="auto,auto" marginTop="2%">
+            <GridLayout *ngIf="isRenderingUserDetail" row="2" height="45%" width="100%"
+                rows="auto,auto,auto,auto,auto,auto">
+                <GridLayout row="0" height="12%" width="90%" columns="auto,auto" marginTop="2%">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Name : "></Label>
                     </StackLayout>
@@ -101,7 +102,7 @@
                         <Label class="labelDetail" [text]="userName"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="1" width="90%" height="14%" columns="auto,auto">
+                <GridLayout row="1" width="90%" height="12%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Phone number : "></Label>
                     </StackLayout>
@@ -109,7 +110,7 @@
                         <Label class="labelDetail" [text]="phoneNumber"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="2" width="90%" height="36%" columns="auto,auto">
+                <GridLayout row="2" width="90%" height="30%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Address : "></Label>
                     </StackLayout>
@@ -117,7 +118,15 @@
                         <Label class="labelDetail" textWrap="true" [text]="address"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="3" width="90%" height="14%" columns="auto,auto">
+                <GridLayout row="3" width="90%" height="12%" columns="auto,auto">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="Date (Time): "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" [text]="date"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="4" width="90%" height="12%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Total amount : "></Label>
                     </StackLayout>
@@ -125,7 +134,7 @@
                         <Label class="labelDetail" [text]="totalAmount"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="4" width="100%" height="20%" columns="auto,auto">
+                <GridLayout row="5" width="100%" height="20%" columns="auto,auto">
                     <StackLayout col="1" width="100%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
                         <Button *ngIf="isCancelButton" class="cancelOrderButton" [text]="cancelButtonText"

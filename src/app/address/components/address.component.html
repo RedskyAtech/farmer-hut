@@ -32,13 +32,13 @@
             </StackLayout>
             <StackLayout row="2" width="80%" height="10%">
                 <TextField [hint]="addressHint" [text]="address" (textChange)="onAddressTextChanged($event)"
-                    secure="false" [borderColor]="addressBorderColor" returnKeyType="done" autocorrect="false"
+                    secure="false" padding="0" [borderColor]="addressBorderColor" returnKeyType="done" autocorrect="false"
                     class="input input-border input-field">
                 </TextField>
             </StackLayout>
             <StackLayout row="3" width="80%" height="10%">
                 <TextField [hint]="mapAddressHint" [text]="mapAddress" editable="false"
-                    (textChange)="onMapAddressTextChanged($event)" secure="false" [borderColor]="mapAddressBorderColor"
+                    (textChange)="onMapAddressTextChanged($event)" secure="false" padding="0" [borderColor]="mapAddressBorderColor"
                     returnKeyType="done" autocorrect="false" class="input input-border input-field">
                 </TextField>
             </StackLayout>
@@ -48,7 +48,7 @@
                 </TextField>
             </StackLayout>
             <StackLayout row="5" width="80%" height="10%">
-                <TextField [text]="district" secure="false" returnKeyType="done" [borderColor]="districtBorderColor"
+                <TextField [text]="district" secure="false" returnKeyType="done" padding="0" [borderColor]="districtBorderColor"
                     autocorrect="false" class="input input-border input-field">
                 </TextField>
             </StackLayout>

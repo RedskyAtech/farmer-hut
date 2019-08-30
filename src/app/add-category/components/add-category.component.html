@@ -43,7 +43,7 @@
                 <StackLayout row="1" width="80%" height="10%" marginTop="5%">
                     <TextField #myTextfield [hint]="categoryHint" [text]="categoryName"
                         (textChange)="onCategoryTextChanged($event)" secure="false" [borderColor]="categoryBorderColor"
-                        returnKeyType="done" autocorrect="false" class="input input-border input-field">
+                        returnKeyType="done" padding="0" autocorrect="false" class="input input-border input-field">
                     </TextField>
                 </StackLayout>
                 <StackLayout *ngIf="showAddButton" row="2" width="80%" height="10%">

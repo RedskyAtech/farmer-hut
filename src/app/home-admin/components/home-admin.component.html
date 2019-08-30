@@ -3,7 +3,7 @@
         <GridLayout row="0" height="8%" width="100%" columns="auto,auto,auto">
             <StackLayout col="0" height="50%" width="15%">
             </StackLayout>
-            <StackLayout col="1" height="50%" width="70%">
+            <StackLayout col="1" height="100%" verticalAlignment="middle" width="70%">
                 <Label class="pageHeading" text="Products"></Label>
             </StackLayout>
             <StackLayout col="2" height="50%" width="15%" (tap)="onProfile()">
@@ -11,7 +11,7 @@
             </StackLayout>
 
         </GridLayout>
-        <GridLayout *ngIf="isRenderingSlider" row="1" width="100%" height="15%" columns="auto,auto">
+        <GridLayout row="1" width="100%" height="15%" columns="auto,auto">
             <GridLayout col="0" width="70%" height="100%">
                 <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
                     android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="80%"
@@ -90,7 +90,7 @@
                                             <GridLayout row="3" columns="auto,auto" width="100%" height="35%">
                                                 <StackLayout col="0" height="100%" width="50%"
                                                     verticalAlignment="middle">
-                                                    <Button class="inactiveButton" text="Inactive"
+                                                    <Button class="inactiveButton" fontSize="14%" text="Inactive"
                                                         [backgroundColor]="item.status=='disabled'?'#00C012':'white'"
                                                         [color]="item.status=='disabled'?'white':'#00C012'"
                                                         [borderColor]="item.status=='disabled'?'white':'#00C012'"
@@ -98,7 +98,7 @@
                                                 </StackLayout>
                                                 <StackLayout col="1" height="100%" width="50%"
                                                     verticalAlignment="middle">
-                                                    <Button class="activeButton" text="Active"
+                                                    <Button class="activeButton" fontSize="14%" text="Active"
                                                         [backgroundColor]="item.status=='enabled'?'#00C012':'white'"
                                                         [color]="item.status=='enabled'?'white':'#00C012'"
                                                         [borderColor]="item.status=='enabled'?'white':'#00C012'"
@@ -135,14 +135,14 @@
                                     </StackLayout>
                                     <GridLayout row="3" width="90%" height="15%" columns="auto,auto">
                                         <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
-                                            <Button class="inactiveButton" text="Inactive"
+                                            <Button class="inactiveButton" fontSize="10%" text="Inactive"
                                                 [backgroundColor]="item.status=='inactive'?'#00C012':'white'"
                                                 [color]="item.status=='inactive'?'white':'#00C012'"
                                                 [borderColor]="item.status=='inactive'?'white':'#00C012'"
                                                 (tap)="onCategoryInactive(item)"></Button>
                                         </StackLayout>
                                         <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
-                                            <Button class="activeButton" text="Active"
+                                            <Button class="activeButton" fontSize="10%" text="Active"
                                                 [backgroundColor]="item.status=='active'?'#00C012':'white'"
                                                 [color]="item.status=='active'?'white':'#00C012'"
                                                 [borderColor]="item.status=='active'?'white':'#00C012'"

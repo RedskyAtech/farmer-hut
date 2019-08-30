@@ -7,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { Order } from "../../models/order.model";
 import * as Toast from 'nativescript-toast';
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-myOrderDetail",
@@ -35,8 +36,9 @@ export class MyOrderDetailComponent implements OnInit {
     isReasonButton: boolean;
     isCancelButton: boolean;
     isRenderingUserDetail: boolean;
+    date: string;
 
-    constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private http: HttpClient) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
@@ -46,6 +48,8 @@ export class MyOrderDetailComponent implements OnInit {
         this.reason = "";
         this.isCancelButton = false;
         this.isReasonButton = false;
+        this.date = "";
+        this.navigationService.backTo = "myOrders";
 
         this.route.queryParams.subscribe(params => {
             if (params["orderId"] != "") {
@@ -67,6 +71,15 @@ export class MyOrderDetailComponent implements OnInit {
                             this.orderStatus = res.data.status;
                             this.reason = res.data.reason;
                             this.isRenderingUserDetail = true;
+                            this.date = res.data.date;
+                            var dateTime = new Date(this.date);
+                            var hours = dateTime.getHours();
+                            var ampm = "am";
+                            if (hours > 12) {
+                                var hours = hours - 12;
+                                var ampm = "pm";
+                            }
+                            this.date = dateTime.getDate().toString() + "/" + dateTime.getMonth().toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
                             if (this.orderStatus == "pending") {
                                 this.cancelButtonText = "Cancel your order";
                                 this.isCancelButton = true;
@@ -116,7 +129,9 @@ export class MyOrderDetailComponent implements OnInit {
     }
 
     onBack() {
-        this.router.navigate(['/myOrders']);
+        this.routerExtensions.navigate(['/myOrders'], {
+            clearHistory: true,
+        });
     }
 
     onCancelOrder() {
@@ -144,7 +159,9 @@ export class MyOrderDetailComponent implements OnInit {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.cancelOrderDialog.hide();
-                        this.router.navigate(['./myOrders']);
+                        this.routerExtensions.navigate(['./myOrders'], {
+                            clearHistory: true,
+                        });
                         this.userService.showLoadingState(false);
                         Toast.makeText("Order successfully cancelled!!!", "long").show();
                     }

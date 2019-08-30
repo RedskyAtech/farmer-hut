@@ -6,6 +6,7 @@ import { AppComponent } from "./app.component";
 import { GridViewModule } from "nativescript-grid-view/angular";
 import { HttpClientModule } from "@angular/common/http";
 import { UserService } from "./services/user.service";
+import { NavigationService } from "./services/navigation.service";
 
 @NgModule({
     bootstrap: [
@@ -20,7 +21,7 @@ import { UserService } from "./services/user.service";
     declarations: [
         AppComponent,
     ],
-    providers: [UserService],
+    providers: [UserService, NavigationService],
     schemas: [
         NO_ERRORS_SCHEMA
     ]

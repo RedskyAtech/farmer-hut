@@ -8,6 +8,7 @@ import * as localstorage from "nativescript-localstorage";
 import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import * as Toast from 'nativescript-toast';
 import { ModalComponent } from "~/app/modals/modal.component";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-confirmPhone",
@@ -30,7 +31,7 @@ export class ConfirmPhoneComponent implements OnInit {
     isVisibleOtpStatus: boolean;
     isVisibleResendButton: boolean;
 
-    constructor(private router: Router, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
         this.otpHint = "Enter OTP"
         this.otp = "";
         this.user = new User();
@@ -42,6 +43,7 @@ export class ConfirmPhoneComponent implements OnInit {
         this.isVisibleTimer = true;
         this.isVisibleOtpStatus = false;
         this.isVisibleResendButton = false;
+        this.navigationService.backTo = "register";
     }
 
     ngOnInit(): void {
@@ -104,7 +106,9 @@ export class ConfirmPhoneComponent implements OnInit {
                                                     }
                                                     localstorage.setItem('userType', res.data.type);
                                                     Toast.makeText("Login successfully!!!", "long").show();
-                                                    this.router.navigate(['./homeAdmin']);
+                                                    this.routerExtensions.navigate(['./homeAdmin'], {
+                                                        clearHistory: true,
+                                                    });
                                                 }
                                                 else {
                                                     localstorage.removeItem('adminToken');
@@ -128,7 +132,9 @@ export class ConfirmPhoneComponent implements OnInit {
                                                     }
                                                     localstorage.setItem('userType', res.data.type);
                                                     // Toast.makeText("Login successfully!!!", "long").show();
-                                                    this.router.navigate(['./homeUser']);
+                                                    this.routerExtensions.navigate(['./homeUser'], {
+                                                        clearHistory: true,
+                                                    });
                                                 }
                                             }
                                         }
@@ -191,6 +197,8 @@ export class ConfirmPhoneComponent implements OnInit {
     }
 
     onBack() {
-        this.router.navigate(['./register'])
+        this.routerExtensions.navigate(['./register'], {
+            clearHistory: true,
+        })
     }
 }

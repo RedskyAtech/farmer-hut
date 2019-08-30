@@ -7,6 +7,7 @@ import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
 import { UserService } from "../../services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-changePassword",
@@ -30,7 +31,7 @@ export class ChangePasswordComponent implements OnInit {
     userId: string;
     errorMessage: string;
 
-    constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private userService: UserService) {
+    constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService) {
         this.user = new User();
         this.errorMessage = "";
         if (localstorage.getItem("userType") == "admin") {
@@ -43,6 +44,8 @@ export class ChangePasswordComponent implements OnInit {
                 this.userId = localstorage.getItem("userId");
             }
         }
+
+        this.navigationService.backTo = "profile";
 
     }
 
@@ -104,7 +107,9 @@ export class ChangePasswordComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Password changed successfully!!!", "long").show();
-                            this.routerExtensions.navigate(['./login']);
+                            this.routerExtensions.navigate(['./login'], {
+                                clearHistory: true,
+                            });
                             localstorage.removeItem('userToken');
                             localStorage.removeItem('adminToken');
                         }
@@ -117,6 +122,8 @@ export class ChangePasswordComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./profile'])
+        this.routerExtensions.navigate(['./profile'], {
+            clearHistory: true,
+        })
     }
 }

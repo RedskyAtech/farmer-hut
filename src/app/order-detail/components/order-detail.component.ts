@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
@@ -12,6 +12,7 @@ import * as geolocation from "nativescript-geolocation";
 import { Accuracy } from "tns-core-modules/ui/enums";
 import { Directions } from "nativescript-directions";
 import { Order } from "../../models/order.model";
+import { NavigationService } from "~/app/services/navigation.service";
 let directions = new Directions();
 
 @Component({
@@ -20,7 +21,7 @@ let directions = new Directions();
     templateUrl: "./order-detail.component.html",
     styleUrls: ["./order-detail.component.css"]
 })
-export class OrderDetailComponent implements OnInit, AfterViewInit {
+export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('confirmOrderDialog') confirmOrderDialog: ModalComponent;
     @ViewChild('rejectOrderDialog') rejectOrderDialog: ModalComponent;
@@ -49,8 +50,9 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     reasonBorderColor: string;
     reason: string;
     isReasonButton: boolean;
+    date: string;
 
-    constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private http: HttpClient) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
@@ -65,6 +67,9 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
         this.reason = "";
         this.isReasonButton = false;
         this.order = new Order();
+        this.date = "";
+        this.navigationService.backTo = "viewOrders";
+
         this.route.queryParams.subscribe(params => {
             if (params["orderId"] != "") {
                 this.orderId = params["orderId"];
@@ -86,6 +91,15 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                             this.address = res.data.deliveryAddress.line1;
                             this.mapAddress = res.data.deliveryAddress.line2;
                             this.reason = res.data.reason;
+                            this.date = res.data.date;
+                            var dateTime = new Date(this.date);
+                            var hours = dateTime.getHours();
+                            var ampm = "am";
+                            if (hours > 12) {
+                                var hours = hours - 12;
+                                var ampm = "pm";
+                            }
+                            this.date = dateTime.getDate().toString() + "/" + dateTime.getMonth().toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
                             this.isRenderingUserDetail = true;
                             if (this.orderStatus == "pending") {
                                 this.confirmButtonText = "Confirm";
@@ -146,7 +160,12 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+    }
 
+    ngOnDestroy(): void {
+        // application.android.off(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
+        //     args.cancel = true;
+        // });
     }
 
     onReason() {
@@ -162,7 +181,9 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     }
 
     onBack() {
-        this.router.navigate(['/viewOrders']);
+        this.routerExtensions.navigate(['/viewOrders'], {
+            clearHistory: true,
+        });
     }
 
     onConfirmOrder() {
@@ -185,8 +206,23 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
 
     onConfirm() {
         if (this.orderStatus == "pending") {
-            this.order.status = "confirmed";
-            this.updateOrderStatus();
+            this.userService.showLoadingState(true);
+            this.http
+                .get(Values.BASE_URL + "files")
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false)
+                            this.order._id = res.data[0]._id;
+                            console.log(this.order._id);
+                            this.order.status = "confirmed";
+                            this.updateOrderStatus();
+                        }
+                    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    console.log(error.error.error);
+                });
         }
         if (this.orderStatus == "confirmed") {
             this.order.status = "delivered";
@@ -196,13 +232,16 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
 
     updateOrderStatus() {
         this.userService.showLoadingState(true);
+        console.log(this.order._id);
         this.http
             .put(Values.BASE_URL + "orders/update/" + this.orderId, this.order)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.confirmOrderDialog.hide();
-                        this.router.navigate(['./viewOrders']);
+                        this.routerExtensions.navigate(['./viewOrders'], {
+                            clearHistory: true,
+                        });
                         this.userService.showLoadingState(false);
                         if (this.order.status == "confirmed") {
                             Toast.makeText("Order successfully confirmed!!!", "long").show();

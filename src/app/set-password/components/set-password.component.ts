@@ -7,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import * as localstorage from "nativescript-localstorage";
 import { ModalComponent } from "~/app/modals/modal.component";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-setPassword",
@@ -29,9 +30,10 @@ export class SetPasswordComponent implements OnInit {
     user: User;
     errorMessage: string;
 
-    constructor(private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.user = new User();
         this.errorMessage = "";
+        this.navigationService.backTo = "forgotPassword";
     }
 
     ngOnInit(): void {
@@ -98,7 +100,9 @@ export class SetPasswordComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Password set successfully!!!", "long").show();
-                            this.routerExtensions.navigate(['./login'])
+                            this.routerExtensions.navigate(['./login'], {
+                                clearHistory: true,
+                            })
                         }
                     }
                 }, error => {
@@ -109,6 +113,8 @@ export class SetPasswordComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./forgotPassword'])
+        this.routerExtensions.navigate(['./forgotPassword'], {
+            clearHistory: true,
+        })
     }
 }

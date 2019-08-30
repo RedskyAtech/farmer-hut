@@ -49,13 +49,13 @@
             </StackLayout>
             <StackLayout row="2" width="80%" height="10%">
                 <TextField [hint]="phoneHint" (textChange)="onPhoneTextChanged($event)" keyboardType="phone"
-                    secure="false" maxLength="10" [borderColor]="phoneBorderColor" returnKeyType="done"
-                    autocorrect="false" class="input input-border input-field">
+                    secure="false" padding="0" maxLength="10" [borderColor]="phoneBorderColor" padding="0"
+                    returnKeyType="done" autocorrect="false" class="input input-border input-field">
                 </TextField>
             </StackLayout>
             <StackLayout row="3" width="80%" height="10%">
                 <TextField [hint]="passwordHint" (textChange)="onPasswordTextChanged($event)" secure="true"
-                    returnKeyType="done" [borderColor]="passwordBorderColor" autocorrect="false"
+                    returnKeyType="done" padding="0" [borderColor]="passwordBorderColor" autocorrect="false" padding="0"
                     class="input input-border input-field">
                 </TextField>
             </StackLayout>

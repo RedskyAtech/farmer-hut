@@ -11,7 +11,8 @@
 }
 .pageHeading{
     color:#00C012;
-    font-size: 24;
+    font-size: 25%;
+    padding:0;
     text-align: center;
     font-weight: 500;
 }

@@ -7,6 +7,9 @@ import * as localstorage from "nativescript-localstorage";
 import { UserService } from "../../services/user.service";
 import { Values } from "~/app/values/values";
 import { HttpClient } from "@angular/common/http";
+import { session, Request } from 'nativescript-background-http';
+import { RouterExtensions } from "nativescript-angular/router";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-similarProducts",
@@ -19,12 +22,19 @@ export class SimilarProductAdminComponent implements OnInit {
 
     similarProducts = [];
     product: Product;
+    file: any;
+    name: string;
+    extension: string;
+    shouldImageUpdate: string;
 
-    constructor(private router: Router, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.product = new Product();
+        this.extension = "jpg";
+        this.userService.showLoadingState(false);
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
             this.getSimilarProducts();
         }
+        this.navigationService.backTo = "homeAdmin";
     }
 
     ngOnInit(): void {
@@ -67,7 +77,14 @@ export class SimilarProductAdminComponent implements OnInit {
                 "type": "edit"
             },
         };
-        this.router.navigate(['./addProduct'], navigationExtras);
+        this.routerExtensions.navigate(['./addProduct'], {
+            queryParams: {
+                "similarProductId": product._id,
+                "classType": "similarProduct",
+                "type": "edit"
+            },
+            clearHistory: true,
+        });
     }
 
     onBack() {
@@ -76,7 +93,12 @@ export class SimilarProductAdminComponent implements OnInit {
                 "index": "1"
             },
         };
-        this.router.navigate(['./homeAdmin'], navigationExtras);
+        this.routerExtensions.navigate(['./homeAdmin'], {
+            queryParams: {
+                "index": "1"
+            },
+            clearHistory: true,
+        });
     }
 
     onAddButton() {
@@ -85,42 +107,97 @@ export class SimilarProductAdminComponent implements OnInit {
                 "classType": "similarProduct"
             },
         };
-        this.router.navigate(['./addProduct'], navigationExtras);
+        this.routerExtensions.navigate(['./addProduct'], {
+            queryParams: {
+                "classType": "similarProduct"
+            },
+            clearHistory: true,
+        });
     }
 
     onProductInactive(product: Product) {
-        this.product.status = "disabled";
         this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "similarProducts/update/" + product._id, this.product)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.similarProducts = [];
-                        this.getSimilarProducts();
-                    }
-                }
-            }, error => {
-                alert(error.error.error);
-            });
+        var that = this;
+        var productId = product._id;
+        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+        var mimeType = "image/" + that.extension;
+        var uploadSession = session('image-upload');
+        var request = {
+            url: Values.BASE_URL + "similarProducts",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/octet-stream",
+                "File-Name": that.name
+            },
+            description: "{'uploading':" + that.name + "}"
+        }
+        const params = [
+            { name: "file", filename: that.file, mimeType: mimeType },
+            { name: "status", value: "disabled" },
+            { name: "shouldImageUpdate", value: "false" },
+            { name: "isUpdate", value: "true" },
+            { name: "product_id", value: productId }
+        ]
+        var task = uploadSession.multipartUpload(params, request);
+        task.on("responded", this.respondedEvent);
+        task.on("error", this.errorEvent);
+        task.on("complete", this.completeEvent);
+
+        setTimeout(() => {
+            that.userService.showLoadingState(false);
+            that.similarProducts = [];
+            that.getSimilarProducts();
+        }, 5000);
     }
 
     onProductActive(product: Product) {
-        this.product.status = "enabled";
         this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "similarProducts/update/" + product._id, this.product)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.similarProducts = [];
-                        this.getSimilarProducts();
-                    }
-                }
-            }, error => {
-                alert(error.error.error);
-            });
+        var that = this;
+        var productId = product._id;
+        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+        var mimeType = "image/" + that.extension;
+        var uploadSession = session('image-upload');
+        var request = {
+            url: Values.BASE_URL + "similarProducts",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/octet-stream",
+                "File-Name": that.name
+            },
+            description: "{'uploading':" + that.name + "}"
+        }
+        const params = [
+            { name: "file", filename: that.file, mimeType: mimeType },
+            { name: "status", value: "enabled" },
+            { name: "shouldImageUpdate", value: "false" },
+            { name: "isUpdate", value: "true" },
+            { name: "product_id", value: productId }
+        ]
+        var task = uploadSession.multipartUpload(params, request);
+        task.on("responded", this.respondedEvent);
+        task.on("error", this.errorEvent);
+        task.on("complete", this.completeEvent);
+
+        setTimeout(() => {
+            that.userService.showLoadingState(false);
+            that.similarProducts = [];
+            that.getSimilarProducts();
+        }, 5000);
+    }
+
+    respondedEvent(e) {
+        console.log("RESPONSE: " + e.data);
+    }
+
+    errorEvent(e) {
+        console.log("Error is: " + JSON.stringify(e));
+    }
+
+    completeEvent(e) {
+        console.log("Completed :" + JSON.stringify(e));
     }
 }

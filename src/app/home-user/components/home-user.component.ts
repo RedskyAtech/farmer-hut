@@ -10,6 +10,8 @@ import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import * as Toast from 'nativescript-toast';
 import { Category } from "../../models/category.model";
+import { RouterExtensions } from "nativescript-angular/router";
+import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-homeUser",
@@ -37,7 +39,7 @@ export class HomeUserComponent implements OnInit {
     isRenderingTabView: boolean;
     pullRefreshPage;
 
-    constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions) {
         this.sliderImage1 = "";
         this.sliderImage2 = "";
         this.sliderImage3 = "";
@@ -49,6 +51,7 @@ export class HomeUserComponent implements OnInit {
         this.cart.product = new Product();
         this.category = new Category();
         this.products = [];
+        this.navigationService.backTo = undefined;
 
         this.userService.showLoadingState(false);
 
@@ -72,11 +75,6 @@ export class HomeUserComponent implements OnInit {
             }
         }, 6000);
 
-        if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
-            this.userService.showLoadingState(true);
-            this.getProducts();
-        }
-
     }
 
     // refreshPage(args) {
@@ -86,6 +84,10 @@ export class HomeUserComponent implements OnInit {
     // }
 
     ngOnInit(): void {
+        if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
+            this.userService.showLoadingState(true);
+            this.getProducts();
+        }
     }
 
     getProducts() {
@@ -113,7 +115,7 @@ export class HomeUserComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                this.pullRefreshPage.refreshing = false;
+                // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
     }
@@ -137,7 +139,7 @@ export class HomeUserComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                this.pullRefreshPage.refreshing = false;
+                // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
     }
@@ -156,23 +158,23 @@ export class HomeUserComponent implements OnInit {
     }
 
     updateSlider() {
+        this.isRenderingSlider = true;
         this.http
             .get(Values.BASE_URL + "files")
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.userService.showLoadingState(false);
-                        this.isRenderingSlider = true;
                         this.sliderImage1 = res.data[0].images[0].url;
                         this.sliderImage2 = res.data[0].images[1].url;
                         this.sliderImage3 = res.data[0].images[2].url;
                         this.sliderImage4 = res.data[0].images[3].url;
                     }
-                    this.pullRefreshPage.refreshing = false;
+                    // this.pullRefreshPage.refreshing = false;
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                this.pullRefreshPage.refreshing = false;
+                // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
     }
@@ -187,12 +189,13 @@ export class HomeUserComponent implements OnInit {
                             this.isCartCount = true;
                             this.cartCount = res.data.products.length;
                         }
+                        this.userService.showLoadingState(false);
                         this.updateSlider();
                     }
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                this.pullRefreshPage.refreshing = false;
+                // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
     }
@@ -203,7 +206,12 @@ export class HomeUserComponent implements OnInit {
                 "productId": product._id,
             },
         };
-        this.router.navigate(['/productDetail'], navigationExtras);
+        this.routerExtensions.navigate(['/productDetail'], {
+            queryParams: {
+                "productId": product._id,
+            },
+            clearHistory: true,
+        });
     }
 
     onCategory(category: Category) {
@@ -212,21 +220,31 @@ export class HomeUserComponent implements OnInit {
                 "categoryId": category._id,
             },
         };
-        this.router.navigate(['/similarProductUser'], navigationExtras);
+        this.routerExtensions.navigate(['/similarProductUser'], {
+            queryParams: {
+                "categoryId": category._id,
+            },
+            clearHistory: true,
+        });
     }
 
     onProfile() {
-        this.router.navigate(['/profile']);
+        this.routerExtensions.navigate(['/profile'], {
+            clearHistory: true,
+        });
     }
 
     onCartClick() {
-        this.router.navigate(['/cart']);
+        this.routerExtensions.navigate(['/cart'], {
+            clearHistory: true,
+        });
     }
 
     onAddCart(product: Product) {
         this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
-        console.log(localstorage.getItem("cartId"));
+        console.log(product._id);
+        // console.log(localstorage.getItem("cartId"));
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
