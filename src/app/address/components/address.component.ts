@@ -265,7 +265,7 @@ export class AddressComponent implements OnInit {
                     // });
 
                     that.http
-                        .get(Values.GOOGLE_MAP_URL + "latlng=" + that.latitude + "," + that.longitude + "Use Google Map Api Key Here")
+                        .get(Values.GOOGLE_MAP_URL + "latlng=" + that.latitude + "," + that.longitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
                         .subscribe((res: any) => {
                             that.userService.showLoadingState(false);
                             // that.address = res.results[0].address_components[0].long_name;

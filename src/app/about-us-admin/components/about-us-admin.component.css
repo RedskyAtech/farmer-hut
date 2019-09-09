@@ -5,21 +5,26 @@
     width:100%;
     height:100%;
 }
-.appLogo{
-    height:150;
-    width:150;
-}
 .backButton{
     height:30;
     width:30;
 }
-.appLabel{
+.pageHeading{
     color:#00C012;
-    font-size: 36;
+    font-size: 25%;
+    padding:0;
     text-align: center;
     font-weight: 500;
 }
-.button{
+
+.input-field{
+    placeholder-color:white;
+    border-bottom-width: 1;
+    height:40;
+    color:#00C012;
+}
+
+.submitButton{
     border-color:white;
     border-width:1;
     border-radius:10;
@@ -27,26 +32,17 @@
     font-size: 20;
     text-transform: initial;
     text-align: center;
-    height:40;
+    height:80%;
     padding:0;
-    background-color:#00C012
+    background-color: #00C012;
 }
-.button:highlighted{
+.submitButton:highlighted{
     background-color: transparent;
     z-index: 500;    
-    border-color:#00C012;
-    color:#00C012
+    border-color: #00C012;
+    color:#00C012;
 }
-.input-field{
-    placeholder-color:white;
-    border-bottom-width: 1;
-    height:40;
-    color:#00C012
-}
-.description-label{
-    color:white;
-    text-align: center;
-}
+
 .ok-button{
     border-radius: 10;
     background-color:#00C012;
@@ -63,23 +59,5 @@
 .ok-button:highlighted{
     background-color: white;
     border-color:#00C012;
-    color:#00C012
-}
-.resend-button{
-    border-color:#00C012;
-    border-width:1;
-    border-radius:10;
     color:#00C012;
-    font-size: 20;
-    text-transform: initial;
-    text-align: center;
-    height:40;
-    padding:0;
-    background-color: transparent
-}
-.resend-button:highlighted{
-    background-color:#00C012;
-    z-index: 500;    
-    border-color: white;
-    color:white;
 }

@@ -39,6 +39,7 @@ export class CartComponent implements OnInit {
     address: string;
     mapAddress: string;
     addressButtonText: string;
+    isRenderingMessage: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService) {
         this.cartProducts = [];
@@ -49,6 +50,7 @@ export class CartComponent implements OnInit {
         this.isRendering = false;
         this.mapAddress = "";
         this.address = "";
+        this.isRenderingMessage = false;
         this.navigationService.backTo = "homeUser";
     }
 
@@ -250,6 +252,10 @@ export class CartComponent implements OnInit {
                                 }, error => {
                                     alert(error.error.error);
                                 });
+                        }
+                        else {
+                            this.userService.showLoadingState(false);
+                            this.isRenderingMessage = true;
                         }
                     }
                 }

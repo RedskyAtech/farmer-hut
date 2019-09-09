@@ -5,7 +5,7 @@
                 <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
             </StackLayout>
             <StackLayout col="1" height="50%" width="70%">
-                <Label class="pageHeading" text="Similar products"></Label>
+                <Label class="pageHeading" [text]="heading"></Label>
             </StackLayout>
         </GridLayout>
         <GridLayout row="1" height="80%" width="100%">

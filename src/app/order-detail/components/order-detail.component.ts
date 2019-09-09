@@ -14,6 +14,7 @@ import { Directions } from "nativescript-directions";
 import { Order } from "../../models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
 let directions = new Directions();
+import { openUrl } from "tns-core-modules/utils/utils";
 
 @Component({
     selector: "ns-orderDetail",
@@ -27,6 +28,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('rejectOrderDialog') rejectOrderDialog: ModalComponent;
     @ViewChild('rejectReasonDialog') rejectReasonDialog: ModalComponent;
 
+    utilsModule
     orderedProducts = [];
     userName: string;
     phoneNumber: string;
@@ -51,6 +53,8 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     reason: string;
     isReasonButton: boolean;
     date: string;
+    latitude: number;
+    longitude: number;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
         this.userName = "";
@@ -90,6 +94,8 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.orderStatus = res.data.status;
                             this.address = res.data.deliveryAddress.line1;
                             this.mapAddress = res.data.deliveryAddress.line2;
+                            this.latitude = res.data.deliveryAddress.location.latitude;
+                            this.longitude = res.data.deliveryAddress.location.longitude;
                             this.reason = res.data.reason;
                             this.date = res.data.date;
                             var dateTime = new Date(this.date);
@@ -284,10 +290,11 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onTrack() {
-        if (this.mapAddress != null && this.mapAddress != undefined) {
+        if (this.latitude != null && this.latitude != undefined && this.longitude != null && this.longitude != undefined) {
             this.userService.showLoadingState(true);
             geolocation.enableLocationRequest();
             var that = this;
+
             // that.http
             //     .get(Values.GOOGLE_MAP_URL + "address=" + that.address + "," + "CA&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
             //     .subscribe((res: any) => {
@@ -303,30 +310,33 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                 then(function (location) {
                     if (location) {
                         that.userService.showLoadingState(false);
-                        directions.navigate({
-                            // from: { // optional, default 'current location'
-                            // },
-                            // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
-                            //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
-                            // },
-                            // {
-                            //     address: "Aak 98, Wieringerwerf, Netherlands"
-                            // }],
-                            to: {
-                                address: that.mapAddress,
-                                // lat: parseInt(that.userLatitude),
-                                // lng: parseInt(that.userLongitude)
-                            },
-                            type: "driving", // optional, can be: driving, transit, bicycling or walking
-                            ios: {
-                                preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
-                                allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
-                            }
-                        }).then(() => {
-                            console.log("Maps app launched.");
-                        }, error => {
-                            console.log(error);
-                        });
+
+                        openUrl("google.navigation:q=" + that.latitude.toString() + "," + that.longitude.toString());
+                        
+                        // directions.navigate({
+                        //     // from: { // optional, default 'current location'
+                        //     // },
+                        //     // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
+                        //     //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
+                        //     // },
+                        //     // {
+                        //     //     address: "Aak 98, Wieringerwerf, Netherlands"
+                        //     // }],
+                        //     to: {
+                        //         // address: that.mapAddress,
+                        //         lat: that.latitude,
+                        //         lng: that.longitude
+                        //     },
+                        //     type: "driving", // optional, can be: driving, transit, bicycling or walking
+                        //     ios: {
+                        //         preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
+                        //         allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
+                        //     }
+                        // }).then(() => {
+                        //     console.log("Maps app launched.");
+                        // }, error => {
+                        //     console.log(error);
+                        // });
 
                     }
                 }, function (e) {

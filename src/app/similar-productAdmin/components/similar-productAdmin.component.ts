@@ -26,15 +26,32 @@ export class SimilarProductAdminComponent implements OnInit {
     name: string;
     extension: string;
     shouldImageUpdate: string;
+    heading: string;
+    categoryId: string;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.product = new Product();
         this.extension = "jpg";
         this.userService.showLoadingState(false);
+        this.heading = "";
+        this.categoryId = "";
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
             this.getSimilarProducts();
         }
         this.navigationService.backTo = "homeAdmin";
+
+        this.http
+            .get(Values.BASE_URL + "categories/" + this.categoryId)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.heading = res.data.name;
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                alert(error.error.error);
+            });
     }
 
     ngOnInit(): void {
@@ -42,6 +59,7 @@ export class SimilarProductAdminComponent implements OnInit {
 
     getSimilarProducts() {
         if (localstorage.getItem("categoryId") != null && localstorage.getItem("categoryId") != undefined) {
+            this.categoryId = localstorage.getItem("categoryId");
             this.userService.showLoadingState(true);
             this.http
                 .get(Values.BASE_URL + "similarProducts?_id=" + localstorage.getItem("categoryId"))

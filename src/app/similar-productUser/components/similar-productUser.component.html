@@ -5,7 +5,7 @@
                 <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
             </StackLayout>
             <StackLayout col="1" height="50%" width="70%">
-                <Label class="pageHeading" text="Similar products"></Label>
+                <Label class="pageHeading" [text]="heading"></Label>
             </StackLayout>
             <StackLayout col="2" height="50%" width="15%" (tap)="onCartClick()">
                 <Image class="cartButton" src="res://cart_icon"></Image>

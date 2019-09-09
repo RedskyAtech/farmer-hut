@@ -25,17 +25,32 @@ export class SimilarProductUserComponent implements OnInit {
     product: Product;
     isCartCount: boolean;
     cart: Cart;
+    heading: string;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
         this.product = new Product();
         this.cart = new Cart();
         this.cart.product = new Product();
+        this.heading = "";
         this.route.queryParams.subscribe(params => {
             if (params["categoryId"] != null && params["categoryId"] != undefined) {
                 this.categoryId = params["categoryId"];
             }
         });
         this.navigationService.backTo = "homeUser";
+
+        this.http
+            .get(Values.BASE_URL + "categories/" + this.categoryId)
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.heading = res.data.name;
+                    }
+                }
+            }, error => {
+                this.userService.showLoadingState(false);
+                alert(error.error.error);
+            });
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             this.getSimilarProducts();

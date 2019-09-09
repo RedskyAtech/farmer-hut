@@ -250,36 +250,39 @@ export class AddProductComponent implements OnInit {
         let context = imagepicker.create({
             mode: "single"
         });
-        context
-            .authorize()
+        permissions.requestPermission([android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE])
             .then(() => {
-                return context.present();
-            })
-            .then(selection => {
-                selection.forEach(function (selected) {
-                    let source = new ImageSource();
-                    source.fromAsset(selected).then((source) => {
-                        that.imageCropper.show(source, { lockSquare: true }).then((args: any) => {
-                            if (args.image !== null) {
-                                var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
-                                var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
-                                args.image.saveToFile(file.path, 'jpg');
-                                that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-                                that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
-                                that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
-                                that.productImage = undefined;
-                                that.productImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
-                                that.shouldImageUpdate = "true";
-                            }
-                        })
-                            .catch(function (e) {
-                                console.log(e);
+                context
+                    .authorize()
+                    .then(() => {
+                        return context.present();
+                    })
+                    .then(selection => {
+                        selection.forEach(function (selected) {
+                            let source = new ImageSource();
+                            source.fromAsset(selected).then((source) => {
+                                that.imageCropper.show(source, { lockSquare: true }).then((args: any) => {
+                                    if (args.image !== null) {
+                                        var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
+                                        var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                        args.image.saveToFile(file.path, 'jpg');
+                                        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+                                        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+                                        that.productImage = undefined;
+                                        that.productImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                        that.shouldImageUpdate = "true";
+                                    }
+                                })
+                                    .catch(function (e) {
+                                        console.log(e);
+                                    });
+                            }).catch((err) => {
+                                console.log("Error -> " + err.message);
                             });
-                    }).catch((err) => {
-                        console.log("Error -> " + err.message);
-                    });
 
-                });
+                        });
+                    });
             });
     }
 

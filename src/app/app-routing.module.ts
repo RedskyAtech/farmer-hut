@@ -21,6 +21,7 @@ const routes: Routes = [
     { path: "giveFeedback", loadChildren: "~/app/give-feedback/give-feedback.module#GiveFeedbackModule" },
     { path: "address", loadChildren: "~/app/address/address.module#AddressModule" },
     { path: "aboutUs", loadChildren: "~/app/about-us/about-us.module#AboutUsModule" },
+    { path: "aboutUsAdmin", loadChildren: "~/app/about-us-admin/about-us-admin.module#AboutUsAdminModule" },
     { path: "changePassword", loadChildren: "~/app/change-password/change-password.module#ChangePasswordModule" },
     { path: "orderDetail", loadChildren: "~/app/order-detail/order-detail.module#OrderDetailModule" },
     { path: "similarProductUser", loadChildren: "~/app/similar-productUser/similar-productUser.module#SimilarProductUserModule" },

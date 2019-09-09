@@ -225,8 +225,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     onAbout() {
-        this.routerExtensions.navigate(['./aboutUs'], {
-            clearHistory: true,
-        });
+        if (localstorage.getItem("userType") == "admin") {
+            this.routerExtensions.navigate(['./aboutUsAdmin'], {
+                clearHistory: true,
+            });
+        }
+        else {
+            this.routerExtensions.navigate(['./aboutUs'], {
+                clearHistory: true,
+            });
+        }
     }
 }
