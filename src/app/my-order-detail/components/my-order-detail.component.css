@@ -22,7 +22,7 @@
 
 .backButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: white;
 }
 .pageHeading{
@@ -100,7 +100,7 @@
 }
 .cancelOrderButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     color:#00C012;
     border-color:#00C012;
 }

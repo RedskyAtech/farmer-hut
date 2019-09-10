@@ -47,7 +47,7 @@
 }
 .addProductButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: #00C012;
     color:#00C012;
 }
@@ -60,7 +60,7 @@
     height:80%;
     width:95%;
     padding:0;
-    z-index:0;
+    z-index:1;
 }
 .activeButton{
     border-width:1;
@@ -70,7 +70,7 @@
     height:80%;
     width:95%;
     padding:0;
-    z-index:0;
+    z-index:1;
 }
 
 .editButton{
@@ -84,11 +84,11 @@
     background-color: #00C012;
     color:white;
     border-color: white;
-    z-index:0;
+    z-index:1;
 }
 .editButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     color:#00C012;
     border-color: #00C012;
 }

@@ -38,7 +38,7 @@
 }
 .button:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: #00C012;
     color:#00C012;
 }
@@ -56,7 +56,7 @@
     background-color: #00C012;
 }
 .feedbackButton:highlighted{
-    z-index:500;
+    z-index:1;
     background-color: transparent;
     border-color: #00C012;
     color:#00C012;
@@ -73,7 +73,7 @@
     width:80%;
     padding:0;
     background-color: transparent;
-    z-index:500;
+    z-index:1;
 }
 .aboutButton:highlighted{
     background-color: #00C012;
@@ -98,7 +98,7 @@
 
 .backButton:highlighted{
     background-color: transparent;
-    z-index: 500;
+    z-index: 1;
     border-color: white;
 }
 
@@ -117,7 +117,7 @@
 }
 .logoutButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: #00C012;
     color:#00C012;
 }

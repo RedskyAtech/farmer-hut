@@ -21,7 +21,7 @@
 }
 .backButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: white;
 }
 .pageHeading{

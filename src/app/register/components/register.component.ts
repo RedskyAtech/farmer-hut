@@ -120,17 +120,15 @@ export class RegisterComponent implements OnInit {
         else if (this.password.length < 6) {
             this.errorMessage = "Password is too short, please enter minimum six characters.";
             this.warningDialog.show();
-            // alert("Please enter ten digit phone number!!!");
         }
         else if (this.rePassword == "") {
             this.errorMessage = "Please enter repeat password.";
             this.warningDialog.show();
             // alert("Please enter repeat password!!!");
         }
-        else if (this.rePassword.length < 6) {
-            this.errorMessage = "Repeat password is too short, please enter minimum six characters.";
+        else if (this.rePassword.length < 5) {
+            this.errorMessage = "Repeat password is too short, please enter minimum five characters.";
             this.warningDialog.show();
-            // alert("Please enter ten digit phone number!!!");
         }
         else if (this.password != this.rePassword) {
             this.errorMessage = "Password and repeat password should be same.";
@@ -171,7 +169,7 @@ export class RegisterComponent implements OnInit {
                     }
                 }, error => {
                     this.userService.showLoadingState(false);
-                    alert(error.error.error);
+                    console.log(error.error.error);
                 });
         }
     }
@@ -192,7 +190,7 @@ export class RegisterComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                alert(error.error.error);
+                console.log(error.error.error);
             });
     }
 

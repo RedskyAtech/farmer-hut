@@ -90,6 +90,10 @@ export class LoginComponent implements OnInit {
             this.warningDialog.show();
             alert("Please enter password!!!");
         }
+        else if (this.password.length < 5) {
+            this.errorMessage = "Password is too short, please enter minimum five characters.";
+            this.warningDialog.show();
+        }
         else {
             this.user.phone = this.phone;
             this.user.password = this.password;

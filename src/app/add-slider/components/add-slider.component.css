@@ -21,7 +21,7 @@
 }
 .backButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: white;
 }
 .pageHeading{
@@ -49,7 +49,7 @@
 }
 .button:highlighted{
     background-color: transparent;
-    z-index: 500;    
+    z-index: 1;    
     border-color: #00C012;
     color:#00C012;
 }

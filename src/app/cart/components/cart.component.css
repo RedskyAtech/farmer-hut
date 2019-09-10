@@ -22,7 +22,7 @@
 
 .backButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: white;
 }
 .pageHeading{
@@ -95,7 +95,7 @@
 }
 .orderItemButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: #00C012;
     color:#00C012;
 }
@@ -115,7 +115,7 @@
 }
 .enterAddressButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: #00C012;
     color:#00C012;
 }
@@ -198,7 +198,7 @@
 }
 .removeItemButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color:#00C012;
     color:#00C012;
 }

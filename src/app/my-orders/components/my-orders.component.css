@@ -22,7 +22,7 @@
 
 .backButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: white;
 }
 .pageHeading{
@@ -54,7 +54,7 @@
     width:80%;
     padding:0;
     background-color: transparent;
-    z-index:0;
+    z-index:1;
     border-color: #00C012;
     border-width: 1;
     border-radius:5;

@@ -29,7 +29,7 @@
 
 .profileButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: white;
 }
 .brand-name{
@@ -65,7 +65,7 @@
 }
 .addButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     border-color: #00C012;
     color:#00C012;
 }
@@ -111,7 +111,7 @@
 }
 .editButton:highlighted{
     background-color: transparent;
-    z-index:500;
+    z-index:1;
     color:#00C012;
     border-color: #00C012;
 }
