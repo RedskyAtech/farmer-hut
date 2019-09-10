@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import * as Toast from 'nativescript-toast';
 import { User } from "~/app/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
-import * as localstorage from "nativescript-localstorage";
 import { UserService } from "../../services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
-import { HttpInterceptingHandler } from "@angular/common/http/src/module";
 import { Color } from "tns-core-modules/color/color";
+import { Page } from "tns-core-modules/ui/page/page";
+import * as Toast from 'nativescript-toast';
+import * as localstorage from "nativescript-localstorage";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -34,7 +34,8 @@ export class LoginComponent implements OnInit {
     userToken: string;
     errorMessage: string;
 
-    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.user = new User();
         this.userService.showLoadingState(false);
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {

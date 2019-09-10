@@ -1,21 +1,20 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
-import * as imagepicker from "nativescript-imagepicker";
+import { NavigationExtras, ActivatedRoute } from "@angular/router";
 import { ImageSource, fromFile } from "tns-core-modules/image-source/image-source";
 import { ImageCropper } from 'nativescript-imagecropper';
-import * as camera from "nativescript-camera";
-import * as permissions from "nativescript-permissions";
 import { Category } from "~/app/models/category.model";
 import { Values } from "~/app/values/values";
 import { HttpClient } from "@angular/common/http";
 import { Image } from "~/app/models/image.model";
 import { ModalComponent } from "../../../app/modals/modal.component";
 import { UserService } from "../../../app/services/user.service";
-import { registerElement } from "nativescript-angular/element-registry";
-import { session, Request } from 'nativescript-background-http';
-import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
+import { session } from 'nativescript-background-http';
+import { Folder, path, File } from "tns-core-modules/file-system";
 import { NavigationService } from "~/app/services/navigation.service";
+import * as camera from "nativescript-camera";
+import * as permissions from "nativescript-permissions";
+import * as imagepicker from "nativescript-imagepicker";
 
 declare var android: any;
 

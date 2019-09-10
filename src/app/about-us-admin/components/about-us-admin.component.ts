@@ -6,8 +6,9 @@ import { ModalComponent } from "~/app/modals/modal.component";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { AboutUs } from "~/app/models/aboutUs.model";
-import * as Toast from 'nativescript-toast';
 import { Color } from "tns-core-modules/color/color";
+
+import * as Toast from 'nativescript-toast';
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -143,8 +144,10 @@ export class AboutUsAdminComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./profile'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['./profile'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
     }
 }

@@ -1,13 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
-import { Product } from "../../models/product";
-import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { Order } from "~/app/models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
+
+import * as localstorage from "nativescript-localstorage";
+
 
 @Component({
     selector: "ns-cart",
@@ -24,7 +24,7 @@ export class ViewOrdersComponent implements OnInit {
     isRenderingMessage: boolean;
     isRenderingOrders: boolean;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.orderedProducts = [];
         this.order = new Order();
         this.isRenderingMessage = false;
@@ -73,22 +73,23 @@ export class ViewOrdersComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/profile'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/profile'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
     }
 
     onViewDetail(id: string) {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "orderId": id
-            },
-        };
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "orderId": id
+        //     },
+        // };
         this.routerExtensions.navigate(['/orderDetail'], {
             queryParams: {
                 "orderId": id
             },
-            clearHistory: true,
         });
     }
 }

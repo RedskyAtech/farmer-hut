@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import * as imagepicker from "nativescript-imagepicker";
 import { Values } from "~/app/values/values";
 import { Product } from "~/app/models/product.model";
 import { Heading } from "~/app/models/heading.model";
 import { Image } from "~/app/models/image.model";
 import { HttpClient } from "@angular/common/http";
-import { ImageSource, fromBase64, fromFile } from "tns-core-modules/image-source/image-source";
-import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
+import { ImageSource, fromFile } from "tns-core-modules/image-source/image-source";
+import { Folder, path, File } from "tns-core-modules/file-system";
 import { CardView } from "nativescript-cardview";
 import { registerElement } from "nativescript-angular/element-registry";
 import { ImageCropper } from 'nativescript-imagecropper';

@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { UserService } from "~/app/services/user.service";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { Order } from "../../models/order.model";
-import * as Toast from 'nativescript-toast';
 import { NavigationService } from "~/app/services/navigation.service";
+
+import * as Toast from 'nativescript-toast';
+
 
 @Component({
     selector: "ns-myOrderDetail",
@@ -129,9 +131,12 @@ export class MyOrderDetailComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/myOrders'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/myOrders'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
+
     }
 
     onCancelOrder() {

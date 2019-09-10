@@ -66,7 +66,8 @@
                                     </GridLayout>
                                     <GridLayout row="1" columns="auto,auto" width="100%" height="80%">
                                         <StackLayout col="0" height="100%" width="40%">
-                                            <Image [src]="item.image" stretch="aspectFit" width="100vw" height="100vh">
+                                            <Image [src]="item.image" useCache="true" stretch="aspectFit" width="100vw"
+                                                height="100vh">
                                             </Image>
                                         </StackLayout>
                                         <GridLayout col="1" rows="auto,auto,auto,auto" height="100%" width="60%">

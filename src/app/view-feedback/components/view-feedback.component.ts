@@ -1,12 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
-import { Product } from "../../models/product";
-import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { NavigationService } from "~/app/services/navigation.service";
+
+import * as localstorage from "nativescript-localstorage";
 
 @Component({
     selector: "ns-viewFeedback",
@@ -19,7 +18,7 @@ export class ViewFeedbackComponent implements OnInit {
 
     feedbacks;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.feedbacks = [];
         this.navigationService.backTo = "profile";
         if (localstorage.getItem("adminToken") != null &&
@@ -53,8 +52,10 @@ export class ViewFeedbackComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/profile'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/profile'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
     }
 }

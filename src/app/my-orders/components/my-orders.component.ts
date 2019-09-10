@@ -92,9 +92,10 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/profile'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/profile'], {
+        //     clearHistory: true,
+        // });
+        this.routerExtensions.back();
     }
 
     onViewDetail(id: string) {
@@ -104,7 +105,6 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
             },
         };
         this.routerExtensions.navigate(['/myOrderDetail'], {
-            clearHistory: true,
             queryParams: {
                 "orderId": id
             }

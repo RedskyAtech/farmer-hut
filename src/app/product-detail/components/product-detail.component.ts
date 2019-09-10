@@ -1,15 +1,16 @@
 import { Component, OnInit, AfterViewInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
-import * as localstorage from "nativescript-localstorage";
+import { ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { Cart } from '~/app/models/cart.model';
-import * as Toast from 'nativescript-toast';
 import { Product } from "../../models/product.model";
 import { NavigationService } from "~/app/services/navigation.service";
+
+import * as localstorage from "nativescript-localstorage";
+import * as Toast from 'nativescript-toast';
+
 
 @Component({
     selector: "ns-productDetail",
@@ -117,14 +118,15 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
 
 
     onBack() {
-        this.routerExtensions.navigate(['/homeUser'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/homeUser'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
     }
 
     onCartClick() {
         this.routerExtensions.navigate(['/cart'], {
-            clearHistory: true,
         });
     }
 
@@ -237,26 +239,20 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                                 if (this.productId == res.data.products[i]._id) {
                                     var quantity = parseInt(res.data.products[i].quantity) + 1;
                                     this.cart.product.quantity = quantity.toString();
-                                    this.routerExtensions.navigate(['/cart'], {
-                                        clearHistory: true,
-                                    })
+                                    this.routerExtensions.navigate(['/cart'])
                                     this.updateCart();
                                     break;
                                 }
                                 else {
                                     this.cart.product.quantity = "1";
-                                    this.routerExtensions.navigate(['/cart'], {
-                                        clearHistory: true,
-                                    })
+                                    this.routerExtensions.navigate(['/cart'])
                                     this.updateCart();
                                 }
                             }
                         }
                         else {
                             this.cart.product.quantity = "1";
-                            this.routerExtensions.navigate(['/cart'], {
-                                clearHistory: true,
-                            })
+                            this.routerExtensions.navigate(['/cart'])
                             this.updateCart();
                         }
                     }

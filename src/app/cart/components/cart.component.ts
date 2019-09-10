@@ -1,11 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import { ModalComponent } from "../../modals/modal.component";
-import * as Toast from 'nativescript-toast';
 import { Color } from "tns-core-modules/color/color";
-import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
@@ -13,9 +9,14 @@ import { Cart } from "~/app/models/cart.model";
 import { Product } from "~/app/models/product.model";
 import { Order } from "~/app/models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
+
+import * as Toast from 'nativescript-toast';
+import * as localstorage from "nativescript-localstorage";
 
 declare const android: any;
 declare const CGSizeMake: any;
+
 
 @Component({
     selector: "ns-cart",
@@ -41,7 +42,8 @@ export class CartComponent implements OnInit {
     addressButtonText: string;
     isRenderingMessage: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.cartProducts = [];
         this.cart = new Cart();
         this.cart.product = new Product();
@@ -66,9 +68,8 @@ export class CartComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/homeUser'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/homeUser']);
+        this.routerExtensions.back();
     }
 
     onRemoveItem(product: Product) {
@@ -275,17 +276,12 @@ export class CartComponent implements OnInit {
     }
 
     onAddress() {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "from": "cart"
-            },
-        };
-        this.routerExtensions.navigate(['/address'], {
-            queryParams: {
-                "from": "cart"
-            },
-            clearHistory: true
-        });
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "from": "cart"
+        //     },
+        // };
+        this.routerExtensions.navigate(['/address']);
     }
 
     onOrderItem() {

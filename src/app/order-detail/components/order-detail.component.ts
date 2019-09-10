@@ -1,20 +1,19 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { ModalComponent } from "~/app/modals/modal.component";
-import * as Toast from 'nativescript-toast';
-import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
-import * as geolocation from "nativescript-geolocation";
 import { Accuracy } from "tns-core-modules/ui/enums";
-import { Directions } from "nativescript-directions";
 import { Order } from "../../models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
-let directions = new Directions();
 import { openUrl } from "tns-core-modules/utils/utils";
+
+
+import * as geolocation from "nativescript-geolocation";
+import * as Toast from 'nativescript-toast';
+
 
 @Component({
     selector: "ns-orderDetail",
@@ -187,9 +186,11 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/viewOrders'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/viewOrders'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
     }
 
     onConfirmOrder() {
@@ -312,7 +313,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                         that.userService.showLoadingState(false);
 
                         openUrl("google.navigation:q=" + that.latitude.toString() + "," + that.longitude.toString());
-                        
+
                         // directions.navigate({
                         //     // from: { // optional, default 'current location'
                         //     // },

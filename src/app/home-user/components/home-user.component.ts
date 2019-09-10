@@ -1,17 +1,21 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 // import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+import { NavigationExtras, ActivatedRoute } from "@angular/router";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Product } from "~/app/models/product.model";
 import { Cart } from "~/app/models/cart.model";
-import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
-import * as Toast from 'nativescript-toast';
 import { Category } from "../../models/category.model";
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page, EventData } from "tns-core-modules/ui/page/page";
+import { GridView, GridItemEventData } from "nativescript-grid-view/grid-view"
+import * as localstorage from "nativescript-localstorage";
+import * as Toast from 'nativescript-toast';
+import { Marker, Position, MapView } from "nativescript-google-maps-sdk";
+import * as Location from "nativescript-geolocation"
 
 @Component({
     selector: "ns-homeUser",
@@ -38,8 +42,26 @@ export class HomeUserComponent implements OnInit {
     isRenderingSlider: boolean;
     isRenderingTabView: boolean;
     pullRefreshPage;
+    pageNo: number;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions) {
+
+
+    latitude = -33.86;
+    longitude = 151.20;
+    zoom = 8;
+    minZoom = 0;
+    maxZoom = 22;
+    bearing = 0;
+    tilt = 0;
+    padding = [40, 40, 40, 40];
+    mapView: MapView;
+
+    marker = new Marker();
+    location = new Location.Location()
+
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page) {
+        this.page.actionBarHidden = true;
+
         this.sliderImage1 = "";
         this.sliderImage2 = "";
         this.sliderImage3 = "";
@@ -52,6 +74,7 @@ export class HomeUserComponent implements OnInit {
         this.category = new Category();
         this.products = [];
         this.navigationService.backTo = undefined;
+        this.pageNo = 1;
 
         this.userService.showLoadingState(false);
 
@@ -90,9 +113,69 @@ export class HomeUserComponent implements OnInit {
         }
     }
 
+    // onGridLoaded(args: any) {
+    //     var gridView: GridView = args.object as GridView;
+    //     gridView.on('scroll', (args) => {
+    //         console.trace('Scrolled:::', args)
+    //     })
+    // }
+
+
+    //  gridViewItemTap(args: GridItemEventData) {
+    //     console.log("tap index " + args.index.toString());
+    // }
+
+    //Map events
+    onMapReady(event) {
+        console.log('Map Ready');
+
+        this.mapView = event.object;
+
+        console.log("Setting a marker...");
+        this.marker.position = Position.positionFromLatLng(this.latitude, this.longitude)
+        this.marker.draggable = true;
+        this.marker.color = "#888800";
+        this.marker.visible = true;
+
+        this.mapView.addMarker(this.marker);
+        this.mapView.myLocationEnabled = true;
+
+    }
+
+    onCoordinateTapped(args) {
+        console.log("Coordinate Tapped, Lat: " + args.position.latitude + ", Lon: " + args.position.longitude, args);
+    }
+
+    onMarkerEvent(args) {
+        console.log("Marker Event: '" + args.eventName
+            + "' triggered on: " + args.marker.title
+            + ", Lat: " + args.marker.position.latitude + ", Lon: " + args.marker.position.longitude, args);
+    }
+
+    onCameraChanged(args) {
+        // console.log("Camera changed: " + JSON.stringify(args.camera), JSON.stringify(args.camera) === this.lastCamera);
+        // this.lastCamera = JSON.stringify(args.camera);
+    }
+
+    onCameraMove(args) {
+        // this.marker.position = Position.positionFromLatLng(this.location.latitude, this.location.longitude);
+        // this.marker.userData = { index: 1 };
+        // this.mapView.addMarker(this.marker);
+        console.log("Camera moving: " + JSON.stringify(args.camera));
+    }
+
+
+    gridViewItemLoading(args: any) {
+        console.log("item loading " + args.index.toString());
+    }
+
+    gridViewLoadMoreItems(args: EventData) {
+        console.log("load more items", args);
+    }
+
     getProducts() {
         this.http
-            .get(Values.BASE_URL + "products?status=enabled")
+            .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&products=3`)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
@@ -201,43 +284,38 @@ export class HomeUserComponent implements OnInit {
     }
 
     onViewDetail(product: Product) {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "productId": product._id,
-            },
-        };
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "productId": product._id,
+        //     },
+        // };
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
                 "productId": product._id,
-            },
-            clearHistory: true,
+            }
         });
+
     }
 
     onCategory(category: Category) {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "categoryId": category._id,
-            },
-        };
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "categoryId": category._id,
+        //     },
+        // };
         this.routerExtensions.navigate(['/similarProductUser'], {
             queryParams: {
                 "categoryId": category._id,
             },
-            clearHistory: true,
         });
     }
 
     onProfile() {
-        this.routerExtensions.navigate(['/profile'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.navigate(['/profile']);
     }
 
     onCartClick() {
-        this.routerExtensions.navigate(['/cart'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.navigate(['/cart']);
     }
 
     onAddCart(product: Product) {

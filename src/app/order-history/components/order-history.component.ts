@@ -1,12 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+import { NavigationExtras, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
+import { NavigationService } from "~/app/services/navigation.service";
+
 import * as localstorage from "nativescript-localstorage";
 import * as application from "tns-core-modules/application";
-import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
     selector: "ns-orderHistory",
@@ -24,7 +25,7 @@ export class OrderHistoryComponent implements OnInit {
     isRenderingMessage: boolean;
     isRenderingHistory: boolean;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";
@@ -61,23 +62,24 @@ export class OrderHistoryComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/profile'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['/profile'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
     }
 
     onViewDetail(id: string) {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "orderId": id
-            },
-        };
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "orderId": id
+        //     },
+        // };
         if (this.userType == "admin") {
             this.routerExtensions.navigate(['/orderDetail'], {
                 queryParams: {
                     "orderId": id
                 },
-                clearHistory: true,
             });
         }
         else {
@@ -85,7 +87,6 @@ export class OrderHistoryComponent implements OnInit {
                 queryParams: {
                     "orderId": id
                 },
-                clearHistory: true,
             });
         }
     }

@@ -1,19 +1,25 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import * as geolocation from "nativescript-geolocation";
 import { Accuracy } from "tns-core-modules/ui/enums";
-import { ActivatedRoute} from "@angular/router";
+import { Directions } from "nativescript-directions";
+import { ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { User } from "~/app/models/user.model";
 import { Location } from "~/app/models/location.model";
-import * as localstorage from "nativescript-localstorage";
 import { Address } from "../../models/address.model";
-import * as Toast from 'nativescript-toast';
 import { UserService } from "../../services/user.service";
 import { DeliveryAddress } from "../../models/delivery-address.model";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
+
+
+import * as geolocation from "nativescript-geolocation";
+import * as Toast from 'nativescript-toast';
+import * as localstorage from "nativescript-localstorage";
+
+
+let directions = new Directions();
 
 @Component({
     selector: "ns-address",
@@ -148,9 +154,11 @@ export class AddressComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Delivery address added successfully!!!", "long").show();
-                            this.routerExtensions.navigate(['./cart'], {
-                                clearHistory: true,
-                            });
+                            // this.routerExtensions.navigate(['./cart'], {
+                            //     clearHistory: true,
+                            // });
+
+                            this.routerExtensions.back();
                         }
                     }
                 }, error => {
@@ -169,9 +177,12 @@ export class AddressComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Address added successfully!!!", "long").show();
-                            this.routerExtensions.navigate(['./profile'], {
-                                clearHistory: true,
-                            });
+                            // this.routerExtensions.navigate(['./profile'], {
+                            //     clearHistory: true,
+                            // });
+
+                            this.routerExtensions.back();
+
                             // if (this.from == "cart") {
                             //     this.router.navigate(['./cart']);
                             // }
@@ -210,15 +221,16 @@ export class AddressComponent implements OnInit {
     }
 
     onBack() {
-        if (this.from == "cart") {
-            this.routerExtensions.navigate(['./cart'], {
-                clearHistory: true,
-            });
-        } else {
-            this.routerExtensions.navigate(['./profile'], {
-                clearHistory: true,
-            });
-        }
+        this.routerExtensions.back();
+        // if (this.from == "cart") {
+        //     this.routerExtensions.navigate(['./cart'], {
+        //         clearHistory: true,
+        //     });
+        // } else {
+        //     this.routerExtensions.navigate(['./profile'], {
+        //         clearHistory: true,
+        //     });
+        // }
     }
 
     onMap() {

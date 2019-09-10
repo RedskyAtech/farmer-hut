@@ -1,13 +1,15 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import * as Toast from 'nativescript-toast';
-import { ActivatedRoute, NavigationExtras } from "@angular/router";
-import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { User } from "~/app/models/user.model";
 import { UserService } from "../../services/user.service";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
+
+import * as Toast from 'nativescript-toast';
+import * as localstorage from "nativescript-localstorage";
+
 
 @Component({
     selector: "ns-profile",
@@ -32,8 +34,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     feedbackButtonText: string;
     historyButtonText: string;
     isVisibleProfile: string;
-    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService) {
-
+    listener: any;
+    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.city = "Abohar";
         this.district = "Fazilka";
         this.state = "Punjab";
@@ -146,59 +149,54 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     onBack() {
-        if (localstorage.getItem("userType") == "admin") {
-            this.routerExtensions.navigate(['./homeAdmin'], {
-                clearHistory: true,
-            });
-        }
-        else {
-            this.routerExtensions.navigate(['/homeUser'], {
-                clearHistory: true,
-            })
-        }
+        this.routerExtensions.back();
+
+        // if (localstorage.getItem("userType") == "admin") {
+        //     this.routerExtensions.navigate(['./homeAdmin'], {
+        //         clearHistory: true,
+        //     });
+
+        //     this.routerExtensions.back();
+        // }
+        // else {
+        //     this.routerExtensions.navigate(['/homeUser'], {
+        //         clearHistory: true,
+        //     })
+        // }
     }
 
     onAddressButton() {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "city": this.city,
-                "district": this.district,
-                "state": this.state
-            },
-        };
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "city": this.city,
+        //         "district": this.district,
+        //         "state": this.state
+        //     },
+        // };
         this.routerExtensions.navigate(['/address'], {
             queryParams: {
                 "city": this.city,
                 "district": this.district,
                 "state": this.state
             },
-            clearHistory: true,
         });
     }
 
     onChangePassword() {
-        this.routerExtensions.navigate(['/changePassword'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.navigate(['/changePassword']);
     }
 
     onOrders() {
         if (localstorage.getItem("userType") == "admin") {
-            this.routerExtensions.navigate(['./viewOrders'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./viewOrders']);
         }
         else {
-            this.routerExtensions.navigate(['./myOrders'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./myOrders']);
         }
     }
 
     onHistory() {
-        this.routerExtensions.navigate(['./orderHistory'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.navigate(['./orderHistory']);
     }
 
     onLogout() {
@@ -213,27 +211,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     onFeedback() {
         if (localstorage.getItem("userType") == "admin") {
-            this.routerExtensions.navigate(['./viewFeedback'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./viewFeedback']);
         }
         else {
-            this.routerExtensions.navigate(['./giveFeedback'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./giveFeedback']);
         }
     }
 
     onAbout() {
         if (localstorage.getItem("userType") == "admin") {
-            this.routerExtensions.navigate(['./aboutUsAdmin'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./aboutUsAdmin']);
         }
         else {
-            this.routerExtensions.navigate(['./aboutUs'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./aboutUs']);
         }
     }
 }

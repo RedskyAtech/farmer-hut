@@ -41,8 +41,10 @@ export class AboutUsComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./profile'], {
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['./profile'], {
+        //     clearHistory: true,
+        // });
+
+        this.routerExtensions.back();
     }
 }

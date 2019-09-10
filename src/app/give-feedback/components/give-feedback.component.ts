@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import * as Toast from 'nativescript-toast';
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { Feedback } from "~/app/models/feedback.model";
 import { UserService } from "~/app/services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
+
+
+import * as Toast from 'nativescript-toast';
+
 
 @Component({
     selector: "ns-giveFeedback",
@@ -78,8 +81,10 @@ export class GiveFeedbackComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./profile'], {
-            clearHistory: true,
-        })
+        // this.routerExtensions.navigate(['./profile'], {
+        //     clearHistory: true,
+        // })
+
+        this.routerExtensions.back();
     }
 }

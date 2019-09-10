@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { NativeScriptRouterModule } from "nativescript-angular/router";
-import { Routes } from "@angular/router";
+import { Routes, PreloadAllModules } from "@angular/router";
 
 const routes: Routes = [
     { path: "", redirectTo: "/login", pathMatch: "full" },
@@ -33,7 +33,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [NativeScriptRouterModule.forRoot(routes)],
+    imports: [NativeScriptRouterModule.forRoot(<any>routes, { preloadingStrategy: PreloadAllModules })],
     exports: [NativeScriptRouterModule]
 })
 export class AppRoutingModule { }
