@@ -6,8 +6,23 @@
     height:100%;
 }
 .backButton{
-    height:30;
-    width:30;
+    border-color:#00C012;
+    border-width:1;
+    border-radius:15;
+    text-transform: initial;
+    height:50%;
+    width:70%;
+    padding:0;
+    background-image: url("res://back_icon");
+    background-size:60% 80%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center;
+}
+.backButton:highlighted{
+    background-color: transparent;
+    z-index:500;
+    border-color: white;
 }
 .pageHeading{
     color:#00C012;

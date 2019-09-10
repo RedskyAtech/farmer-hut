@@ -44,8 +44,8 @@
 
         <GridLayout rows="auto,auto,auto" width="100%" height="100%">
             <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
-                <StackLayout col="0" verticalAlignment="middle" width=" 20%">
-                    <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
+                <StackLayout col="0" height="100%" verticalAlignment="middle" width="20%">
+                    <Button class="backButton" (tap)="onBack()"></Button>
                 </StackLayout>
                 <StackLayout col="1" verticalAlignment="middle" width=" 60%">
                     <Label class="pageHeading" text="Cart"></Label>

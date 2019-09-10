@@ -25,6 +25,8 @@ import { NavigationService } from "~/app/services/navigation.service";
 
 registerElement("CardView", () => CardView);
 
+declare var android: any;
+
 @Component({
     selector: "ns-addProduct",
     moduleId: module.id,

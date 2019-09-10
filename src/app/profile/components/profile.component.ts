@@ -1,14 +1,12 @@
-import { Component, OnInit, OnDestroy, NgZone } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import * as Toast from 'nativescript-toast';
-import * as application from "tns-core-modules/application";
-import { Router, ActivatedRoute, NavigationExtras } from "@angular/router";
+import { ActivatedRoute, NavigationExtras } from "@angular/router";
 import * as localstorage from "nativescript-localstorage";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { User } from "~/app/models/user.model";
 import { UserService } from "../../services/user.service";
-import { elementStyleProp } from "@angular/core/src/render3";
 import { NavigationService } from "~/app/services/navigation.service";
 
 @Component({
@@ -33,8 +31,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     ordersButtonText: string;
     feedbackButtonText: string;
     historyButtonText: string;
-    listener: any;
-    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private ngZone: NgZone, private navigationService: NavigationService) {
+    isVisibleProfile: string;
+    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService) {
 
         this.city = "Abohar";
         this.district = "Fazilka";
@@ -43,6 +41,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.phone = "";
         this.address = "";
         this.mapAddress = "";
+        this.isVisibleProfile = "hidden";
     }
 
     ngOnInit(): void {
@@ -102,6 +101,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                             else {
                                 this.addressButton = "Add address";
                             }
+                            this.isVisibleProfile = "visible";
                         }
                     }
                 }, error => {

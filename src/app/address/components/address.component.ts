@@ -2,8 +2,7 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import * as geolocation from "nativescript-geolocation";
 import { Accuracy } from "tns-core-modules/ui/enums";
-import { Directions } from "nativescript-directions";
-import { Router, ActivatedRoute, NavigationExtras } from "@angular/router";
+import { ActivatedRoute} from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { User } from "~/app/models/user.model";
@@ -15,7 +14,6 @@ import { UserService } from "../../services/user.service";
 import { DeliveryAddress } from "../../models/delivery-address.model";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
-let directions = new Directions();
 
 @Component({
     selector: "ns-address",

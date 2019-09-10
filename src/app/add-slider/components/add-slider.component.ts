@@ -15,6 +15,8 @@ import { Image } from "../../models/image.model";
 import * as Toast from 'nativescript-toast';
 import { NavigationService } from "~/app/services/navigation.service";
 
+declare var android: any;
+
 @Component({
     selector: "ns-addSlider",
     moduleId: module.id,

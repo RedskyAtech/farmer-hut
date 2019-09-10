@@ -17,6 +17,8 @@ import { session, Request } from 'nativescript-background-http';
 import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
 import { NavigationService } from "~/app/services/navigation.service";
 
+declare var android: any;
+
 @Component({
     selector: "ns-addCategory",
     moduleId: module.id,

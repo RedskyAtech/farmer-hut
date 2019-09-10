@@ -29,12 +29,44 @@
     font-weight:500;
 }
 .profileButton{
-    width:30;
-    height:30;
+    border-color:#00C012;
+    border-width:1;
+    border-radius:10;
+    text-transform: initial;
+    height:90%;
+    width:80%;
+    padding:0;
+    background-image: url("res://profile");
+    background-size:80% 80%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center;
+}
+
+.profileButton:highlighted{
+    background-color: transparent;
+    z-index:500;
+    border-color: white;
 }
 .cartButton{
-    height:30;
-    width:30;
+    border-color:#00C012;
+    border-width:1;
+    border-radius:10;
+    text-transform: initial;
+    height:90%;
+    width:80%;
+    padding:0;
+    background-image: url("res://cart_icon");
+    background-size:80% 80%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center;
+}
+
+.cartButton:highlighted{
+    background-color: transparent;
+    z-index:500;
+    border-color: white;
 }
 .addCartButton{
     border-color:#00C012;

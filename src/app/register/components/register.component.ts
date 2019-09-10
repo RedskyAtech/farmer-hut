@@ -117,10 +117,20 @@ export class RegisterComponent implements OnInit {
             this.warningDialog.show();
             // alert("Please enter password!!!");
         }
+        else if (this.password.length < 6) {
+            this.errorMessage = "Password is too short, please enter minimum six characters.";
+            this.warningDialog.show();
+            // alert("Please enter ten digit phone number!!!");
+        }
         else if (this.rePassword == "") {
             this.errorMessage = "Please enter repeat password.";
             this.warningDialog.show();
             // alert("Please enter repeat password!!!");
+        }
+        else if (this.rePassword.length < 6) {
+            this.errorMessage = "Repeat password is too short, please enter minimum six characters.";
+            this.warningDialog.show();
+            // alert("Please enter ten digit phone number!!!");
         }
         else if (this.password != this.rePassword) {
             this.errorMessage = "Password and repeat password should be same.";

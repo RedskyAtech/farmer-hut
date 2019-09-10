@@ -1,18 +1,18 @@
 <Page>
     <GridLayout rows="auto,auto,auto" class="page">
         <GridLayout row="0" height="8%" width="100%" columns="auto,auto,auto">
-            <StackLayout col="0" height="50%" width="15%" (tap)="onProfile()">
-                <Image class="profileButton" src="res://profile"></Image>
+            <StackLayout col="0" height="80%" width="15%">
+                <Button class="profileButton" (tap)="onProfile()"></Button>
             </StackLayout>
             <StackLayout col="1" height="100%" verticalAlignment="middle" width="70%">
                 <Label class="pageHeading" text="Products"></Label>
             </StackLayout>
-            <StackLayout col="2" height="50%" width="15%" (tap)="onCartClick()">
-                <Image class="cartButton" src="res://cart_icon"></Image>
+            <StackLayout col="2" height="80%" width="15%">
+                <Button class="cartButton" (tap)="onCartClick()"></Button>
             </StackLayout>
             <StackLayout *ngIf="isCartCount" col="2" verticalAlignment="middle" width="20" height="20"
-                backgroundColor="white" borderRadius="10" marginBottom="15" marginLeft="15">
-                <Label color="#00C012" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
+                backgroundColor="#00C012" borderRadius="10" marginBottom="15" marginLeft="15">
+                <Label color="white" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
         <GridLayout *ngIf="isRenderingSlider" row="1" height="25%" width="100%">

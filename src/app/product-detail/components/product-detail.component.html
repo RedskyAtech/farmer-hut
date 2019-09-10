@@ -1,18 +1,18 @@
 <Page>
     <GridLayout rows="auto,auto,auto,auto" class="page">
-        <GridLayout row="0" columns="auto,auto,auto" width="100%" height="10%">
-            <StackLayout col="0" verticalAlignment="middle" width=" 20%">
+        <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
+            <StackLayout col="0" verticalAlignment="middle" width="20%">
                 <Image class="backButton" src="res://back_icon" (tap)="onBack()"></Image>
             </StackLayout>
-            <StackLayout col="1" verticalAlignment="middle" width=" 60%">
+            <StackLayout col="1" verticalAlignment="middle" width="60%">
                 <Label class="pageHeading" text="Product detail"></Label>
             </StackLayout>
-            <StackLayout col="2" verticalAlignment="middle" width=" 20%">
-                <Image class="cartButton" src="res://cart_icon" (tap)="onCartClick()"></Image>
+            <StackLayout col="2" height="80%" width="20%">
+                <Button class="cartButton" (tap)="onCartClick()"></Button>
             </StackLayout>
             <StackLayout *ngIf="isCartCount" col="2" verticalAlignment="middle" width="20" height="20"
-                backgroundColor="white" borderRadius="10" marginBottom="15" marginLeft="15">
-                <Label color="#00C012" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
+                backgroundColor="#00C012" borderRadius="10" marginBottom="15" marginLeft="15">
+                <Label color="white" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
         <GridLayout *ngIf="isRenderingDetail" row="1" width="100%" height="32%" backgroundColor="white">
@@ -21,7 +21,7 @@
             </StackLayout>
         </GridLayout>
         <GridLayout *ngIf="isRenderingDetail" row="2" rows="auto,auto,auto,auto,auto,auto,auto,*" width="100%"
-            height="44%" marginTop="3%" backgroundColor="white">
+            height="46%" marginTop="3%" backgroundColor="white">
             <StackLayout row="0" height="10%" width="90%" verticalAlignment="middle" orientation="horizontal">
                 <Label class="brandName" [text]="brandName"></Label>
                 <Label class="brandNamePresents" text=" presents:"></Label>

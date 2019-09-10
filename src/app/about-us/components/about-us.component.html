@@ -1,8 +1,8 @@
 <Page actionBarHidden="true">
     <GridLayout class="page" rows="auto,auto,auto">
         <GridLayout row="0" columns="auto,auto" width="100%" marginTop="10" height="8%">
-            <StackLayout col="0" height="100%" verticalAlignment="middle" width="20%" (tap)="onBack()">
-                <Image class="backButton" src="res://back_icon"></Image>
+            <StackLayout col="0" height="100%" verticalAlignment="middle" width="20%">
+                <Button class="backButton" (tap)="onBack()"></Button>
             </StackLayout>
             <StackLayout col="1" verticalAlignment="middle" width="60%" height="100%">
                 <Label class="pageHeading" text="About us"></Label>
