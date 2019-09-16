@@ -144,7 +144,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                                 // for (var i = 0; i < res.data.length; i++) {
                                 for (var j = 0; j < res.data.products.length; j++) {
                                     this.orderedProducts.push({
-                                        image: res.data.products[j].image.url,
+                                        image: res.data.products[j].image.resize_url,
                                         name: res.data.products[j].name,
                                         weight: res.data.products[j].dimensions[0].value + " " + res.data.products[j].dimensions[0].unit,
                                         price: "Rs " + res.data.products[j].price.value,
