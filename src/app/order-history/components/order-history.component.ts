@@ -8,6 +8,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
 import * as application from "tns-core-modules/application";
+import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-orderHistory",
@@ -24,8 +25,11 @@ export class OrderHistoryComponent implements OnInit {
     userType: string;
     isRenderingMessage: boolean;
     isRenderingHistory: boolean;
+    orderInit = true;
+    orderPageNo = 1;
 
-    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";
@@ -96,26 +100,27 @@ export class OrderHistoryComponent implements OnInit {
             if (localstorage.getItem("userType") == "admin") {
                 this.userService.showLoadingState(true);
                 this.http
-                    .get(Values.BASE_URL + "orders?history=true")
+                    .get(Values.BASE_URL + "orders?history=true" + `&pageNo=${this.orderPageNo}&items=10`)
                     .subscribe((res: any) => {
+                        console.log("RES:::ORDERHISTORY:::ADMIN", res);
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                if (res.data.length != 0) {
+                                if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
-                                    for (var i = 0; i < res.data.length; i++) {
-                                        if (res.data[i].status == "delivered") {
+                                    for (var i = 0; i < res.data.orders.length; i++) {
+                                        if (res.data.orders[i].status == "delivered") {
                                             var status = "Delivered";
                                         }
-                                        if (res.data[i].status == "rejected") {
+                                        if (res.data.orders[i].status == "rejected") {
                                             var status = "Rejected";
                                         }
-                                        if (res.data[i].status == "cancelled") {
+                                        if (res.data.orders[i].status == "cancelled") {
                                             var status = "Cancelled";
                                         }
                                         this.orderedProducts.push({
-                                            _id: res.data[i]._id,
-                                            name: res.data[i].name,
+                                            _id: res.data.orders[i]._id,
+                                            name: res.data.orders[i].name,
                                             status: status
                                         })
                                     }
@@ -135,24 +140,25 @@ export class OrderHistoryComponent implements OnInit {
                 this.http
                     .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=true")
                     .subscribe((res: any) => {
+                        console.log("RES:::ORDERHISTORY:::USER", res);
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                if (res.data.length != 0) {
+                                if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
-                                    for (var i = 0; i < res.data.length; i++) {
-                                        if (res.data[i].status == "delivered") {
+                                    for (var i = 0; i < res.data.orders.length; i++) {
+                                        if (res.data.orders[i].status == "delivered") {
                                             var status = "Delivered";
                                         }
-                                        if (res.data[i].status == "rejected") {
+                                        if (res.data.orders[i].status == "rejected") {
                                             var status = "Rejected";
                                         }
-                                        if (res.data[i].status == "cancelled") {
+                                        if (res.data.orders[i].status == "cancelled") {
                                             var status = "Cancelled";
                                         }
                                         this.orderedProducts.push({
-                                            _id: res.data[i]._id,
-                                            name: res.data[i].name,
+                                            _id: res.data.orders[i]._id,
+                                            name: res.data.orders[i].name,
                                             status: status
                                         })
                                     }
@@ -168,5 +174,13 @@ export class OrderHistoryComponent implements OnInit {
                     });
             }
         }
+    }
+
+    onLoadMoreOrderItems() {
+        if (!this.orderInit) {
+            this.orderPageNo = this.orderPageNo + 1;
+            this.viewOrderHistory();
+        }
+        this.orderInit = false;
     }
 }

@@ -7,6 +7,8 @@ import { GridViewModule } from "nativescript-grid-view/angular";
 import { HttpClientModule } from "@angular/common/http";
 import { UserService } from "./services/user.service";
 import { NavigationService } from "./services/navigation.service";
+import { BackgroundHttpService } from "./services/background.http.service";
+import { TNSImageCacheItModule } from 'nativescript-image-cache-it/angular';
 
 @NgModule({
     bootstrap: [
@@ -16,12 +18,13 @@ import { NavigationService } from "./services/navigation.service";
         NativeScriptModule,
         AppRoutingModule,
         GridViewModule,
-        HttpClientModule
+        HttpClientModule,
+        TNSImageCacheItModule
     ],
     declarations: [
         AppComponent,
     ],
-    providers: [UserService, NavigationService],
+    providers: [UserService, NavigationService, BackgroundHttpService],
     schemas: [
         NO_ERRORS_SCHEMA
     ]

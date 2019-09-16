@@ -14,6 +14,9 @@ import { Product } from "../../models/product.model";
 import { Image } from "../../models/image.model";
 import * as Toast from 'nativescript-toast';
 import { NavigationService } from "~/app/services/navigation.service";
+import * as BitmapFactory from "nativescript-bitmap-factory"
+import { Page } from "tns-core-modules/ui/page/page";
+
 
 declare var android: any;
 
@@ -36,7 +39,8 @@ export class AddSliderComponent implements OnInit {
     showAddButton: boolean;
     errorMessage: string;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
         this.sliderImage = "res://add_image_icon";
@@ -56,9 +60,7 @@ export class AddSliderComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/homeAdmin'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.back();
     }
 
     onOutsideClick() {
@@ -131,7 +133,8 @@ export class AddSliderComponent implements OnInit {
                             source.fromAsset(imageAsset).then((source) => {
                                 this.imageCropper.show(source, { lockSquare: true }).then((args) => {
                                     if (args.image !== null) {
-                                        that.imageUrl = args.image.toBase64String('png', 10);
+                                        that.imageUrl = that.compressImage(args.image)
+                                        // that.imageUrl = args.image.toBase64String('png', 10);
                                         that.imageUrl = that.imageUrl.replace(/\=/g, "");
                                         that.imageUrl = 'data:image/png;base64,' + that.imageUrl;
                                         that.sliderImage = that.imageUrl;
@@ -191,5 +194,18 @@ export class AddSliderComponent implements OnInit {
                     });
             }
         }
+    }
+
+    compressImage(imageSource: ImageSource): string {
+        var compressedImage: string;
+        var tempImageBitmap = BitmapFactory.asBitmap(imageSource);
+
+        imageSource = undefined;
+
+        compressedImage = tempImageBitmap.resize({ width: 500, height: 500 }).toBase64(BitmapFactory.OutputFormat.PNG, 50);
+
+        tempImageBitmap = undefined;
+
+        return compressedImage;
     }
 }

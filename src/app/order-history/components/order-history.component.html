@@ -13,7 +13,7 @@
         </StackLayout>
         <GridLayout *ngIf="isRenderingHistory" row="1" width="100%" height="92%">
             <GridView [items]="orderedProducts" colWidth="90%" rowHeight="15%" width="100%" height="100%"
-                backgroundColor="transparent">
+                backgroundColor="transparent" (loadMoreItems)="onLoadMoreOrderItems()">
                 <ng-template let-item="item" let-odd="odd">
                     <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
                         marginTop="10%" marginBottom="10%" rows="auto,auto">

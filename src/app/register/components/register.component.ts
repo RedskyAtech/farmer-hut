@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import * as Toast from 'nativescript-toast';
 import { User } from "~/app/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
-import * as localstorage from "nativescript-localstorage";
 import { ModalComponent } from "~/app/modals/modal.component";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
+
+import * as localstorage from "nativescript-localstorage";
+
 
 @Component({
     selector: "ns-register",
@@ -150,13 +150,7 @@ export class RegisterComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             localstorage.setItem('regToken', res.data.regToken);
-                            let navigationExtras: NavigationExtras = {
-                                queryParams: {
-                                    "name": this.name,
-                                    "phone": this.phone,
-                                    "password": this.password
-                                },
-                            };
+
                             this.routerExtensions.navigate(['./confirmPhone'], {
                                 queryParams: {
                                     "name": this.name,

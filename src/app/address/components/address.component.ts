@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Accuracy } from "tns-core-modules/ui/enums";
 import { Directions } from "nativescript-directions";
 import { ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
@@ -12,14 +11,14 @@ import { UserService } from "../../services/user.service";
 import { DeliveryAddress } from "../../models/delivery-address.model";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
-
+import { Page } from "tns-core-modules/ui/page/page";
+import { MapView, Marker, Position } from "nativescript-google-maps-sdk";
 
 import * as geolocation from "nativescript-geolocation";
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
+import * as location from "nativescript-geolocation"
 
-
-let directions = new Directions();
 
 @Component({
     selector: "ns-address",
@@ -30,8 +29,8 @@ let directions = new Directions();
 export class AddressComponent implements OnInit {
     @ViewChild('warningDialog') warningDialog: ModalComponent;
 
-    addressBorderColor = "white";
-    mapAddressBorderColor = "white";
+    addressBorderColor;
+    mapAddressBorderColor;
     cityBorderColor = "#00C012";
     districtBorderColor = "#00C012";
     stateBorderColor = "#00C012";
@@ -55,7 +54,28 @@ export class AddressComponent implements OnInit {
     adminId: string;
     errorMessage: string;
 
-    constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService) {
+
+    intialLatitude = 30.140726;
+    intialLongitude = 74.200587;
+    zoom = 17;
+    minZoom = 0;
+    maxZoom = 22;
+    bearing = 0;
+    tilt = 0;
+    padding = [40, 40, 40, 40];
+    pinLocation = false;
+
+    mapView: MapView;
+    marker = new Marker();
+    location: location.Location;
+    finalLatitude: number;
+    finalLongitude: number;
+
+    isLoading: boolean;
+
+    constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private changeDetector: ChangeDetectorRef) {
+        this.page.actionBarHidden = true;
+        this.isLoading = false;
         this.user = new User();
         this.user.address = new Address();
         this.user.address.location = new Location();
@@ -68,6 +88,9 @@ export class AddressComponent implements OnInit {
         //     this.district = params["district"];
         //     this.state = params["state"];
         // });
+        this.addressBorderColor = "white";
+        this.mapAddressBorderColor = "white";
+
         this.city = "Abohar";
         this.district = "Fazilka";
         this.errorMessage = "";
@@ -103,11 +126,75 @@ export class AddressComponent implements OnInit {
     onAddressTextChanged(args) {
         this.addressBorderColor = "#00C012";
         this.address = args.object.text;
+        // this.changeDetector.detectChanges();
     }
     onMapAddressTextChanged(args) {
         this.mapAddressBorderColor = "#00C012";
         this.mapAddress = args.object.text;
+        // this.changeDetector.detectChanges();
     }
+
+
+
+
+    //Map events
+    onMapReady(event) {
+        console.log('Map Ready');
+
+        this.mapView = event.object;
+
+        console.log("Setting a marker...");
+
+        // this.marker.position = Position.positionFromLatLng(this.latitude, this.longitude)
+
+        // this.marker.icon = this.image;
+        setTimeout(async () => {
+            await location.getCurrentLocation({ desiredAccuracy: 0, timeout: 120000, maximumAge: 120000 }).then((location: location.Location) => {
+                // this.location = location;
+                this.marker.position = Position.positionFromLatLng(location.latitude, location.longitude)
+                this.intialLatitude = location.latitude;
+                this.intialLongitude = location.longitude;
+                this.marker.draggable = true;
+                this.marker.color = "#00C012";
+                this.marker.visible = true;
+                this.mapView.myLocationEnabled = true;
+                this.mapView.addMarker(this.marker);
+                console.log('LOC:', location)
+            }).catch((error) => {
+                console.log('Error:', error)
+            })
+        }, 1)
+
+    }
+
+    onCoordinateTapped(args) {
+        console.log("Coordinate Tapped, Lat: " + args.position.latitude + ", Lon: " + args.position.longitude, args);
+    }
+
+    onMarkerEvent(args) {
+        console.log("Marker Event: '" + args.eventName
+            + "' triggered on: " + args.marker.title
+            + ", Lat: " + args.marker.position.latitude + ", Lon: " + args.marker.position.longitude, args);
+    }
+
+    onCameraChanged(args) {
+        console.log("Camera changed: " + JSON.stringify(args.camera));
+
+        this.finalLatitude = args.camera.latitude;
+        this.finalLongitude = args.camera.longitude;
+
+    }
+
+    onCameraMove(args) {
+        this.marker.position = Position.positionFromLatLng(args.camera.latitude, args.camera.longitude)
+        console.log("Camera moving: " + JSON.stringify(args.camera));
+    }
+
+
+
+
+
+
     // onCityTextChanged(args) {
     //     this.addressBorderColor = "white";
     //     this.cityBorderColor = "#00C012";
@@ -234,59 +321,84 @@ export class AddressComponent implements OnInit {
     }
 
     onMap() {
+        this.pinLocation = true;
         this.mapAddress = "";
-        this.userService.showLoadingState(true);
+        // this.userService.showLoadingState(true);
+
         geolocation.enableLocationRequest();
+
         var that = this;
-        geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 2, maximumAge: 20000, timeout: 20000 }).
-            then(function (location) {
-                if (location) {
-                    that.latitude = location.latitude;
-                    that.longitude = location.longitude;
 
-                    // directions.navigate({
-                    //     from: { // optional, default 'current location'
-                    //         lat: location.latitude,
-                    //         lng: location.longitude
 
-                    //     },
-                    //     // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
-                    //     //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
-                    //     // },
-                    //     // {
-                    //     //     address: "Aak 98, Wieringerwerf, Netherlands"
-                    //     // }],
-                    //     to: {
-                    //         // address: "Ivy Hospital, sector 71, Mohali"
-                    //         // lat: location.latitude,
-                    //         // lng: location.longitude
-                    //         lat: 30.7091987,
-                    //         lng: 76.7023474
-                    //     },
-                    //     type: "driving", // optional, can be: driving, transit, bicycling or walking
-                    //     ios: {
-                    //         preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
-                    //         allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
-                    //     }
-                    // }).then(() => {
-                    //     console.log("Maps app launched.");
-                    // }, error => {
-                    //     console.log(error);
-                    // });
+        // geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 2, maximumAge: 20000, timeout: 20000 }).
+        //     then(function (location) {
+        //         if (location) {
+        //             that.latitude = location.latitude;
+        //             that.longitude = location.longitude;
 
-                    that.http
-                        .get(Values.GOOGLE_MAP_URL + "latlng=" + that.latitude + "," + that.longitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
-                        .subscribe((res: any) => {
-                            that.userService.showLoadingState(false);
-                            // that.address = res.results[0].address_components[0].long_name;
-                            that.mapAddress = res.results[0].formatted_address;
-                        }, error => {
-                            console.log(error);
-                        });
+        //             // directions.navigate({
+        //             //     from: { // optional, default 'current location'
+        //             //         lat: location.latitude,
+        //             //         lng: location.longitude
 
-                }
-            }, function (e) {
-                console.log("Error: " + e.message);
+        //             //     },
+        //             //     // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
+        //             //     //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
+        //             //     // },
+        //             //     // {
+        //             //     //     address: "Aak 98, Wieringerwerf, Netherlands"
+        //             //     // }],
+        //             //     to: {
+        //             //         // address: "Ivy Hospital, sector 71, Mohali"
+        //             //         // lat: location.latitude,
+        //             //         // lng: location.longitude
+        //             //         lat: 30.7091987,
+        //             //         lng: 76.7023474
+        //             //     },
+        //             //     type: "driving", // optional, can be: driving, transit, bicycling or walking
+        //             //     ios: {
+        //             //         preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
+        //             //         allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
+        //             //     }
+        //             // }).then(() => {
+        //             //     console.log("Maps app launched.");
+        //             // }, error => {
+        //             //     console.log(error);
+        //             // });
+
+        //             that.http
+        //                 .get(Values.GOOGLE_MAP_URL + "latlng=" + that.latitude + "," + that.longitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
+        //                 .subscribe((res: any) => {
+        //                     that.userService.showLoadingState(false);
+        //                     // that.address = res.results[0].address_components[0].long_name;
+        //                     that.mapAddress = res.results[0].formatted_address;
+        //                 }, error => {
+        //                     console.log(error);
+        //                 });
+
+        //         }
+        //     }, function (e) {
+        //         console.log("Error: " + e.message);
+        //     });
+
+
+    }
+
+    onSelectLocation() {
+
+        this.pinLocation = false;
+        this.isLoading = true;
+
+        this.http
+            .get(Values.GOOGLE_MAP_URL + "latlng=" + this.finalLatitude + "," + this.finalLongitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
+            .subscribe((res: any) => {
+                this.mapAddress = res.results[0].formatted_address;
+                this.isLoading = false;
+            }, error => {
+                Toast.makeText('Could not get Address', 'long')
+                console.log(error);
+                this.isLoading = false;
             });
     }
+
 }

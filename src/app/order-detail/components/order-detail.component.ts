@@ -13,6 +13,7 @@ import { openUrl } from "tns-core-modules/utils/utils";
 
 import * as geolocation from "nativescript-geolocation";
 import * as Toast from 'nativescript-toast';
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -55,7 +56,8 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     latitude: number;
     longitude: number;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient, private page: Page) {
+        this.page.actionBarHidden = true;
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";

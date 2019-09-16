@@ -3,12 +3,11 @@ import { RouterExtensions } from "nativescript-angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { Feedback } from "~/app/models/feedback.model";
-import { UserService } from "~/app/services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
 
-
 import * as Toast from 'nativescript-toast';
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -27,7 +26,8 @@ export class GiveFeedbackComponent implements OnInit {
     feedback: Feedback;
     errorMessage: string;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
+        this.page.actionBarHidden = true;
         this.feedbackBorderColor = "white";
         this.feedbackHint = "Message";
         this.feedbackMessage = "";
@@ -65,18 +65,18 @@ export class GiveFeedbackComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != "" && res != undefined) {
                         if (res.isSuccess == true) {
-                            this.userService.showLoadingState(false);
                             Toast.makeText("Feedback submitted successfully!!!", "long").show();
+                            this.routerExtensions.back();
                         }
                     }
                 }, error => {
-                    this.userService.showLoadingState(false);
+                    this.routerExtensions.back();
                     console.log(error.error.error);
                 });
 
-            this.routerExtensions.navigate(['./profile'], {
-                clearHistory: true,
-            })
+            // this.routerExtensions.navigate(['./profile'], {
+            //     clearHistory: true,
+            // })
         }
     }
 

@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import * as Toast from 'nativescript-toast';
 import { UserService } from "../../services/user.service";
 import { User } from "~/app/models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
-import * as localstorage from "nativescript-localstorage";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
+
+import * as localstorage from "nativescript-localstorage";
+import * as Toast from 'nativescript-toast';
+
 
 @Component({
     selector: "ns-setPassword",

@@ -9,6 +9,7 @@ import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
 import * as Toast from 'nativescript-toast';
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-confirmPhone",
@@ -31,7 +32,8 @@ export class ConfirmPhoneComponent implements OnInit {
     isVisibleOtpStatus: boolean;
     isVisibleResendButton: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private page: Page) {
+        this.page.actionBarHidden = true;
         this.otpHint = "Enter OTP"
         this.otp = "";
         this.user = new User();

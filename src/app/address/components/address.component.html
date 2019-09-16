@@ -1,5 +1,5 @@
-<Page actionBarHidden="true">
-    <GridLayout class="page">
+<Page>
+    <GridLayout *ngIf="!pinLocation" class="page">
         <CardView #warningDialog modal size="lg" duration="100" backgroundColor="transparent">
             <GridLayout rows="auto,auto,auto,auto" width="80%" height="30%" borderRadius="20" backgroundColor="white">
                 <StackLayout row="0" height="40%">
@@ -32,14 +32,15 @@
             </StackLayout>
             <StackLayout row="2" width="80%" height="10%">
                 <TextField [hint]="addressHint" [text]="address" (textChange)="onAddressTextChanged($event)"
-                    secure="false" padding="0" [borderColor]="addressBorderColor" returnKeyType="done" autocorrect="false"
-                    class="input input-border input-field">
+                    secure="false" padding="0" [borderColor]="addressBorderColor" returnKeyType="done"
+                    autocorrect="false" class="input input-border input-field">
                 </TextField>
             </StackLayout>
             <StackLayout row="3" width="80%" height="10%">
                 <TextField [hint]="mapAddressHint" [text]="mapAddress" editable="false"
-                    (textChange)="onMapAddressTextChanged($event)" secure="false" padding="0" [borderColor]="mapAddressBorderColor"
-                    returnKeyType="done" autocorrect="false" class="input input-border input-field">
+                    (textChange)="onMapAddressTextChanged($event)" secure="false" padding="0"
+                    [borderColor]="mapAddressBorderColor" returnKeyType="done" autocorrect="false"
+                    class="input input-border input-field">
                 </TextField>
             </StackLayout>
             <StackLayout row="4" width="80%" height="10%">
@@ -48,8 +49,8 @@
                 </TextField>
             </StackLayout>
             <StackLayout row="5" width="80%" height="10%">
-                <TextField [text]="district" secure="false" returnKeyType="done" padding="0" [borderColor]="districtBorderColor"
-                    autocorrect="false" class="input input-border input-field">
+                <TextField [text]="district" secure="false" returnKeyType="done" padding="0"
+                    [borderColor]="districtBorderColor" autocorrect="false" class="input input-border input-field">
                 </TextField>
             </StackLayout>
             <!-- <StackLayout row="6" width="80%" height="10%">
@@ -69,4 +70,26 @@
             </StackLayout>
         </GridLayout>
     </GridLayout>
+
+    <GridLayout *ngIf="pinLocation" class="page">
+
+        <MapView #mapView [latitude]="intialLatitude" [longitude]="intialLongitude" [zoom]="zoom" [minZoom]="minZoom"
+            [maxZoom]="maxZoom" [bearing]="bearing" [tilt]="tilt" i-padding="50,50,50,50" [padding]="padding"
+            (mapReady)="onMapReady($event)" (markerSelect)="onMarkerEvent($event)"
+            (markerBeginDragging)="onMarkerEvent($event)" (markerEndDragging)="onMarkerEvent($event)"
+            (markerDrag)="onMarkerEvent($event)" (markerInfoWindowTapped)="onMarkerEvent($event)"
+            (coordinateTapped)="onCoordinateTapped($event)" (cameraChanged)="onCameraChanged($event)"
+            (cameraMove)="onCameraMove($event)"></MapView>
+
+        <Button verticalAlignment="bottom" horizontalAlignment="center" text="Select"
+            (tap)="onSelectLocation()"></Button>
+
+    </GridLayout>
+
+    <GridLayout *ngIf="isLoading" width="100%" height="100%">
+        <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="!isLoading" rowSpan="1"
+            colSpan="1">
+        </ActivityIndicator>
+    </GridLayout>
+
 </Page>

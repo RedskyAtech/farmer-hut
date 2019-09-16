@@ -7,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { Order } from "../../models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 import * as Toast from 'nativescript-toast';
 
@@ -40,7 +41,8 @@ export class MyOrderDetailComponent implements OnInit {
     isRenderingUserDetail: boolean;
     date: string;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient, private page: Page) {
+        this.page.actionBarHidden = true;
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
@@ -63,6 +65,7 @@ export class MyOrderDetailComponent implements OnInit {
             this.http
                 .get(Values.BASE_URL + "orders/" + this.orderId)
                 .subscribe((res: any) => {
+                    console.log("RES:::MYORDERDETAILS:::USER", res)
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
@@ -102,7 +105,7 @@ export class MyOrderDetailComponent implements OnInit {
                             if (res.data.length != 0) {
                                 for (var j = 0; j < res.data.products.length; j++) {
                                     this.orderedProducts.push({
-                                        image: res.data.products[j].image.url,
+                                        image: res.data.products[j].image.resize_url,
                                         name: res.data.products[j].name,
                                         weight: res.data.products[j].dimensions[0].value + " " + res.data.products[j].dimensions[0].unit,
                                         price: "Rs " + res.data.products[j].price.value,
@@ -161,12 +164,14 @@ export class MyOrderDetailComponent implements OnInit {
         this.http
             .put(Values.BASE_URL + "orders/update/" + this.orderId, this.order)
             .subscribe((res: any) => {
+                console.log("RES:::UPDATE:::USER", res)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.cancelOrderDialog.hide();
-                        this.routerExtensions.navigate(['./myOrders'], {
-                            clearHistory: true,
-                        });
+                        // this.routerExtensions.navigate(['./myOrders'], {
+                        //     clearHistory: true,
+                        // });
+                        this.routerExtensions.back();
                         this.userService.showLoadingState(false);
                         Toast.makeText("Order successfully cancelled!!!", "long").show();
                     }

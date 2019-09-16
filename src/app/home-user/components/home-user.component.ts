@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-// import { RouterExtensions } from "nativescript-angular/router";
-import { NavigationExtras, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Product } from "~/app/models/product.model";
 import { Cart } from "~/app/models/cart.model";
@@ -10,12 +9,14 @@ import { UserService } from '../../services/user.service';
 import { Category } from "../../models/category.model";
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
-import { Page, EventData } from "tns-core-modules/ui/page/page";
-import { GridView, GridItemEventData } from "nativescript-grid-view/grid-view"
+import { Page } from "tns-core-modules/ui/page/page";
+import { BackgroundHttpService } from "~/app/services/background.http.service";
+import { Marker, MapView } from "nativescript-google-maps-sdk";
+
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
-import { Marker, Position, MapView } from "nativescript-google-maps-sdk";
 import * as Location from "nativescript-geolocation"
+
 
 @Component({
     selector: "ns-homeUser",
@@ -57,15 +58,18 @@ export class HomeUserComponent implements OnInit {
     mapView: MapView;
 
     marker = new Marker();
-    location = new Location.Location()
+    location = new Location.Location();
+    mainInit = true;
+    categoryPageNo = 1;
+    categoryInit = true;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
 
-        this.sliderImage1 = "";
-        this.sliderImage2 = "";
-        this.sliderImage3 = "";
-        this.sliderImage4 = "";
+        this.sliderImage1 = "res://image_background";
+        this.sliderImage2 = "res://image_background";
+        this.sliderImage3 = "res://image_background";
+        this.sliderImage4 = "res://image_background";
         this.isRenderingSlider = false;
         this.isRenderingTabView = false;
         this.product = new Product();
@@ -100,100 +104,64 @@ export class HomeUserComponent implements OnInit {
 
     }
 
-    // refreshPage(args) {
-    //     this.pullRefreshPage = args.object;
-    //     this.pullRefreshPage.refreshing = true;
-    //     this.getProducts();
-    // }
-
     ngOnInit(): void {
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
-            this.userService.showLoadingState(true);
-            this.getProducts();
+            if (this.getProducts()) {
+                if (this.getCategory()) {
+                    this.updateSlider(1)
+                }
+                // this.updateCartCount();
+            }
         }
     }
 
-    // onGridLoaded(args: any) {
-    //     var gridView: GridView = args.object as GridView;
-    //     gridView.on('scroll', (args) => {
-    //         console.trace('Scrolled:::', args)
-    //     })
-    // }
 
 
-    //  gridViewItemTap(args: GridItemEventData) {
-    //     console.log("tap index " + args.index.toString());
-    // }
 
-    //Map events
-    onMapReady(event) {
-        console.log('Map Ready');
-
-        this.mapView = event.object;
-
-        console.log("Setting a marker...");
-        this.marker.position = Position.positionFromLatLng(this.latitude, this.longitude)
-        this.marker.draggable = true;
-        this.marker.color = "#888800";
-        this.marker.visible = true;
-
-        this.mapView.addMarker(this.marker);
-        this.mapView.myLocationEnabled = true;
-
+    onLoadMoreMainItems() {
+        console.log("111")
+        if (!this.mainInit) {
+            this.pageNo = this.pageNo + 1;
+            this.getProducts();
+        }
+        this.mainInit = false;
     }
 
-    onCoordinateTapped(args) {
-        console.log("Coordinate Tapped, Lat: " + args.position.latitude + ", Lon: " + args.position.longitude, args);
-    }
-
-    onMarkerEvent(args) {
-        console.log("Marker Event: '" + args.eventName
-            + "' triggered on: " + args.marker.title
-            + ", Lat: " + args.marker.position.latitude + ", Lon: " + args.marker.position.longitude, args);
-    }
-
-    onCameraChanged(args) {
-        // console.log("Camera changed: " + JSON.stringify(args.camera), JSON.stringify(args.camera) === this.lastCamera);
-        // this.lastCamera = JSON.stringify(args.camera);
-    }
-
-    onCameraMove(args) {
-        // this.marker.position = Position.positionFromLatLng(this.location.latitude, this.location.longitude);
-        // this.marker.userData = { index: 1 };
-        // this.mapView.addMarker(this.marker);
-        console.log("Camera moving: " + JSON.stringify(args.camera));
-    }
-
-
-    gridViewItemLoading(args: any) {
-        console.log("item loading " + args.index.toString());
-    }
-
-    gridViewLoadMoreItems(args: EventData) {
-        console.log("load more items", args);
+    onLoadMoreCategoryItems() {
+        console.log("111")
+        if (!this.categoryInit) {
+            this.categoryPageNo = this.categoryPageNo + 1;
+            this.getCategory();
+        }
+        this.categoryInit = false;
     }
 
     getProducts() {
         this.http
-            .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&products=3`)
+            .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
+                console.trace('RES:::', res.data)
                 if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        for (var i = 0; i < res.data.length; i++) {
+                    if (res.isSuccess == true && res.data && res.data.products) {
+                        for (var i = 0; i < res.data.products.length; i++) {
                             this.products.push({
-                                _id: res.data[i]._id,
-                                status: res.data[i].status,
-                                image: res.data[i].image.url,
-                                brandName: res.data[i].brand,
-                                heading: res.data[i].heading.title,
-                                name: res.data[i].name,
-                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                price: "Rs " + res.data[i].price.value,
+                                _id: res.data.products[i]._id,
+                                status: res.data.products[i].status,
+                                image: res.data.products[i].image.resize_url,
+                                brandName: res.data.products[i].brand,
+                                heading: res.data.products[i].heading.title,
+                                name: res.data.products[i].name,
+                                weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
+                                price: "Rs " + res.data.products[i].price.value,
                             })
                         }
-                        if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
-                            this.getCategory();
-                        }
+                        // if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
+                        //     this.getCategory();
+                        // }
+                        // this.pageNo = this.pageNo + 1;
+                        // this.updateSlider(1);
+                        this.isRenderingSlider = true;     //remove it
+                        this.mainInit = true;
                     }
                 }
             }, error => {
@@ -201,23 +169,27 @@ export class HomeUserComponent implements OnInit {
                 // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
+        return true
     }
 
     getCategory() {
         this.http
-            .get(Values.BASE_URL + "categories?status=active")
+            .get(Values.BASE_URL + `categories?status=active&pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
+                console.log('RES:::CATEGORY:::', res)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        for (var i = 0; i < res.data.length; i++) {
-                            this.productCategories.push({
-                                _id: res.data[i]._id,
-                                image: res.data[i].image.url,
-                                name: res.data[i].name,
-                            })
+                        if (res.data && res.data.categories) {
+                            for (var i = 0; i < res.data.categories.length; i++) {
+                                this.productCategories.push({
+                                    _id: res.data.categories[i]._id,
+                                    image: res.data.categories[i].image.resize_url,
+                                    name: res.data.categories[i].name,
+                                })
+                            }
+                            this.isRenderingTabView = true;
+                            this.categoryInit=true;
                         }
-                        this.isRenderingTabView = true;
-                        this.updateCartCount();
                     }
                 }
             }, error => {
@@ -225,6 +197,8 @@ export class HomeUserComponent implements OnInit {
                 // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
             });
+
+        return true;
     }
 
     onSelectedIndexChanged(args: SelectedIndexChangedEventData) {
@@ -240,55 +214,57 @@ export class HomeUserComponent implements OnInit {
         }
     }
 
-    updateSlider() {
-        this.isRenderingSlider = true;
-        this.http
-            .get(Values.BASE_URL + "files")
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.sliderImage1 = res.data[0].images[0].url;
-                        this.sliderImage2 = res.data[0].images[1].url;
-                        this.sliderImage3 = res.data[0].images[2].url;
-                        this.sliderImage4 = res.data[0].images[3].url;
+    updateSlider(count: number) {
+        if (count > 0 && count < 5) {
+            this.isRenderingSlider = true;
+            this.http
+                .get(Values.BASE_URL + `files?pageNo=${count}&items=1`)
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            this.userService.showLoadingState(false);
+                            switch (count) {
+                                case 1:
+                                    this.sliderImage1 = res.data.url;
+                                    break;
+                                case 2:
+                                    this.sliderImage2 = res.data.url;
+                                    break;
+                                case 3:
+                                    this.sliderImage3 = res.data.url;
+                                    break;
+                                case 4:
+                                    this.sliderImage4 = res.data.url;
+                                    break;
+                            }
+                            if (count + 1 < 5) {
+                                this.updateSlider(count + 1)
+                            }
+                            // this.sliderImage1 = res.data.url;
+                            // this.sliderImage2 = res.data[0].images[1].url;
+                            // this.sliderImage3 = res.data[0].images[2].url;
+                            // this.sliderImage4 = res.data[0].images[3].url;
+                        }
+                        // this.pullRefreshPage.refreshing = false;
                     }
+                }, error => {
+                    this.userService.showLoadingState(false);
                     // this.pullRefreshPage.refreshing = false;
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                // this.pullRefreshPage.refreshing = false;
-                console.log(error.error.error);
-            });
+                    console.log(error.error.error);
+                });
+        }
     }
 
     updateCartCount() {
-        this.http
-            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        if (res.data.products.length != 0) {
-                            this.isCartCount = true;
-                            this.cartCount = res.data.products.length;
-                        }
-                        this.userService.showLoadingState(false);
-                        this.updateSlider();
-                    }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                // this.pullRefreshPage.refreshing = false;
-                console.log(error.error.error);
-            });
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+
+        if (storedCart.products.length != 0) {
+            this.isCartCount = true;
+            this.cartCount = storedCart.products.length;
+        }
     }
 
     onViewDetail(product: Product) {
-        // let navigationExtras: NavigationExtras = {
-        //     queryParams: {
-        //         "productId": product._id,
-        //     },
-        // };
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
                 "productId": product._id,
@@ -298,11 +274,6 @@ export class HomeUserComponent implements OnInit {
     }
 
     onCategory(category: Category) {
-        // let navigationExtras: NavigationExtras = {
-        //     queryParams: {
-        //         "categoryId": category._id,
-        //     },
-        // };
         this.routerExtensions.navigate(['/similarProductUser'], {
             queryParams: {
                 "categoryId": category._id,
@@ -319,56 +290,144 @@ export class HomeUserComponent implements OnInit {
     }
 
     onAddCart(product: Product) {
+
         this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
         console.log(product._id);
-        // console.log(localstorage.getItem("cartId"));
-        this.http
-            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        if (res.data.products.length != 0) {
-                            for (var i = 0; i < res.data.products.length; i++) {
-                                if (product._id == res.data.products[i]._id) {
-                                    var quantity = parseInt(res.data.products[i].quantity) + 1;
-                                    this.cart.product.quantity = quantity.toString();
-                                    this.updateCart();
-                                    break;
-                                }
-                                else {
-                                    this.cart.product.quantity = "1";
-                                    this.updateCart();
-                                }
-                            }
-                        }
-                        else {
-                            this.cart.product.quantity = "1";
-                            this.updateCart();
-                        }
-                    }
+
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+
+        if (storedCart.products.length != 0) {
+            for (var i = 0; i < storedCart.products.length; i++) {
+                if (product._id == storedCart.products[i]._id) {
+                    var quantity = parseInt(storedCart.products[i].quantity) + 1;
+                    this.cart.product.quantity = quantity.toString();
+                    this.updateCart(storedCart._id);
+                    break;
                 }
-            }, error => {
-                this.userService.showLoadingState(false);
-                console.log(error.error.error);
-            });
+                else {
+                    this.cart.product.quantity = "1";
+                    this.updateCart(storedCart._id);
+                }
+            }
+        }
+        else {
+            this.cart.product.quantity = "1";
+            this.updateCart(storedCart._id);
+        }
+
+
+        // this.http
+        //     .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+        //     .subscribe((res: any) => {
+        //         if (res != null && res != undefined) {
+        //             if (res.isSuccess == true) {
+        //                 if (res.data.products.length != 0) {
+        //                     for (var i = 0; i < res.data.products.length; i++) {
+        //                         if (product._id == res.data.products[i]._id) {
+        //                             var quantity = parseInt(res.data.products[i].quantity) + 1;
+        //                             this.cart.product.quantity = quantity.toString();
+        //                             this.updateCart();
+        //                             break;
+        //                         }
+        //                         else {
+        //                             this.cart.product.quantity = "1";
+        //                             this.updateCart();
+        //                         }
+        //                     }
+        //                 }
+        //                 else {
+        //                     this.cart.product.quantity = "1";
+        //                     this.updateCart();
+        //                 }
+        //             }
+        //         }
+        //     }, error => {
+        //         this.userService.showLoadingState(false);
+        //         console.log(error.error.error);
+        //     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // this.userService.showLoadingState(true);
+        // this.cart.product._id = product._id;
+        // console.log(product._id);
+        // // console.log(localstorage.getItem("cartId"));
+        // this.http
+        //     .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+        //     .subscribe((res: any) => {
+        //         if (res != null && res != undefined) {
+        //             if (res.isSuccess == true) {
+        //                 if (res.data.products.length != 0) {
+        //                     for (var i = 0; i < res.data.products.length; i++) {
+        //                         if (product._id == res.data.products[i]._id) {
+        //                             var quantity = parseInt(res.data.products[i].quantity) + 1;
+        //                             this.cart.product.quantity = quantity.toString();
+        //                             this.updateCart();
+        //                             break;
+        //                         }
+        //                         else {
+        //                             this.cart.product.quantity = "1";
+        //                             this.updateCart();
+        //                         }
+        //                     }
+        //                 }
+        //                 else {
+        //                     this.cart.product.quantity = "1";
+        //                     this.updateCart();
+        //                 }
+        //             }
+        //         }
+        //     }, error => {
+        //         this.userService.showLoadingState(false);
+        //         console.log(error.error.error);showLoadingState
+        //     });
     }
 
-    updateCart() {
-        this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
-            .subscribe((res: any) => {
+    updateCart(cardId: string) {
+
+        this.backgroundHttpService
+            .put(Values.BASE_URL + `carts/update/${cardId}`, {}, this.cart)
+            .then((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        localstorage.setItem('cart', JSON.stringify(res.data));
                         Toast.makeText("Product is added to cart!!!", "long").show();
                         this.updateCartCount();
                     }
                 }
             }, error => {
-                this.userService.showLoadingState(false);
                 console.log(error.error.error);
             });
+
+
+
+        // this.userService.showLoadingState(true);
+        // this.http
+        //     .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
+        //     .subscribe((res: any) => {
+        //         if (res != null && res != undefined) {
+        //             if (res.isSuccess == true) {
+        //                 Toast.makeText("Product is added to cart!!!", "long").show();
+        //                 this.updateCartCount();
+        //             }
+        //         }
+        //     }, error => {
+        //         this.userService.showLoadingState(false);
+        //         console.log(error.error.error);
+        //     });
     }
 
 }

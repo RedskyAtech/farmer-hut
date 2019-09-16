@@ -7,6 +7,7 @@ import { Order } from "~/app/models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -24,7 +25,11 @@ export class ViewOrdersComponent implements OnInit {
     isRenderingMessage: boolean;
     isRenderingOrders: boolean;
 
-    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    orderInit = true;
+    orderPageNo = 1;
+
+    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.orderedProducts = [];
         this.order = new Order();
         this.isRenderingMessage = false;
@@ -33,29 +38,33 @@ export class ViewOrdersComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.getOrders();
+    }
+
+    getOrders() {
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
             localstorage.getItem("adminId") != null &&
             localstorage.getItem("adminId") != undefined) {
             this.userService.showLoadingState(true);
             this.http
-                .get(Values.BASE_URL + "orders?history=false")
+                .get(Values.BASE_URL + "orders?history=false" + `&pageNo=${this.orderPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            if (res.data.length != 0) {
+                            if (res.data.orders.length != 0) {
                                 this.isRenderingOrders = true;
-                                for (var i = 0; i < res.data.length; i++) {
-                                    if (res.data[i].status == "pending") {
+                                for (var i = 0; i < res.data.orders.length; i++) {
+                                    if (res.data.orders[i].status == "pending") {
                                         var status = "Pending...";
                                     }
                                     else {
                                         var status = "Confirmed";
                                     }
                                     this.orderedProducts.push({
-                                        _id: res.data[i]._id,
-                                        name: res.data[i].name,
+                                        _id: res.data.orders[i]._id,
+                                        name: res.data.orders[i].name,
                                         status: status
                                     })
                                 }
@@ -63,6 +72,7 @@ export class ViewOrdersComponent implements OnInit {
                             else {
                                 this.isRenderingMessage = true;
                             }
+                            this.orderInit = true;
                         }
                     }
                 }, error => {
@@ -70,6 +80,14 @@ export class ViewOrdersComponent implements OnInit {
                     console.log(error.error.error);
                 });
         }
+    }
+
+    onLoadMoreOrderItems() {
+        if (!this.orderInit) {
+            this.orderPageNo = this.orderPageNo + 1;
+            this.getOrders();
+        }
+        this.orderInit = false;
     }
 
     onBack() {

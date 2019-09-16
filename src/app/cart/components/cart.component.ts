@@ -13,6 +13,8 @@ import { Page } from "tns-core-modules/ui/page/page";
 
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
+import { NavigationExtras } from "@angular/router";
+import { BackgroundHttpService } from "~/app/services/background.http.service";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -30,7 +32,7 @@ export class CartComponent implements OnInit {
     @ViewChild('placeOrderDialog') placeOrderDialog: ModalComponent;
     @ViewChild('viewAddressDialog') viewAddressDialog: ModalComponent;
 
-    cartProducts;
+    cartProducts: Array<any>;
     totalAmount: string;
     cart: Cart;
     product: Product;
@@ -41,9 +43,11 @@ export class CartComponent implements OnInit {
     mapAddress: string;
     addressButtonText: string;
     isRenderingMessage: boolean;
+    isRenderingWhole: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
+        this.isRenderingWhole = false;
         this.cartProducts = [];
         this.cart = new Cart();
         this.cart.product = new Product();
@@ -65,6 +69,9 @@ export class CartComponent implements OnInit {
             localstorage.getItem("userId") != undefined) {
             this.refreshCartPage();
         }
+        setTimeout(() => {
+            this.isRenderingWhole = true;
+        }, 100)
     }
 
     onBack() {
@@ -75,141 +82,116 @@ export class CartComponent implements OnInit {
     onRemoveItem(product: Product) {
         this.cart.product._id = product._id;
         this.cart.product.quantity = "0";
+
+        var index = this.cartProducts.indexOf(product)
+        this.cartProducts.splice(index, 1);
+
         if (product.isSimilarProduct == true) {
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
         } else {
             this.cart.product.isSimilarProduct = false;
         }
-        this.updateCartQuantity();
+        if (this.cartProducts.length == 0) {
+            this.isRenderingMessage = true;
+        }
+        this.notifyUpdateCartQuantity();
     }
 
     onPlus(product: Product) {
-        this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
+
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+        console.log("STO::C::", storedCart)
+
+        var index = this.cartProducts.indexOf(product)
+
+        this.cartProducts[index].quantity = (parseInt(this.cartProducts[index].quantity) + 1).toString();
+
         if (product.isSimilarProduct == true) {
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
-            this.http
-                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            if (res.data.products.length != 0) {
-                                for (var i = 0; i < res.data.products.length; i++) {
-                                    if (product._id == res.data.products[i]._id) {
-                                        var quantity = parseInt(res.data.products[i].quantity) + 1;
-                                        this.cart.product.quantity = quantity.toString();
-                                        this.userService.showLoadingState(false);
-                                        this.updateCartQuantity();
-                                    }
-                                }
-                            }
-                        }
+            if (storedCart.products.length != 0) {
+                for (var i = 0; i < storedCart.products.length; i++) {
+                    if (product._id == storedCart.products[i]._id) {
+                        var quantity = parseInt(storedCart.products[i].quantity) + 1;
+                        this.cart.product.quantity = quantity.toString();
+                        this.notifyUpdateCartQuantity();
                     }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    console.log(error.error.error);
-                });
+                }
+            }
         }
         else {
             this.cart.product.isSimilarProduct = false;
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
-            this.http
-                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            if (res.data.products.length != 0) {
-                                for (var i = 0; i < res.data.products.length; i++) {
-                                    if (product._id == res.data.products[i]._id) {
-                                        var quantity = parseInt(res.data.products[i].quantity) + 1;
-                                        this.cart.product.quantity = quantity.toString();
-                                        this.userService.showLoadingState(false);
-                                        this.updateCartQuantity();
-                                    }
-                                }
-                            }
-                        }
+
+            if (storedCart.products.length != 0) {
+                for (var i = 0; i < storedCart.products.length; i++) {
+                    if (product._id == storedCart.products[i]._id) {
+                        var quantity = parseInt(storedCart.products[i].quantity) + 1;
+                        this.cart.product.quantity = quantity.toString();
+                        this.notifyUpdateCartQuantity();
                     }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    console.log(error.error.error);
-                });
+                }
+            }
         }
     }
 
     onMinus(product: Product) {
-        this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
+
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+
+        var index = this.cartProducts.indexOf(product)
+
+        if (parseInt(this.cartProducts[index].quantity) - 1 == 0) {
+            this.onRemoveItem(product);
+        } else {
+            this.cartProducts[index].quantity = (parseInt(this.cartProducts[index].quantity) - 1).toString();
+        }
+
         if (product.isSimilarProduct == true) {
             console.log(product.isSimilarProduct);
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
-            this.http
-                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            if (res.data.products.length != 0) {
-                                for (var i = 0; i < res.data.products.length; i++) {
-                                    if (product._id == res.data.products[i]._id) {
-                                        var quantity = parseInt(res.data.products[i].quantity) - 1;
-                                        this.cart.product.quantity = quantity.toString();
-                                        this.userService.showLoadingState(false);
-                                        this.updateCartQuantity();
-                                    }
-                                }
-                            }
-                        }
+
+            if (storedCart.products.length != 0) {
+                for (var i = 0; i < storedCart.products.length; i++) {
+                    if (product._id == storedCart.products[i]._id) {
+                        var quantity = parseInt(storedCart.products[i].quantity) - 1;
+                        this.cart.product.quantity = quantity.toString();
+                        this.notifyUpdateCartQuantity();
                     }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    console.log(error.error.error);
-                });
+                }
+            }
         }
         else {
             this.cart.product.isSimilarProduct = false;
-            this.http
-                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            if (res.data.products.length != 0) {
-                                for (var i = 0; i < res.data.products.length; i++) {
-                                    if (product._id == res.data.products[i]._id) {
-                                        var quantity = parseInt(res.data.products[i].quantity) - 1;
-                                        this.cart.product.quantity = quantity.toString();
-                                        this.userService.showLoadingState(false);
-                                        this.updateCartQuantity();
-                                    }
-                                }
-                            }
-                        }
+
+            if (storedCart.products.length != 0) {
+                for (var i = 0; i < storedCart.products.length; i++) {
+                    if (product._id == storedCart.products[i]._id) {
+                        var quantity = parseInt(storedCart.products[i].quantity) - 1;
+                        this.cart.product.quantity = quantity.toString();
+                        this.notifyUpdateCartQuantity();
                     }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    console.log(error.error.error);
-                });
+                }
+            }
         }
     }
 
-    updateCartQuantity() {
-        this.userService.showLoadingState(true);
-        this.http
-            .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
-            .subscribe((res: any) => {
+    notifyUpdateCartQuantity() {
+        this.backgroundHttpService
+            .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), {}, this.cart)
+            .then((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        this.refreshCartPage();
+                        localstorage.setItem('cart', JSON.stringify(res.data))
                     }
                 }
             }, error => {
-                this.userService.showLoadingState(false);
                 console.log(error.error.error);
             });
     }
 
     refreshCartPage() {
-        this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
@@ -224,7 +206,7 @@ export class CartComponent implements OnInit {
                                 this.cartProducts.push({
                                     _id: res.data.products[i]._id,
                                     isSimilarProduct: productType,
-                                    image: res.data.products[i].image.url,
+                                    image: res.data.products[i].image.resize_url,
                                     fullName: res.data.products[i].name,
                                     quantity: res.data.products[i].quantity,
                                     totalPrice: "RS" + " " + res.data.products[i].total,
@@ -233,7 +215,6 @@ export class CartComponent implements OnInit {
                                 })
                             }
                             this.totalAmount = res.data.grandTotal;
-                            this.isRendering = true;
                             this.http
                                 .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
                                 .subscribe((res: any) => {
@@ -250,12 +231,13 @@ export class CartComponent implements OnInit {
                                             }
                                         }
                                     }
+                                    this.isRendering = true;
                                 }, error => {
+                                    this.isRendering = true;
                                     alert(error.error.error);
                                 });
                         }
                         else {
-                            this.userService.showLoadingState(false);
                             this.isRenderingMessage = true;
                         }
                     }
@@ -276,12 +258,12 @@ export class CartComponent implements OnInit {
     }
 
     onAddress() {
-        // let navigationExtras: NavigationExtras = {
-        //     queryParams: {
-        //         "from": "cart"
-        //     },
-        // };
-        this.routerExtensions.navigate(['/address']);
+        let navigationExtras: NavigationExtras = {
+            queryParams: {
+                "from": "cart"
+            },
+        };
+        this.routerExtensions.navigate(['/address'], navigationExtras);
     }
 
     onOrderItem() {

@@ -1,5 +1,5 @@
 <Page>
-    <GridLayout class="page">
+    <GridLayout *ngIf="isRenderingWhole" class="page">
         <CardView #placeOrderDialog modal size="lg" duration="100" backgroundColor="transparent">
             <GridLayout #dialog width="80%" height="30%" borderRadius="20" backgroundColor="white"
                 (loaded)="onDialogLoaded($event)">
@@ -54,7 +54,7 @@
             <StackLayout *ngIf="isRenderingMessage" row="1" width="100%" height="92%" verticalAlignment="middle">
                 <Label text="Cart is empty..." textAlignment="center" fontSize="18" color="white"></Label>
             </StackLayout>
-            <GridLayout row="1" width="100%" height="67%">
+            <GridLayout *ngIf="!isRenderingMessage" row="1" width="100%" height="67%">
                 <GridView [items]="cartProducts" colWidth="90%" rowHeight="35%" width="100%" height="100%"
                     backgroundColor="transparent">
                     <ng-template let-item="item" let-odd="odd">
@@ -117,7 +117,6 @@
                                 </GridLayout>
                             </GridLayout>
                             <StackLayout row="2" height="20%" marginRight="5%" horizontalAlignment="right">
-                                <!-- <Label class="removeItem" text="REMOVE ITEM" (tap)="onRemoveItem(item)"></Label> -->
                                 <Button class="removeItemButton" text="Remove item" (tap)="onRemoveItem(item)"></Button>
                             </StackLayout>
                         </GridLayout>
@@ -150,4 +149,5 @@
             </GridLayout>
         </GridLayout>
     </GridLayout>
+
 </Page>

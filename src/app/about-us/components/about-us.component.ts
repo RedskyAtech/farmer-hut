@@ -4,6 +4,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 import { UserService } from "~/app/services/user.service";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
+import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-aboutUs",
@@ -14,8 +15,11 @@ import { Values } from "~/app/values/values";
 export class AboutUsComponent implements OnInit {
 
     aboutUs: string;
+    isRendering: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient, private page: Page) {
+        this.isRendering = false;
+        this.page.actionBarHidden = true;
         this.navigationService.backTo = "profile";
         this.getAbout();
         // this.aboutUs = "hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg";
@@ -30,12 +34,10 @@ export class AboutUsComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
                         this.aboutUs = res.data[0].description;
                     }
                 }
             }, error => {
-                this.userService.showLoadingState(false);
                 alert(error.error.error);
             });
     }
@@ -44,7 +46,7 @@ export class AboutUsComponent implements OnInit {
         // this.routerExtensions.navigate(['./profile'], {
         //     clearHistory: true,
         // });
-
         this.routerExtensions.back();
+
     }
 }

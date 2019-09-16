@@ -17,7 +17,7 @@
         </GridLayout>
         <GridLayout row="1" height="90%" width="100%">
             <GridView [items]="similarProducts" colWidth="90%" rowHeight="25%" width="100%" height="100%"
-                backgroundColor="transparent">
+                backgroundColor="transparent" (loadMoreItems)="onLoadMoreSimilarItems()">
                 <ng-template let-item="item" let-i="index" let-odd="odd">
                     <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%" marginRight="5%"
                         marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">

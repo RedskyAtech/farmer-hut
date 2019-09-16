@@ -5,8 +5,8 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import * as localstorage from "nativescript-localstorage";
-import * as application from "tns-core-modules/application";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-myOrderDetail",
@@ -23,50 +23,57 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
     isRenderingMessage: boolean;
     isRenderingOrders: boolean;
     listener: any;
+    orderInit = true;
+    orderPageNo = 1;
 
-    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private ngZone: NgZone, private navigationService: NavigationService) {
 
+    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private ngZone: NgZone, private navigationService: NavigationService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.navigationService.backTo = 'profile';
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
+        this.getOrders();
     }
 
     ngOnInit(): void {
+    }
+
+    getOrders() {
         if (localstorage.getItem("userToken") != null &&
             localstorage.getItem("userToken") != undefined &&
             localstorage.getItem("userId") != null &&
             localstorage.getItem("userId") != undefined) {
             this.userService.showLoadingState(true);
             this.http
-                .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=false")
+                .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=false" + `&pageNo=${this.orderPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            if (res.data.length != 0) {
+                            if (res.data.orders.length != 0) {
                                 this.isRenderingOrders = true;
-                                for (var i = 0; i < res.data.length; i++) {
-                                    if (res.data[i].status == "pending") {
+                                for (var i = 0; i < res.data.orders.length; i++) {
+                                    if (res.data.orders[i].status == "pending") {
                                         var status = "In progress...";
                                     }
-                                    else if (res.data[i].status == "confirmed") {
+                                    else if (res.data.orders[i].status == "confirmed") {
                                         var status = "Confirmed";
                                     }
-                                    else if (res.data[i].status == "delivered") {
+                                    else if (res.data.orders[i].status == "delivered") {
                                         var status = "Delivered";
                                     }
-                                    else if (res.data[i].status == "rejected") {
+                                    else if (res.data.orders[i].status == "rejected") {
                                         var status = "Rejected";
                                     }
                                     else {
                                         var status = "Cancelled";
                                     }
                                     this.orderedProducts.push({
-                                        _id: res.data[i]._id,
-                                        name: res.data[i].name,
+                                        _id: res.data.orders[i]._id,
+                                        name: res.data.orders[i].name,
                                         status: status
                                     })
                                 }
@@ -74,6 +81,7 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
                             else {
                                 this.isRenderingMessage = true;
                             }
+                            this.orderInit = true;
                         }
                     }
                 }, error => {
@@ -81,6 +89,14 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
                     console.log(error.error.error);
                 });
         }
+    }
+
+    onLoadMoreOrderItems() {
+        if (!this.orderInit) {
+            this.orderPageNo = this.orderPageNo + 1;
+            this.getOrders();
+        }
+        this.orderInit = false;
     }
 
     ngOnDestroy(): void {

@@ -9,11 +9,17 @@ import { HTTP } from "./services/http.service";
 import * as application from "tns-core-modules/application";
 import * as Toast from 'nativescript-toast';
 import * as permissions from "nativescript-permissions";
+import { ad } from "tns-core-modules/utils/utils"
+import { BackgroundService } from "./services/background.service"
+import { BackgroundHttpService } from "./services/background.http.service";
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
 registerElement("PullToRefresh", () => require("nativescript-pulltorefresh").PullToRefresh);
 registerElement("MapView", () => require("nativescript-google-maps-sdk").MapView);
+
+declare var android: any;
+
 
 
 @Component({
@@ -26,10 +32,12 @@ export class AppComponent {
     showLoading: boolean;
     tries: number;
     listener: any;
+    context: any;
 
-    constructor(private userService: UserService, private routerExtensions: RouterExtensions, private ngZone: NgZone, private navigationService: NavigationService, private http: HttpClient) {
+    constructor(private userService: UserService, private routerExtensions: RouterExtensions, private ngZone: NgZone, private navigationService: NavigationService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService) {
 
         HTTP.http = this.http;
+        this.context = ad.getApplicationContext();
 
         this.userService.showloadingState.subscribe((state: boolean) => {
             if (state != undefined) {
@@ -71,6 +79,5 @@ export class AppComponent {
         permissions.requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, 'Application needs location access for its functioning.').then(() => {
             console.log('Permission Granted')
         })
-
     }
 }

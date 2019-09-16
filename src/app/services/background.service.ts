@@ -1,4 +1,5 @@
 import { HTTP } from "./http.service";
+import { HttpClient } from "@angular/common/http/http";
 
 @JavaProxy("com.tns.BackgroundService")
 export class BackgroundService extends android.app.Service {
@@ -14,16 +15,59 @@ export class BackgroundService extends android.app.Service {
         return null;
     }
 
-    public onStartCommand(intent: android.content.Intent, flags: number, startId: number): number {
+    public onCommand(intent: android.content.Intent, flags: number, startId: number, http: HttpClient, req: string, url: string, options?: any, body?: any): Promise<any> {
+        super.onStartCommand(intent, flags, startId)
+        // this.http.get(url).subscribe((res: any) => {
+        //     console.log('RES:::', res)
+        // }, error => {
+        //     console.log('EEERES:::', error);
+        // })
 
-        this.http = HTTP.http;
+        var promise;
 
-        this.http.get("http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/api/users").subscribe((res: any) => {
-            console.log('RES:::', res)
-        }, error => {
-            console.log('EEERES:::', error);
-        })
-        return 0;
+        switch (req) {
+            case "GET":
+                promise = new Promise<any>((resolve, reject) => {
+                    http.get(url, options).subscribe((res: any) => {
+                        console.log('RES::GET:', res)
+                        resolve(res);
+                        super.stopSelf();
+                    }, error => {
+                        console.log('EEERES::GET:', error);
+                        reject(error);
+                        super.stopSelf();
+                    })
+                });
+                break;
+            case "PUT":
+                promise = new Promise<any>((resolve, reject) => {
+                    http.put(url, body, options).subscribe((res: any) => {
+                        console.log('RES::PUT:', res)
+                        resolve(res);
+                        super.stopSelf();
+                    }, error => {
+                        console.log('EEERES::PUT:', error);
+                        reject(error);
+                        super.stopSelf();
+                    })
+                })
+                break;
+            case "POST":
+                promise = new Promise<any>((resolve, reject) => {
+                    http.post(url, body, options).subscribe((res: any) => {
+                        console.log('RES::POST:', res)
+                        resolve(res);
+                        super.stopSelf();
+                    }, error => {
+                        console.log('EEERES::POST:', error);
+                        reject(error);
+                        super.stopSelf();
+
+                    })
+                })
+                break;
+        }
+        return promise;
     }
 
 }

@@ -84,6 +84,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.http
                 .get(Values.BASE_URL + "users/" + this.userId)
                 .subscribe((res: any) => {
+                    console.log("RES:::PROF:::", res)
                     if (res != "" && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
@@ -116,6 +117,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.http
                 .get(Values.BASE_URL + "users/" + this.adminId)
                 .subscribe((res: any) => {
+                    console.log("RES:::PROF:::ADD", res)
                     if (res != "" && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
@@ -132,6 +134,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                             else {
                                 this.addressButton = "Add address";
                             }
+                            this.isVisibleProfile = "visible";
                         }
                     }
                 }, error => {

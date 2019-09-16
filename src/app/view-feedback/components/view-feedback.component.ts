@@ -6,6 +6,7 @@ import { UserService } from '../../services/user.service';
 import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
+import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-viewFeedback",
@@ -18,7 +19,8 @@ export class ViewFeedbackComponent implements OnInit {
 
     feedbacks;
 
-    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.feedbacks = [];
         this.navigationService.backTo = "profile";
         if (localstorage.getItem("adminToken") != null &&
@@ -32,11 +34,11 @@ export class ViewFeedbackComponent implements OnInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            for (var i = 0; i < res.data.length; i++) {
+                            for (var i = 0; i < res.data.feedbacks.length; i++) {
                                 this.feedbacks.push({
-                                    _id: res.data[i]._id,
-                                    name: res.data[i].name,
-                                    message: res.data[i].message
+                                    _id: res.data.feedbacks[i]._id,
+                                    name: res.data.feedbacks[i].name,
+                                    message: res.data.feedbacks[i].message
                                 })
                             }
                         }

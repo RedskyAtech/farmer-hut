@@ -56,7 +56,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            this.image = res.data.image.url;
+                            this.image = res.data.image.resize_url;
                             this.brandName = res.data.brand;
                             this.fullName = res.data.name;
                             this.detailHeading = res.data.heading.title;
@@ -80,7 +80,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            this.image = res.data.image.url;
+                            this.image = res.data.image.resize_url;
                             this.brandName = res.data.brand;
                             this.fullName = res.data.name;
                             this.detailHeading = res.data.heading.title;

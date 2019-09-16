@@ -1,14 +1,18 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
-import * as localstorage from "nativescript-localstorage";
+import { Component, OnInit } from "@angular/core";
+import { NavigationExtras, ActivatedRoute } from "@angular/router";
 import { Values } from "~/app/values/values";
 import { HttpClient } from "@angular/common/http";
-import * as Toast from 'nativescript-toast';
 import { Cart } from "~/app/models/cart.model";
 import { UserService } from "~/app/services/user.service";
 import { Product } from "~/app/models/product.model";
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
+import { BackgroundHttpService } from "~/app/services/background.http.service";
+import { Page } from "tns-core-modules/ui/page/page";
+
+import * as localstorage from "nativescript-localstorage";
+import * as Toast from 'nativescript-toast';
+
 
 @Component({
     selector: "ns-similarProductUser",
@@ -26,8 +30,11 @@ export class SimilarProductUserComponent implements OnInit {
     isCartCount: boolean;
     cart: Cart;
     heading: string;
+    similarPageNo = 1;
+    similarInit = true;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.product = new Product();
         this.cart = new Cart();
         this.cart.product = new Product();
@@ -60,27 +67,36 @@ export class SimilarProductUserComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    onLoadMoreSimilarItems() {
+        if (!this.similarInit) {
+            this.similarPageNo = this.similarPageNo + 1;
+            this.getSimilarProducts();
+        }
+        this.similarInit = false;
+    }
+
     getSimilarProducts() {
         this.userService.showLoadingState(true);
         this.http
-            .get(Values.BASE_URL + "similarProducts?_id=" + this.categoryId + "&status=enabled")
+            .get(Values.BASE_URL + `similarProducts?_id=${this.categoryId}&status=enabled&pageNo=${this.similarPageNo}&items=10`)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.userService.showLoadingState(false);
-                        for (var i = 0; i < res.data.length; i++) {
+                        for (var i = 0; i < res.data.products.length; i++) {
                             this.similarProducts.push({
-                                _id: res.data[i]._id,
-                                status: res.data[i].status,
-                                image: res.data[i].image.url,
-                                brandName: res.data[i].brand,
-                                name: res.data[i].name,
-                                heading: res.data[i].heading.title,
-                                weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                price: "Rs " + res.data[i].price.value,
+                                _id: res.data.products[i]._id,
+                                status: res.data.products[i].status,
+                                image: res.data.products[i].image.resize_url,
+                                brandName: res.data.products[i].brand,
+                                name: res.data.products[i].name,
+                                heading: res.data.products[i].heading.title,
+                                weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
+                                price: "Rs " + res.data.products[i].price.value,
                             })
                         }
-                        this.updateCartCount();
+                        // this.updateCartCount();
+                        this.similarInit = true;
                     }
                 }
             }, error => {
@@ -89,39 +105,29 @@ export class SimilarProductUserComponent implements OnInit {
             });
     }
 
+
     updateCartCount() {
-        this.userService.showLoadingState(true);
-        this.http
-            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        if (res.data.products.length != 0) {
-                            this.isCartCount = true;
-                            this.cartCount = res.data.products.length;
-                        }
-                    }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                console.log(error.error.error);
-            });
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+
+        if (storedCart.products.length != 0) {
+            this.isCartCount = true;
+            this.cartCount = storedCart.products.length;
+        }
     }
 
+
     onViewDetail(product: Product) {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "productId": product._id,
-                "classType": "similarProduct"
-            },
-        };
+        // let navigationExtras: NavigationExtras = {
+        //     queryParams: {
+        //         "productId": product._id,
+        //         "classType": "similarProduct"
+        //     },
+        // };
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
                 "productId": product._id,
                 "classType": "similarProduct"
             },
-            clearHistory: true,
         });
     }
 
@@ -131,73 +137,63 @@ export class SimilarProductUserComponent implements OnInit {
                 "index": "1"
             },
         };
-        this.routerExtensions.navigate(['./homeUser'], {
-            queryParams: {
-                "index": "1"
-            },
-            clearHistory: true,
-        });
+        // this.routerExtensions.navigate(['./homeUser'], {
+        //     queryParams: {
+        //         "index": "1"
+        //     },
+        //     clearHistory: true,
+        // });
+        this.routerExtensions.back();
     }
 
     onAddCart(product: Product) {
-        this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
         this.cart.product.isSimilarProduct = true;
-        this.http
-            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
-                        if (res.data.products.length != 0) {
-                            for (var i = 0; i < res.data.products.length; i++) {
-                                if (product._id == res.data.products[i]._id) {
-                                    var quantity = parseInt(res.data.products[i].quantity) + 1;
-                                    this.cart.product.quantity = quantity.toString();
-                                    this.updateCart();
-                                    break;
-                                }
-                                else {
-                                    this.cart.product.quantity = "1";
-                                    this.updateCart();
-                                }
-                            }
-                        }
-                        else {
-                            this.cart.product.quantity = "1";
-                            this.updateCart();
-                        }
-                    }
+
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+
+
+        if (storedCart.products.length != 0) {
+            for (var i = 0; i < storedCart.products.length; i++) {
+                if (product._id == storedCart.products[i]._id) {
+                    var quantity = parseInt(storedCart.products[i].quantity) + 1;
+                    this.cart.product.quantity = quantity.toString();
+                    this.updateCart(storedCart._id);
+                    break;
                 }
-            }, error => {
-                this.userService.showLoadingState(false);
-                console.log(error.error.error);
-            });
+                else {
+                    this.cart.product.quantity = "1";
+                    this.updateCart(storedCart._id);
+                }
+            }
+        }
+        else {
+            this.cart.product.quantity = "1";
+            this.updateCart(storedCart._id);
+        }
     }
 
-    updateCart() {
-        this.userService.showLoadingState(true);
-        console.log(this.cart);
-        this.http
-            .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
-            .subscribe((res: any) => {
+
+    updateCart(cardId: string) {
+
+        this.backgroundHttpService
+            .put(Values.BASE_URL + `carts/update/${cardId}`, {}, this.cart)
+            .then((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         console.log(res);
-                        this.userService.showLoadingState(false);
+                        // this.userService.showLoadingState(false);
                         Toast.makeText("Product is added to cart!!!", "long").show();
                         this.updateCartCount();
                     }
                 }
             }, error => {
-                this.userService.showLoadingState(false);
+                // this.userService.showLoadingState(false);
                 console.log(error.error.error);
             });
     }
 
     onCartClick() {
-        this.routerExtensions.navigate(['/cart'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.navigate(['/cart']);
     }
 }

@@ -29,6 +29,9 @@ export class SimilarProductAdminComponent implements OnInit {
     heading: string;
     categoryId: string;
 
+    similarPageNo = 1;
+    similarInit = true;
+
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.product = new Product();
         this.extension = "jpg";
@@ -57,27 +60,36 @@ export class SimilarProductAdminComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    onLoadMoreSimilarItems() {
+        if (!this.similarInit) {
+            this.similarPageNo = this.similarPageNo + 1;
+            this.getSimilarProducts();
+        }
+        this.similarInit = false;
+    }
+
     getSimilarProducts() {
         if (localstorage.getItem("categoryId") != null && localstorage.getItem("categoryId") != undefined) {
             this.categoryId = localstorage.getItem("categoryId");
             this.userService.showLoadingState(true);
             this.http
-                .get(Values.BASE_URL + "similarProducts?_id=" + localstorage.getItem("categoryId"))
+                .get(Values.BASE_URL + "similarProducts?_id=" + localstorage.getItem("categoryId") + `&pageNo=${this.similarPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            for (var i = 0; i < res.data.length; i++) {
+                            for (var i = 0; i < res.data.products.length; i++) {
                                 this.similarProducts.push({
-                                    _id: res.data[i]._id,
-                                    status: res.data[i].status,
-                                    image: res.data[i].image.url,
-                                    brandName: res.data[i].brand,
-                                    name: res.data[i].name,
-                                    weight: res.data[i].dimensions[0].value + " " + res.data[i].dimensions[0].unit,
-                                    price: "Rs " + res.data[i].price.value,
+                                    _id: res.data.products[i]._id,
+                                    status: res.data.products[i].status,
+                                    image: res.data.products[i].image.resize_url,
+                                    brandName: res.data.products[i].brand,
+                                    name: res.data.products[i].name,
+                                    weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
+                                    price: "Rs " + res.data.products[i].price.value,
                                 })
                             }
+                            this.similarInit = true;
                         }
                     }
                 }, error => {
@@ -88,48 +100,25 @@ export class SimilarProductAdminComponent implements OnInit {
     }
 
     onEdit(product: Product) {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "similarProductId": product._id,
-                "classType": "similarProduct",
-                "type": "edit"
-            },
-        };
+
         this.routerExtensions.navigate(['./addProduct'], {
             queryParams: {
                 "similarProductId": product._id,
                 "classType": "similarProduct",
                 "type": "edit"
             },
-            clearHistory: true,
         });
     }
 
     onBack() {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "index": "1"
-            },
-        };
-        this.routerExtensions.navigate(['./homeAdmin'], {
-            queryParams: {
-                "index": "1"
-            },
-            clearHistory: true,
-        });
+        this.routerExtensions.back();
     }
 
     onAddButton() {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "classType": "similarProduct"
-            },
-        };
         this.routerExtensions.navigate(['./addProduct'], {
             queryParams: {
                 "classType": "similarProduct"
             },
-            clearHistory: true,
         });
     }
 

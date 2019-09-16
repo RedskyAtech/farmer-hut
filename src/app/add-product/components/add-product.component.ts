@@ -22,6 +22,7 @@ import { UserService } from "~/app/services/user.service";
 import { session, Request } from 'nativescript-background-http';
 import * as Toast from 'nativescript-toast';
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 registerElement("CardView", () => CardView);
 
@@ -79,8 +80,9 @@ export class AddProductComponent implements OnInit {
 
     private imageCropper: ImageCropper;
 
-    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private page: Page) {
 
+        this.page.actionBarHidden = true;
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
 
@@ -133,7 +135,7 @@ export class AddProductComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                this.productImage = res.data.image.url;
+                                this.productImage = res.data.image.resize_url;
                                 this.brandName = res.data.brand;
                                 this.productName = res.data.name;
                                 this.detailHeading = res.data.heading.title;
@@ -157,7 +159,7 @@ export class AddProductComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                this.productImage = res.data.image.url;
+                                this.productImage = res.data.image.resize_url;
                                 this.brandName = res.data.brand;
                                 this.productName = res.data.name;
                                 this.detailHeading = res.data.heading.title;
@@ -177,9 +179,7 @@ export class AddProductComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['/homeAdmin'], {
-            clearHistory: true
-        });
+        this.routerExtensions.back();
     }
 
     onBrandTextChanged(args) {

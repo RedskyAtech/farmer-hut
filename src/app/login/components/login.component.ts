@@ -7,6 +7,8 @@ import { UserService } from "../../services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { Color } from "tns-core-modules/color/color";
 import { Page } from "tns-core-modules/ui/page/page";
+import { BackgroundHttpService } from "~/app/services/background.http.service";
+
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
 
@@ -34,10 +36,14 @@ export class LoginComponent implements OnInit {
     userToken: string;
     errorMessage: string;
 
-    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
         this.user = new User();
         this.userService.showLoadingState(false);
+        if (localstorage.getItem('cartId') && localstorage.getItem('cartId') != null && localstorage.getItem('cartId') != undefined && localstorage.getItem('cartId') != "") {
+            this.getCart(localstorage.getItem('cartId'));
+        }
+
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
             this.routerExtensions.navigate(['./homeUser'], {
                 clearHistory: true,
@@ -141,6 +147,7 @@ export class LoginComponent implements OnInit {
                                                 if (res != "" && res != undefined) {
                                                     if (res.isSuccess == true) {
                                                         localstorage.setItem('cartId', res.data.cartId);
+                                                        this.getCart(res.data.cartId)
                                                     }
                                                 }
                                             }, error => {
@@ -227,6 +234,25 @@ export class LoginComponent implements OnInit {
             // this.changeDetector.detectChanges();
         }, 400)
 
+    }
+
+
+    getCart(cartId: string) {
+        this.backgroundHttpService.get(Values.BASE_URL + `carts/${cartId}`, {}).then((res: any) => {
+            if (res != null && res != undefined) {
+                console.log("RES:::CART:::", res)
+                if (res.isSuccess == true) {
+                    if (res.data) {
+                        localstorage.setItem('cart', JSON.stringify(res.data));
+                    }
+                }
+            }
+        }, error => {
+            this.userService.showLoadingState(false);
+            // console.log(error.error.error);
+            console.log(error);
+
+        });
     }
 
 }

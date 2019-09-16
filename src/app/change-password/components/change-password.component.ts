@@ -10,6 +10,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -34,7 +35,8 @@ export class ChangePasswordComponent implements OnInit {
     userId: string;
     errorMessage: string;
 
-    constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService) {
+    constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.user = new User();
         this.errorMessage = "";
         if (localstorage.getItem("userType") == "admin") {

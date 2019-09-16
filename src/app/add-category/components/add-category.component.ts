@@ -15,6 +15,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
 import * as imagepicker from "nativescript-imagepicker";
+import { Page } from "tns-core-modules/ui/page/page";
 
 declare var android: any;
 
@@ -47,7 +48,8 @@ export class AddCategoryComponent implements OnInit {
     extension: string;
     shouldImageUpdate: string;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.categoryBorderColor = "white"
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
@@ -77,7 +79,7 @@ export class AddCategoryComponent implements OnInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
-                            this.categoryImage = res.data.image.url;
+                            this.categoryImage = res.data.image.resize_url;
                             this.categoryName = res.data.name;
                             this.categoryBorderColor = "#00C012";
                         }
@@ -96,17 +98,7 @@ export class AddCategoryComponent implements OnInit {
     }
 
     onBack() {
-        let navigationExtras: NavigationExtras = {
-            queryParams: {
-                "index": "1"
-            },
-        };
-        this.routerExtensions.navigate(['/homeAdmin'], {
-            queryParams: {
-                "index": "1"
-            },
-            clearHistory: true
-        });
+        this.routerExtensions.back();
     }
 
     onCategoryTextChanged(args) {

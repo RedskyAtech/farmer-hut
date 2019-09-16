@@ -9,6 +9,7 @@ import { AboutUs } from "~/app/models/aboutUs.model";
 import { Color } from "tns-core-modules/color/color";
 
 import * as Toast from 'nativescript-toast';
+import { Page } from "tns-core-modules/ui/page/page";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -31,7 +32,8 @@ export class AboutUsAdminComponent implements OnInit {
     aboutUs: AboutUs;
     aboutId: string;
 
-    constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService) {
+    constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
+        this.page.actionBarHidden = true;
         this.navigationService.backTo = "profile";
         this.aboutHint = "Tell us about yourself";
         this.aboutText = "";
