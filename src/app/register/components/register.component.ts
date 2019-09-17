@@ -7,6 +7,7 @@ import { UserService } from '../../services/user.service';
 import { ModalComponent } from "~/app/modals/modal.component";
 
 import * as localstorage from "nativescript-localstorage";
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -37,13 +38,21 @@ export class RegisterComponent implements OnInit {
     rePassword = "";
     user: User;
     errorMessage: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.user = new User();
         this.errorMessage = "";
+        this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onNameTextChanged(args) {
@@ -136,6 +145,7 @@ export class RegisterComponent implements OnInit {
             // alert("Password and repeat password should be same!!!");
         }
         else {
+            this.isLoading = true;
             this.userService.showLoadingState(true);
             this.user.name = this.name;
             this.user.phone = this.phone;
@@ -150,7 +160,7 @@ export class RegisterComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             localstorage.setItem('regToken', res.data.regToken);
-
+                            this.isLoading = false;
                             this.routerExtensions.navigate(['./confirmPhone'], {
                                 queryParams: {
                                     "name": this.name,
@@ -162,6 +172,7 @@ export class RegisterComponent implements OnInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     console.log(error.error.error);
                 });
@@ -169,11 +180,13 @@ export class RegisterComponent implements OnInit {
     }
 
     onVerify() {
+        this.isLoading = true;
         this.http
             .post(Values.BASE_URL + "users", this.user)
             .subscribe((res: any) => {
                 if (res != "" && res != undefined) {
                     if (res.isSuccess == true) {
+                        this.isLoading = false;
                         this.userService.showLoadingState(false);
                         this.userVerifyDialog.hide();
                         localstorage.setItem('regToken', res.data.regToken);

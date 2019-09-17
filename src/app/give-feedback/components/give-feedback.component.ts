@@ -25,9 +25,13 @@ export class GiveFeedbackComponent implements OnInit {
     userId: string;
     feedback: Feedback;
     errorMessage: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isLoading = false;
+        this.isRendering = false;
         this.feedbackBorderColor = "white";
         this.feedbackHint = "Message";
         this.feedbackMessage = "";
@@ -37,6 +41,9 @@ export class GiveFeedbackComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        })
     }
 
     onOK() {
@@ -58,6 +65,7 @@ export class GiveFeedbackComponent implements OnInit {
             if (localStorage.getItem("userId") != null && localStorage.getItem("userId") != undefined) {
                 this.userId = localStorage.getItem("userId");
             }
+            this.isLoading=true;
             this.feedback.message = this.feedbackMessage;
             this.feedback.userId = this.userId;
             this.http
@@ -65,11 +73,13 @@ export class GiveFeedbackComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != "" && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             Toast.makeText("Feedback submitted successfully!!!", "long").show();
                             this.routerExtensions.back();
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.routerExtensions.back();
                     console.log(error.error.error);
                 });

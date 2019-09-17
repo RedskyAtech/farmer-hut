@@ -8,7 +8,7 @@
                 <Label class="pageHeading" text="Feedbacks"></Label>
             </StackLayout>
         </GridLayout>
-        <GridLayout row="1" width="100%" height="92%">
+        <GridLayout *ngIf="isRendering" row="1" width="100%" height="92%">
             <GridView [items]="feedbacks" colWidth="90%" rowHeight="20%" width="100%" height="100%"
                 backgroundColor="transparent">
                 <ng-template let-item="item" let-odd="odd">
@@ -23,6 +23,16 @@
                     </GridLayout>
                 </ng-template>
             </GridView>
+        </GridLayout>
+        <GridLayout *ngIf="!isRendering" width="100%" height="100%">
+            <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="!isRendering" rowSpan="1"
+                colSpan="1">
+            </ActivityIndicator>
+        </GridLayout>
+        <GridLayout *ngIf="isLoading" width="100%" height="100%">
+            <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="isLoading" rowSpan="1"
+                colSpan="1">
+            </ActivityIndicator>
         </GridLayout>
     </GridLayout>
 </Page>

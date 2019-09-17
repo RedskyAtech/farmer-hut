@@ -38,9 +38,13 @@ export class AddSliderComponent implements OnInit {
     product: Product;
     showAddButton: boolean;
     errorMessage: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isLoading = false;
+        this.isRendering = false;
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
         this.sliderImage = "res://add_image_icon";
@@ -53,6 +57,9 @@ export class AddSliderComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onOK() {
@@ -163,6 +170,7 @@ export class AddSliderComponent implements OnInit {
         else {
             this.product.image.url = this.imageUrl;
             if (this.product.image.url != null) {
+                this.isLoading = true;
                 this.userService.showLoadingState(true);
                 this.http
                     .get(Values.BASE_URL + "files")
@@ -176,6 +184,7 @@ export class AddSliderComponent implements OnInit {
                                         if (res != null && res != undefined) {
                                             if (res.isSuccess == true) {
                                                 this.userService.showLoadingState(false);
+                                                this.isLoading = false;
                                                 Toast.makeText("Image is added successfully!!!", "long").show();
                                                 this.routerExtensions.navigate(['./homeAdmin'], {
                                                     clearHistory: true,
@@ -184,12 +193,14 @@ export class AddSliderComponent implements OnInit {
                                         }
                                     }, error => {
                                         this.userService.showLoadingState(false);
+                                        this.isLoading = false;
                                         alert(error.error.error);
                                     });
                             }
                         }
                     }, error => {
                         this.userService.showLoadingState(false);
+                        this.isLoading = false;
                         console.log(error.error.error);
                     });
             }

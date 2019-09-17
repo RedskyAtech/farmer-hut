@@ -34,9 +34,14 @@ export class ChangePasswordComponent implements OnInit {
     user: User;
     userId: string;
     errorMessage: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
+
         this.user = new User();
         this.errorMessage = "";
         if (localstorage.getItem("userType") == "admin") {
@@ -55,6 +60,9 @@ export class ChangePasswordComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = false;
+        })
     }
 
     onOK() {
@@ -102,6 +110,7 @@ export class ChangePasswordComponent implements OnInit {
             // alert("Password and repeat password should be same!!!");
         }
         else {
+            this.isLoading = true;
             this.userService.showLoadingState(true);
             this.user.password = this.oldPassword;
             this.user.newPassword = this.newPassword;
@@ -110,6 +119,7 @@ export class ChangePasswordComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             this.userService.showLoadingState(false);
                             Toast.makeText("Password changed successfully!!!", "long").show();
                             this.routerExtensions.navigate(['./login'], {
@@ -120,6 +130,7 @@ export class ChangePasswordComponent implements OnInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });

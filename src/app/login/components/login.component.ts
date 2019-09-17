@@ -35,9 +35,13 @@ export class LoginComponent implements OnInit {
     user: User;
     userToken: string;
     errorMessage: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
         this.user = new User();
         this.userService.showLoadingState(false);
         if (localstorage.getItem('cartId') && localstorage.getItem('cartId') != null && localstorage.getItem('cartId') != undefined && localstorage.getItem('cartId') != "") {
@@ -58,6 +62,9 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onPhoneTextChanged(args) {
@@ -102,6 +109,7 @@ export class LoginComponent implements OnInit {
             this.warningDialog.show();
         }
         else {
+            this.isLoading = true;
             this.user.phone = this.phone;
             this.user.password = this.password;
             this.userService.showLoadingState(true);
@@ -110,7 +118,6 @@ export class LoginComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            console.log(res);
                             this.userService.showLoadingState(false);
                             if (res.data.isVerified == false) {
                                 this.user.name = res.data.name;
@@ -146,12 +153,14 @@ export class LoginComponent implements OnInit {
                                             .subscribe((res: any) => {
                                                 if (res != "" && res != undefined) {
                                                     if (res.isSuccess == true) {
+                                                        this.isLoading = false;
                                                         localstorage.setItem('cartId', res.data.cartId);
                                                         this.getCart(res.data.cartId)
                                                     }
                                                 }
                                             }, error => {
                                                 alert(error.error.error);
+                                                this.isLoading = false;
                                             });
                                     }
                                     localstorage.setItem('userType', res.data.type);
@@ -166,17 +175,20 @@ export class LoginComponent implements OnInit {
                 }, error => {
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
+                    this.isLoading = false;
                 });
         }
     }
 
     onVerify() {
+        this.isLoading = true;
         this.http
             .post(Values.BASE_URL + "users", this.user)
             .subscribe((res: any) => {
                 if (res != "" && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.userService.showLoadingState(false);
+                        this.isLoading = false;
+                        // this.userService.showLoadingState(false);
                         this.userVerifyDialog.hide();
                         localstorage.setItem('regToken', res.data.regToken);
                         this.routerExtensions.navigate(['./confirmPhone'], {
@@ -185,8 +197,9 @@ export class LoginComponent implements OnInit {
                     }
                 }
             }, error => {
-                this.userService.showLoadingState(false);
+                // this.userService.showLoadingState(false);
                 alert(error.error.error);
+                this.isLoading = false;
             });
     }
 
@@ -251,7 +264,6 @@ export class LoginComponent implements OnInit {
             this.userService.showLoadingState(false);
             // console.log(error.error.error);
             console.log(error);
-
         });
     }
 

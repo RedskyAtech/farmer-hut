@@ -40,7 +40,7 @@
                 </StackLayout>
             </GridLayout>
         </CardView>
-        <GridLayout rows="auto,auto,auto,auto,auto,auto,auto" width="100%" height="100%">
+        <GridLayout *ngIf="isRendering" rows="auto,auto,auto,auto,auto,auto,auto" width="100%" height="100%">
             <StackLayout row="0" width="100%" marginTop="10" height="30%" verticalAlignment="middle">
                 <Image class="appLogo" src="res://logo"></Image>
             </StackLayout>
@@ -60,8 +60,7 @@
                 </TextField>
             </StackLayout>
             <StackLayout row="4" width="80%" height="5%">
-                <Label class="forgot-label" text="Forgot password?"
-                    (tap)="onForgotPassword()"></Label>
+                <Label class="forgot-label" text="Forgot password?" (tap)="onForgotPassword()"></Label>
             </StackLayout>
             <StackLayout row="5" width="80%" height="10%">
                 <Button class="button" text="Login" (tap)="onLogin()"></Button>
@@ -69,6 +68,16 @@
             <StackLayout row="6" width="80%" height="10%">
                 <Label class="footer-label" text="Don't have an account? Registration" (tap)="onRegister()"></Label>
             </StackLayout>
+        </GridLayout>
+        <GridLayout *ngIf="!isRendering" width="100%" height="100%">
+            <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="!isRendering" rowSpan="1"
+                colSpan="1">
+            </ActivityIndicator>
+        </GridLayout>
+        <GridLayout *ngIf="isLoading" width="100%" height="100%">
+            <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="isLoading" rowSpan="1"
+                colSpan="1">
+            </ActivityIndicator>
         </GridLayout>
     </GridLayout>
 </Page>

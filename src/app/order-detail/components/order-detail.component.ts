@@ -55,9 +55,13 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     date: string;
     latitude: number;
     longitude: number;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
@@ -83,12 +87,14 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (this.orderId != null && this.orderId != undefined) {
             this.userService.showLoadingState(true);
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "orders/" + this.orderId)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
+                            this.isLoading = false;
                             this.userName = res.data.name;
                             this.phoneNumber = res.data.phone;
                             this.totalAmount = res.data.grandTotal;
@@ -106,7 +112,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                                 var hours = hours - 12;
                                 var ampm = "pm";
                             }
-                            this.date = dateTime.getDate().toString() + "/" + dateTime.getMonth().toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
+                            this.date = dateTime.getDate().toString() + "/" + (dateTime.getMonth() + 1).toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
                             this.isRenderingUserDetail = true;
                             if (this.orderStatus == "pending") {
                                 this.confirmButtonText = "Confirm";
@@ -157,6 +163,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     console.log(error.error.error);
                 });
@@ -164,6 +171,9 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     ngAfterViewInit(): void {
@@ -216,11 +226,13 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     onConfirm() {
         if (this.orderStatus == "pending") {
             this.userService.showLoadingState(true);
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "files")
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             this.userService.showLoadingState(false)
                             this.order._id = res.data[0]._id;
                             console.log(this.order._id);
@@ -229,6 +241,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     console.log(error.error.error);
                 });
@@ -241,6 +254,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
     updateOrderStatus() {
         this.userService.showLoadingState(true);
+        this.isLoading = true;
         console.log(this.order._id);
         this.http
             .put(Values.BASE_URL + "orders/update/" + this.orderId, this.order)
@@ -252,6 +266,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                             clearHistory: true,
                         });
                         this.userService.showLoadingState(false);
+                        this.isLoading = false;
                         if (this.order.status == "confirmed") {
                             Toast.makeText("Order successfully confirmed!!!", "long").show();
                             this.confirmButtonText = "Deliver";
@@ -268,6 +283,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 }
             }, error => {
+                this.isLoading = false;
                 this.userService.showLoadingState(false);
                 console.log(error.error.error);
             });
@@ -295,6 +311,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     onTrack() {
         if (this.latitude != null && this.latitude != undefined && this.longitude != null && this.longitude != undefined) {
             this.userService.showLoadingState(true);
+            this.isLoading = true;
             geolocation.enableLocationRequest();
             var that = this;
 
@@ -313,7 +330,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                 then(function (location) {
                     if (location) {
                         that.userService.showLoadingState(false);
-
+                        that.isLoading = false;
                         openUrl("google.navigation:q=" + that.latitude.toString() + "," + that.longitude.toString());
 
                         // directions.navigate({
@@ -343,6 +360,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
                     }
                 }, function (e) {
+                    that.isLoading = false;
                     console.log("Error: " + e.message);
                 });
         }

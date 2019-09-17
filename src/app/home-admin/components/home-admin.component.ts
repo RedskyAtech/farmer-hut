@@ -46,6 +46,8 @@ export class HomeAdminComponent implements OnInit {
 
     categoryPageNo = 1;
     categoryInit = true;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
@@ -62,6 +64,8 @@ export class HomeAdminComponent implements OnInit {
         this.isRenderingProducts = false;
         this.isRenderingSlider = false;
         this.extension = "jpg";
+        this.isLoading = false;
+        this.isRendering = false;
 
         this.pageNo = 1;
 
@@ -80,6 +84,9 @@ export class HomeAdminComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
         this.route.queryParams.subscribe(params => {
             if (params["index"] == "1" && params["index"] != undefined) {
                 this.tabSelectedIndex = 1;
@@ -188,13 +195,14 @@ export class HomeAdminComponent implements OnInit {
 
     getProducts() {
         console.log('HOME:::PRO')
-
+        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `products?pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
                 console.log("RES:::ADMIN", res)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        // this.isLoading = false;
                         for (var i = 0; i < res.data.products.length; i++) {
                             this.products.push({
                                 _id: res.data.products[i]._id,
@@ -212,6 +220,7 @@ export class HomeAdminComponent implements OnInit {
                     }
                 }
             }, error => {
+                // this.isLoading = false;
                 alert(error.error.error);
             });
 
@@ -220,13 +229,14 @@ export class HomeAdminComponent implements OnInit {
 
     getCategories() {
         console.log('HOME:::CAT')
-
+        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `categories?pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
 
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        // this.isLoading = false;
                         for (var i = 0; i < res.data.categories.length; i++) {
                             this.productCategories.push({
                                 _id: res.data.categories[i]._id,
@@ -242,6 +252,7 @@ export class HomeAdminComponent implements OnInit {
                     // this.isRenderingProducts = true;
                 }
             }, error => {
+                // this.isLoading = false;
                 alert(error.error.error);
             });
         return true;

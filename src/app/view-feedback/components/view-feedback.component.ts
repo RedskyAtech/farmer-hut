@@ -18,21 +18,27 @@ import { Page } from "tns-core-modules/ui/page/page";
 export class ViewFeedbackComponent implements OnInit {
 
     feedbacks;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
         this.feedbacks = [];
+        this.isRendering = false;
+        this.isLoading = false;
         this.navigationService.backTo = "profile";
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
             localstorage.getItem("adminId") != null &&
             localstorage.getItem("adminId") != undefined) {
             this.userService.showLoadingState(true);
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "feedbacks")
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             this.userService.showLoadingState(false);
                             for (var i = 0; i < res.data.feedbacks.length; i++) {
                                 this.feedbacks.push({
@@ -44,6 +50,7 @@ export class ViewFeedbackComponent implements OnInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     console.log(error.error.error);
                 });
@@ -51,6 +58,9 @@ export class ViewFeedbackComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        })
     }
 
     onBack() {

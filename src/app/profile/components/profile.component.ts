@@ -35,6 +35,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     historyButtonText: string;
     isVisibleProfile: string;
     listener: any;
+
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService, private page: Page) {
         this.page.actionBarHidden = true;
         this.city = "Abohar";

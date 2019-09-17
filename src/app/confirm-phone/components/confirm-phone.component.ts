@@ -31,6 +31,8 @@ export class ConfirmPhoneComponent implements OnInit {
     isVisibleTimer: boolean;
     isVisibleOtpStatus: boolean;
     isVisibleResendButton: boolean;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
@@ -46,9 +48,14 @@ export class ConfirmPhoneComponent implements OnInit {
         this.isVisibleOtpStatus = false;
         this.isVisibleResendButton = false;
         this.navigationService.backTo = "register";
+        this.isLoading = false;
+        this.isRendering = false;
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onOK() {
@@ -75,6 +82,7 @@ export class ConfirmPhoneComponent implements OnInit {
             // alert("Please enter six digit otp!!!");
         }
         else {
+            this.isLoading = true;
             this.user.otp = this.otp;
             this.user.regToken = localstorage.getItem("regToken");
             this.userService.showLoadingState(true);
@@ -91,6 +99,7 @@ export class ConfirmPhoneComponent implements OnInit {
                                 .subscribe((res: any) => {
                                     if (res != null && res != undefined) {
                                         if (res.isSuccess == true) {
+                                            this.isLoading = false;
                                             this.userService.showLoadingState(false);
                                             if (res.data.isVerified == false) {
                                                 this.user.name = res.data.name;
@@ -142,12 +151,14 @@ export class ConfirmPhoneComponent implements OnInit {
                                         }
                                     }
                                 }, error => {
+                                    this.isLoading = false;
                                     this.userService.showLoadingState(false);
                                     alert(error.error.error);
                                 });
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });

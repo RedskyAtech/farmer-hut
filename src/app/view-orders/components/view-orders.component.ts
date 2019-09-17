@@ -24,12 +24,15 @@ export class ViewOrdersComponent implements OnInit {
     status: string;
     isRenderingMessage: boolean;
     isRenderingOrders: boolean;
-
+    isRendering: boolean;
+    isLoading: boolean;
     orderInit = true;
     orderPageNo = 1;
 
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
         this.orderedProducts = [];
         this.order = new Order();
         this.isRenderingMessage = false;
@@ -38,6 +41,9 @@ export class ViewOrdersComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
         this.getOrders();
     }
 
@@ -47,11 +53,13 @@ export class ViewOrdersComponent implements OnInit {
             localstorage.getItem("adminId") != null &&
             localstorage.getItem("adminId") != undefined) {
             this.userService.showLoadingState(true);
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "orders?history=false" + `&pageNo=${this.orderPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             this.userService.showLoadingState(false);
                             if (res.data.orders.length != 0) {
                                 this.isRenderingOrders = true;
@@ -76,6 +84,7 @@ export class ViewOrdersComponent implements OnInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     console.log(error.error.error);
                 });

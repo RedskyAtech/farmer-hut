@@ -40,9 +40,13 @@ export class MyOrderDetailComponent implements OnInit {
     isCancelButton: boolean;
     isRenderingUserDetail: boolean;
     date: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
@@ -62,6 +66,7 @@ export class MyOrderDetailComponent implements OnInit {
         });
         if (this.orderId != null && this.orderId != undefined) {
             this.userService.showLoadingState(true);
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "orders/" + this.orderId)
                 .subscribe((res: any) => {
@@ -69,6 +74,7 @@ export class MyOrderDetailComponent implements OnInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
+                            this.isLoading = false;
                             this.address = res.data.deliveryAddress.line1;
                             this.userName = res.data.name;
                             this.phoneNumber = res.data.phone;
@@ -84,7 +90,7 @@ export class MyOrderDetailComponent implements OnInit {
                                 var hours = hours - 12;
                                 var ampm = "pm";
                             }
-                            this.date = dateTime.getDate().toString() + "/" + dateTime.getMonth().toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
+                            this.date = dateTime.getDate().toString() + "/" + (dateTime.getMonth() + 1).toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
                             if (this.orderStatus == "pending") {
                                 this.cancelButtonText = "Cancel your order";
                                 this.isCancelButton = true;
@@ -118,12 +124,16 @@ export class MyOrderDetailComponent implements OnInit {
                     }
                 }, error => {
                     this.userService.showLoadingState(false);
+                    this.isLoading = false;
                     console.log(error.error.error);
                 });
         }
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onReason() {
@@ -161,6 +171,7 @@ export class MyOrderDetailComponent implements OnInit {
 
     updateOrderStatus() {
         this.userService.showLoadingState(true);
+        this.isLoading = true;
         this.http
             .put(Values.BASE_URL + "orders/update/" + this.orderId, this.order)
             .subscribe((res: any) => {
@@ -173,11 +184,13 @@ export class MyOrderDetailComponent implements OnInit {
                         // });
                         this.routerExtensions.back();
                         this.userService.showLoadingState(false);
+                        this.isLoading = false;
                         Toast.makeText("Order successfully cancelled!!!", "long").show();
                     }
                 }
             }, error => {
                 this.userService.showLoadingState(false);
+                this.isLoading = false;
                 console.log(error.error.error);
             });
     }

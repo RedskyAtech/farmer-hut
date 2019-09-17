@@ -1,7 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 // import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras } from "@angular/router";
-import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Product } from "~/app/models/product.model";
 import * as localstorage from "nativescript-localstorage";
 import { UserService } from "../../services/user.service";
@@ -10,6 +8,7 @@ import { HttpClient } from "@angular/common/http";
 import { session, Request } from 'nativescript-background-http';
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-similarProducts",
@@ -31,8 +30,11 @@ export class SimilarProductAdminComponent implements OnInit {
 
     similarPageNo = 1;
     similarInit = true;
+    isRendering: boolean;
+    isLoading: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private page: Page, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
+        this.page.actionBarHidden = true;
         this.product = new Product();
         this.extension = "jpg";
         this.userService.showLoadingState(false);
@@ -42,7 +44,8 @@ export class SimilarProductAdminComponent implements OnInit {
             this.getSimilarProducts();
         }
         this.navigationService.backTo = "homeAdmin";
-
+        this.isLoading = false;
+        this.isRendering = false;
         this.http
             .get(Values.BASE_URL + "categories/" + this.categoryId)
             .subscribe((res: any) => {
@@ -58,6 +61,9 @@ export class SimilarProductAdminComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onLoadMoreSimilarItems() {
@@ -72,12 +78,14 @@ export class SimilarProductAdminComponent implements OnInit {
         if (localstorage.getItem("categoryId") != null && localstorage.getItem("categoryId") != undefined) {
             this.categoryId = localstorage.getItem("categoryId");
             this.userService.showLoadingState(true);
+            // this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "similarProducts?_id=" + localstorage.getItem("categoryId") + `&pageNo=${this.similarPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
+                            // this.isLoading = false;
                             for (var i = 0; i < res.data.products.length; i++) {
                                 this.similarProducts.push({
                                     _id: res.data.products[i]._id,
@@ -93,6 +101,7 @@ export class SimilarProductAdminComponent implements OnInit {
                         }
                     }
                 }, error => {
+                    // this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });
@@ -100,7 +109,6 @@ export class SimilarProductAdminComponent implements OnInit {
     }
 
     onEdit(product: Product) {
-
         this.routerExtensions.navigate(['./addProduct'], {
             queryParams: {
                 "similarProductId": product._id,

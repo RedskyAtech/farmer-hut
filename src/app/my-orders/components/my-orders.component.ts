@@ -25,10 +25,13 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
     listener: any;
     orderInit = true;
     orderPageNo = 1;
-
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private ngZone: NgZone, private navigationService: NavigationService, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
         this.navigationService.backTo = 'profile';
         this.orderedProducts = [];
         this.address = "Select address";
@@ -39,6 +42,9 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     getOrders() {
@@ -47,12 +53,14 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
             localstorage.getItem("userId") != null &&
             localstorage.getItem("userId") != undefined) {
             this.userService.showLoadingState(true);
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=false" + `&pageNo=${this.orderPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
+                            this.isLoading = false;
                             if (res.data.orders.length != 0) {
                                 this.isRenderingOrders = true;
                                 for (var i = 0; i < res.data.orders.length; i++) {
@@ -85,6 +93,7 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     console.log(error.error.error);
                 });

@@ -62,6 +62,8 @@ export class HomeUserComponent implements OnInit {
     mainInit = true;
     categoryPageNo = 1;
     categoryInit = true;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
@@ -79,6 +81,8 @@ export class HomeUserComponent implements OnInit {
         this.products = [];
         this.navigationService.backTo = undefined;
         this.pageNo = 1;
+        this.isRendering = false;
+        this.isLoading = false;
 
         this.userService.showLoadingState(false);
 
@@ -105,6 +109,9 @@ export class HomeUserComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             if (this.getProducts()) {
                 if (this.getCategory()) {
@@ -137,12 +144,14 @@ export class HomeUserComponent implements OnInit {
     }
 
     getProducts() {
+        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
                 console.trace('RES:::', res.data)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true && res.data && res.data.products) {
+                        // this.isLoading = false;
                         for (var i = 0; i < res.data.products.length; i++) {
                             this.products.push({
                                 _id: res.data.products[i]._id,
@@ -165,6 +174,7 @@ export class HomeUserComponent implements OnInit {
                     }
                 }
             }, error => {
+                // this.isLoading = false;
                 this.userService.showLoadingState(false);
                 // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
@@ -173,12 +183,14 @@ export class HomeUserComponent implements OnInit {
     }
 
     getCategory() {
+        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `categories?status=active&pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
                 console.log('RES:::CATEGORY:::', res)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        // this.isLoading = false;
                         if (res.data && res.data.categories) {
                             for (var i = 0; i < res.data.categories.length; i++) {
                                 this.productCategories.push({
@@ -188,11 +200,12 @@ export class HomeUserComponent implements OnInit {
                                 })
                             }
                             this.isRenderingTabView = true;
-                            this.categoryInit=true;
+                            this.categoryInit = true;
                         }
                     }
                 }
             }, error => {
+                // this.isLoading = false;
                 this.userService.showLoadingState(false);
                 // this.pullRefreshPage.refreshing = false;
                 console.log(error.error.error);
@@ -397,7 +410,6 @@ export class HomeUserComponent implements OnInit {
     }
 
     updateCart(cardId: string) {
-
         this.backgroundHttpService
             .put(Values.BASE_URL + `carts/update/${cardId}`, {}, this.cart)
             .then((res: any) => {

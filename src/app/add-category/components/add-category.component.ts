@@ -47,9 +47,13 @@ export class AddCategoryComponent implements OnInit {
     name: string;
     extension: string;
     shouldImageUpdate: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isLoading = false;
+        this.isRendering = false;
         this.categoryBorderColor = "white"
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
@@ -91,6 +95,9 @@ export class AddCategoryComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onOK() {
@@ -200,6 +207,7 @@ export class AddCategoryComponent implements OnInit {
             this.warningDialog.show();
         }
         else {
+            this.isLoading = true;
             this.userService.showLoadingState(true);
             var that = this;
             var mimeType = "image/" + that.extension;
@@ -231,6 +239,7 @@ export class AddCategoryComponent implements OnInit {
                 task.on("complete", this.completeEvent);
                 setTimeout(() => {
                     this.userService.showLoadingState(false);
+                    this.isLoading = false;
                     let navigationExtras: NavigationExtras = {
                         queryParams: {
                             "index": "1"
@@ -265,6 +274,7 @@ export class AddCategoryComponent implements OnInit {
 
                 setTimeout(() => {
                     this.userService.showLoadingState(false);
+                    this.isLoading = false;
                     let navigationExtras: NavigationExtras = {
                         queryParams: {
                             "index": "1"
@@ -284,6 +294,7 @@ export class AddCategoryComponent implements OnInit {
     respondedEvent(e) {
         console.log("RESPONSE: " + e.data);
         this.userService.showLoadingState(false);
+        this.isLoading = false;
     }
 
     errorEvent(e) {
@@ -293,6 +304,7 @@ export class AddCategoryComponent implements OnInit {
     completeEvent(e) {
         console.log("Completed :" + JSON.stringify(e));
         this.userService.showLoadingState(false);
+        this.isLoading = false;
     }
 
     onOutsideClick() {

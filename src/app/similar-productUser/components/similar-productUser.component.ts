@@ -32,9 +32,14 @@ export class SimilarProductUserComponent implements OnInit {
     heading: string;
     similarPageNo = 1;
     similarInit = true;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isLoading = false;
+        this.isRendering = false;
+
         this.product = new Product();
         this.cart = new Cart();
         this.cart.product = new Product();
@@ -65,6 +70,9 @@ export class SimilarProductUserComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onLoadMoreSimilarItems() {

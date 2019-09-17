@@ -31,6 +31,8 @@ export class AboutUsAdminComponent implements OnInit {
     errorMessage: string;
     aboutUs: AboutUs;
     aboutId: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
@@ -42,11 +44,16 @@ export class AboutUsAdminComponent implements OnInit {
         this.aboutDescription = "";
         this.aboutUs = new AboutUs();
         this.aboutId = "";
+        this.isLoading = false;
+        this.isRendering = false;
         this.getAbout();
         // this.aboutDescription = "hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg";
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     protected get shadowColor(): Color {
@@ -93,6 +100,7 @@ export class AboutUsAdminComponent implements OnInit {
             this.warningDialog.show();
         }
         else {
+            this.isLoading = true;
             this.aboutUs.description = this.aboutText;
             this.userService.showLoadingState(true);
             this.http
@@ -107,17 +115,20 @@ export class AboutUsAdminComponent implements OnInit {
                                 .subscribe((res: any) => {
                                     if (res != null && res != undefined) {
                                         if (res.isSuccess == true) {
+                                            this.isLoading = false;
                                             Toast.makeText("About detail added successfully!!!", "long").show();
                                             this.getAbout();
                                         }
                                     }
                                 }, error => {
                                     this.userService.showLoadingState(false);
+                                    this.isLoading = false;
                                     alert(error.error.error);
                                 });
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });
@@ -125,17 +136,20 @@ export class AboutUsAdminComponent implements OnInit {
     }
 
     getAbout() {
+        this.isLoading = true;
         this.http
             .get(Values.BASE_URL + "aboutUs")
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        this.isLoading = false;
                         this.userService.showLoadingState(false);
                         this.aboutDescription = res.data[0].description;
                         this.aboutText = res.data[0].description;
                     }
                 }
             }, error => {
+                this.isLoading = false;
                 this.userService.showLoadingState(false);
                 alert(error.error.error);
             });

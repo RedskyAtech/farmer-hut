@@ -27,9 +27,13 @@ export class OrderHistoryComponent implements OnInit {
     isRenderingHistory: boolean;
     orderInit = true;
     orderPageNo = 1;
+    isRendering: boolean;
+    isLoading: boolean;
 
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
+        this.isLoading = false;
+        this.isRendering = false;
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";
@@ -63,6 +67,9 @@ export class OrderHistoryComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onBack() {
@@ -99,6 +106,7 @@ export class OrderHistoryComponent implements OnInit {
         if (localstorage.getItem("userType") != null && localstorage.getItem("userType") != undefined) {
             if (localstorage.getItem("userType") == "admin") {
                 this.userService.showLoadingState(true);
+                this.isLoading = true;
                 this.http
                     .get(Values.BASE_URL + "orders?history=true" + `&pageNo=${this.orderPageNo}&items=10`)
                     .subscribe((res: any) => {
@@ -106,6 +114,7 @@ export class OrderHistoryComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
+                                this.isLoading = false;
                                 if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
                                     for (var i = 0; i < res.data.orders.length; i++) {
@@ -131,11 +140,13 @@ export class OrderHistoryComponent implements OnInit {
                             }
                         }
                     }, error => {
+                        this.isLoading = false;
                         this.userService.showLoadingState(false);
                         console.log(error.error.error);
                     });
             }
             else {
+                this.isLoading = true;
                 this.userService.showLoadingState(true);
                 this.http
                     .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=true")
@@ -144,6 +155,7 @@ export class OrderHistoryComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
+                                this.isLoading = false;
                                 if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
                                     for (var i = 0; i < res.data.orders.length; i++) {
@@ -169,6 +181,7 @@ export class OrderHistoryComponent implements OnInit {
                             }
                         }
                     }, error => {
+                        this.isLoading = false;
                         this.userService.showLoadingState(false);
                         console.log(error.error.error);
                     });

@@ -28,16 +28,23 @@ export class ForgotPasswordComponent implements OnInit {
     email: string;
     user: User;
     errorMessage: string;
-
+    isRendering: boolean;
+    isLoading: boolean;
     constructor(private routerExtensions: RouterExtensions, private userService: UserService, private http: HttpClient, private navigationService: NavigationService, private page: Page) {
         this.email = "";
         this.phone = "";
         this.user = new User();
         this.errorMessage = "";
         this.navigationService.backTo = "login";
+        this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onOK() {
@@ -67,6 +74,7 @@ export class ForgotPasswordComponent implements OnInit {
         //     alert("Please enter email!!!");
         // }
         else {
+            this.isLoading = true;
             // this.user.email = this.email;
             this.userService.showLoadingState(true);
             this.http
@@ -74,6 +82,7 @@ export class ForgotPasswordComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             localstorage.setItem('tempToken', res.data.tempToken);
                             this.userService.showLoadingState(false);
                             this.routerExtensions.navigate(['./setPassword'], {
@@ -82,6 +91,7 @@ export class ForgotPasswordComponent implements OnInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });

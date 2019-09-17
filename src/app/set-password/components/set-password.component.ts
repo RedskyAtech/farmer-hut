@@ -9,6 +9,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -31,14 +32,22 @@ export class SetPasswordComponent implements OnInit {
     rePassword = "";
     user: User;
     errorMessage: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient, private page: Page) {
         this.user = new User();
         this.errorMessage = "";
         this.navigationService.backTo = "forgotPassword";
+        this.page.actionBarHidden = true;
+        this.isRendering = false;
+        this.isLoading = false;
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onOtpTextChanged(args) {
@@ -99,6 +108,7 @@ export class SetPasswordComponent implements OnInit {
             // alert("Password and repeat password should be same!!!");
         }
         else {
+            this.isLoading = true;
             this.userService.showLoadingState(true);
             this.user.otp = this.otp;
             this.user.newPassword = this.password;
@@ -108,6 +118,7 @@ export class SetPasswordComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             this.userService.showLoadingState(false);
                             Toast.makeText("Password set successfully!!!", "long").show();
                             this.routerExtensions.navigate(['./login'], {
@@ -116,6 +127,7 @@ export class SetPasswordComponent implements OnInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });

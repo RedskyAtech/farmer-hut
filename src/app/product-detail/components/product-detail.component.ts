@@ -10,6 +10,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -35,8 +36,13 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     cart: Cart;
     classType: string;
     isRenderingDetail: boolean;
+    isRendering: boolean;
+    isLoading: boolean;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+        this.isRendering = false;
+        this.isLoading = false;
+        this.page.actionBarHidden = true;
 
         this.route.queryParams.subscribe(params => {
             this.productId = params["productId"];
@@ -50,11 +56,13 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         this.navigationService.backTo = "homeUser";
 
         if (this.classType == "similarProduct") {
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "similarProducts/" + this.productId)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             this.userService.showLoadingState(false);
                             this.image = res.data.image.resize_url;
                             this.brandName = res.data.brand;
@@ -69,16 +77,19 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });
         }
         else {
+            this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "products/" + this.productId)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            this.isLoading = false;
                             this.userService.showLoadingState(false);
                             this.image = res.data.image.resize_url;
                             this.brandName = res.data.brand;
@@ -93,6 +104,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                         }
                     }
                 }, error => {
+                    this.isLoading = false;
                     this.userService.showLoadingState(false);
                     alert(error.error.error);
                 });
@@ -109,7 +121,9 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     ngAfterViewInit(): void {
@@ -135,7 +149,6 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         // this.addedCartButton = true;
         this.userService.showLoadingState(true);
         this.cart.product._id = this.productId;
-
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
@@ -227,12 +240,13 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
 
         this.userService.showLoadingState(true);
         this.cart.product._id = this.productId;
-
+        this.isLoading = true;
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        this.isLoading = false;
                         this.userService.showLoadingState(false);
                         if (res.data.products.length != 0) {
                             for (var i = 0; i < res.data.products.length; i++) {
@@ -258,6 +272,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                     }
                 }
             }, error => {
+                this.isLoading = false;
                 this.userService.showLoadingState(false);
                 console.log(error.error.error);
             });

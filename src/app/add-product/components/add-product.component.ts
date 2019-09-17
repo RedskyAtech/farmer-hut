@@ -77,12 +77,16 @@ export class AddProductComponent implements OnInit {
     name: string;
     extension: string;
     shouldImageUpdate: string;
+    isRendering: boolean;
+    isLoading: boolean;
 
     private imageCropper: ImageCropper;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private page: Page) {
 
         this.page.actionBarHidden = true;
+        this.isLoading = false;
+        this.isRendering = false;
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
 
@@ -128,12 +132,14 @@ export class AddProductComponent implements OnInit {
 
         if (this.classType == "similarProduct") {
             if (this.similarProductId != undefined) {
+                this.isLoading = true;
                 this.userService.showLoadingState(true);
                 this.http
                     .get(Values.BASE_URL + "similarProducts/" + this.similarProductId)
                     .subscribe((res: any) => {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
+                                this.isLoading = false;
                                 this.userService.showLoadingState(false);
                                 this.productImage = res.data.image.resize_url;
                                 this.brandName = res.data.brand;
@@ -145,6 +151,7 @@ export class AddProductComponent implements OnInit {
                             }
                         }
                     }, error => {
+                        this.isLoading = false;
                         this.userService.showLoadingState(false);
                         alert(error.error.error);
                     });
@@ -152,12 +159,14 @@ export class AddProductComponent implements OnInit {
         }
         else {
             if (this.productId != undefined) {
+                this.isLoading = true;
                 this.userService.showLoadingState(true);
                 this.http
                     .get(Values.BASE_URL + "products/" + this.productId)
                     .subscribe((res: any) => {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
+                                this.isLoading = false;
                                 this.userService.showLoadingState(false);
                                 this.productImage = res.data.image.resize_url;
                                 this.brandName = res.data.brand;
@@ -169,6 +178,7 @@ export class AddProductComponent implements OnInit {
                             }
                         }
                     }, error => {
+                        this.isLoading = false;
                         alert(error.error.error);
                     });
             }
@@ -176,6 +186,9 @@ export class AddProductComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.isRendering = true;
+        }, 50);
     }
 
     onBack() {
@@ -361,6 +374,7 @@ export class AddProductComponent implements OnInit {
             // alert("Please enter price!!!");
         }
         else {
+            this.isLoading = true;
             this.userService.showLoadingState(true);
             var that = this;
             var mimeType = "image/" + this.extension;
@@ -401,6 +415,7 @@ export class AddProductComponent implements OnInit {
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
                         this.userService.showLoadingState(false);
+                        this.isLoading = false;
                         this.routerExtensions.navigate(['./similarProductAdmin'], {
                             clearHistory: true,
                         });
@@ -437,6 +452,7 @@ export class AddProductComponent implements OnInit {
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
                         this.userService.showLoadingState(false);
+                        this.isLoading = false;
                         this.routerExtensions.navigate(['./homeAdmin'], {
                             clearHistory: true,
                         });
@@ -473,6 +489,7 @@ export class AddProductComponent implements OnInit {
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
+                        this.isLoading = false;
                         this.userService.showLoadingState(false);
                         this.routerExtensions.navigate(['./similarProductAdmin'], {
                             clearHistory: true,
@@ -506,6 +523,7 @@ export class AddProductComponent implements OnInit {
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
                         this.userService.showLoadingState(false);
+                        this.isLoading = false;
                         this.routerExtensions.navigate(['./homeAdmin'], {
                             clearHistory: true,
                         });

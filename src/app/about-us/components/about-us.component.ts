@@ -16,7 +16,7 @@ export class AboutUsComponent implements OnInit {
 
     aboutUs: string;
     isRendering: boolean;
-
+    isLoading: boolean;
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient, private page: Page) {
         this.isRendering = false;
         this.page.actionBarHidden = true;
@@ -26,18 +26,22 @@ export class AboutUsComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.isLoading = false;
     }
 
     getAbout() {
+        this.isLoading = true;
         this.http
             .get(Values.BASE_URL + "aboutUs")
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        this.isLoading = false;
                         this.aboutUs = res.data[0].description;
                     }
                 }
             }, error => {
+                this.isLoading = false;
                 alert(error.error.error);
             });
     }
