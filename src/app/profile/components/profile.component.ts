@@ -46,9 +46,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.address = "";
         this.mapAddress = "";
         this.isVisibleProfile = "hidden";
+
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page");
+            this.getProfileDetails()
+        })
     }
 
     ngOnInit(): void {
+        
+    }
+
+    getProfileDetails() {
         if (localstorage.getItem("userType") == "admin") {
             this.ordersButtonText = "View Orders";
             this.historyButtonText = "Order History";
@@ -143,6 +153,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                     alert(error.error.error);
                 });
         }
+
     }
 
     ngOnDestroy(): void {
