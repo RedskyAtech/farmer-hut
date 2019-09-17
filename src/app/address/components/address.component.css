@@ -75,6 +75,7 @@
     border-bottom-width: 1;
     height:40;
     color:#00C012;
+    border-color:white;
 }
 .footer-label{
     color:white;
@@ -101,4 +102,13 @@
     background-color: white;
     border-color:#00C012;
     color:#00C012;
+}
+
+.map-focus{
+    border-color:#00C012;
+    color: #00C012;
+    padding: 0;
+    placeholder-color:white;
+    border-bottom-width: 1;
+    height:40;
 }

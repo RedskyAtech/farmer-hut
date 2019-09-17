@@ -30,7 +30,7 @@ export class AddressComponent implements OnInit {
     @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     addressBorderColor;
-    mapAddressBorderColor;
+    // mapAddressBorderColor;
     cityBorderColor = "#00C012";
     districtBorderColor = "#00C012";
     stateBorderColor = "#00C012";
@@ -72,6 +72,7 @@ export class AddressComponent implements OnInit {
     finalLongitude: number;
 
     isLoading: boolean;
+    mapLabelClass: boolean;
 
     constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private changeDetector: ChangeDetectorRef) {
         this.page.actionBarHidden = true;
@@ -83,13 +84,14 @@ export class AddressComponent implements OnInit {
         this.user.deliveryAddress.location = new Location();
         this.address = "";
         this.mapAddress = "";
+        this.mapLabelClass = true;
         // this.route.queryParams.subscribe(params => {
         //     this.city = params["city"];
         //     this.district = params["district"];
         //     this.state = params["state"];
         // });
         this.addressBorderColor = "white";
-        this.mapAddressBorderColor = "white";
+        // this.mapAddressBorderColor = "white";
 
         this.city = "Abohar";
         this.district = "Fazilka";
@@ -129,7 +131,7 @@ export class AddressComponent implements OnInit {
         // this.changeDetector.detectChanges();
     }
     onMapAddressTextChanged(args) {
-        this.mapAddressBorderColor = "#00C012";
+        // this.mapAddressBorderColor = "#00C012";
         this.mapAddress = args.object.text;
         // this.changeDetector.detectChanges();
     }
@@ -392,9 +394,14 @@ export class AddressComponent implements OnInit {
         this.http
             .get(Values.GOOGLE_MAP_URL + "latlng=" + this.finalLatitude + "," + this.finalLongitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
             .subscribe((res: any) => {
+                this.mapLabelClass = false;
+
                 this.mapAddress = res.results[0].formatted_address;
                 this.isLoading = false;
+
             }, error => {
+                this.mapLabelClass = false;
+
                 Toast.makeText('Could not get Address', 'long')
                 console.log(error);
                 this.isLoading = false;
