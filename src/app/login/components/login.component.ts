@@ -11,6 +11,7 @@ import { BackgroundHttpService } from "~/app/services/background.http.service";
 
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
+import { Product } from "~/app/models/product.model";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -48,15 +49,23 @@ export class LoginComponent implements OnInit {
             this.getCart(localstorage.getItem('cartId'));
         }
 
+        // if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
+        //     this.routerExtensions.navigate(['./homeUser'], {
+        //         clearHistory: true,
+        //     });
+        // }
+        // if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
+        //     this.routerExtensions.navigate(['./homeAdmin'], {
+        //         clearHistory: true,
+        //     });
+        // }
+
+
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
-            this.routerExtensions.navigate(['./homeUser'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./homeUser']);
         }
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
-            this.routerExtensions.navigate(['./homeAdmin'], {
-                clearHistory: true,
-            });
+            this.routerExtensions.navigate(['./homeAdmin']);
         }
         this.errorMessage = "";
     }
@@ -251,20 +260,25 @@ export class LoginComponent implements OnInit {
 
 
     getCart(cartId: string) {
+        var tempCart = [];
         this.backgroundHttpService.get(Values.BASE_URL + `carts/${cartId}`, {}).then((res: any) => {
             if (res != null && res != undefined) {
                 console.log("RES:::CART:::", res)
                 if (res.isSuccess == true) {
-                    if (res.data) {
-                        localstorage.setItem('cart', JSON.stringify(res.data));
+                    if (res.data && res.data.products) {
+                        for (var i = 0; i < res.data.products.length; i++) {
+                            tempCart.push(new Product(res.data.products[i]));
+                        }
                     }
+                    localstorage.setItem('cart', JSON.stringify(tempCart));
                 }
             }
-        }, error => {
-            this.userService.showLoadingState(false);
-            // console.log(error.error.error);
-            console.log(error);
-        });
+        }
+            , error => {
+                this.userService.showLoadingState(false);
+                // console.log(error.error.error);
+                console.log(error);
+            });
     }
 
 }

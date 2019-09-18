@@ -9,13 +9,15 @@ import { UserService } from '../../services/user.service';
 import { Category } from "../../models/category.model";
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
-import { Page } from "tns-core-modules/ui/page/page";
+import { Page, NavigatedData } from "tns-core-modules/ui/page/page";
 import { BackgroundHttpService } from "~/app/services/background.http.service";
 import { Marker, MapView } from "nativescript-google-maps-sdk";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
 import * as Location from "nativescript-geolocation"
+import { element } from "@angular/core/src/render3";
+import { async } from "rxjs/internal/scheduler/async";
 
 
 @Component({
@@ -64,6 +66,7 @@ export class HomeUserComponent implements OnInit {
     categoryInit = true;
     isRendering: boolean;
     isLoading: boolean;
+    hasBeenHitOnce: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
@@ -83,17 +86,32 @@ export class HomeUserComponent implements OnInit {
         this.pageNo = 1;
         this.isRendering = false;
         this.isLoading = false;
+        this.hasBeenHitOnce = false;
 
         this.userService.showLoadingState(false);
 
-        this.route.queryParams.subscribe(params => {
-            if (params["index"] == "1" && params["index"] != undefined) {
-                this.tabSelectedIndex = 1;
 
-            } else {
-                this.tabSelectedIndex = 0;
-            }
-        });
+
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page:::", data.context);
+        })
+
+        this.page.on('navigatedFrom', (data) => {
+            console.log("ddataNF:::", data.isBackNavigation);
+            console.log("navigating to this pageNF:::", data.context);
+        })
+
+    
+        // this.route.queryParams.subscribe(params => {
+        //     console.log("NNNNNNNN::::", params)
+        //     if (params["index"] == "1" && params["index"] != undefined) {
+        //         this.tabSelectedIndex = 1;
+
+        //     } else {
+        //         this.tabSelectedIndex = 0;
+        //     }
+        // });
 
         setInterval(() => {
             setTimeout(() => {
@@ -123,6 +141,20 @@ export class HomeUserComponent implements OnInit {
     }
 
 
+    // onNavigatedFrom(args: NavigatedData) {
+    //     console.log(args.eventName);
+    //     console.log(args.object);
+    //     console.log(args.context);
+    //     console.log(args.isBackNavigation);
+    // }
+
+
+    // onNavigatedTo(args: NavigatedData) {
+    //     console.log(args.eventName);
+    //     console.log(args.object);
+    //     console.log(args.context);
+    //     console.log(args.isBackNavigation);
+    // }
 
 
     onLoadMoreMainItems() {
@@ -271,9 +303,9 @@ export class HomeUserComponent implements OnInit {
     updateCartCount() {
         var storedCart = JSON.parse(localstorage.getItem('cart'));
 
-        if (storedCart.products.length != 0) {
+        if (storedCart.products != 0) {
             this.isCartCount = true;
-            this.cartCount = storedCart.products.length;
+            this.cartCount = storedCart.length;
         }
     }
 
@@ -302,31 +334,53 @@ export class HomeUserComponent implements OnInit {
         this.routerExtensions.navigate(['/cart']);
     }
 
+    productExistance = async (product: Product): Promise<boolean> => {
+
+        var storedCartProducts = JSON.parse(localstorage.getItem('cart'));
+
+        return new Promise<boolean>((resolve, reject) => {
+            for (var i = 0; i < storedCartProducts.length; i++) {
+                if (product._id == storedCartProducts[i]._id) {
+                    var quantity = parseInt(storedCartProducts[i].quantity) + 1;
+                    this.cart.product.quantity = quantity.toString();
+                    // this.updateCart(storedCart._id);
+                    alert("Product already in cart, Please increase quantity in cart");
+                    resolve(true);
+                    return;
+                }
+            }
+            reject(false);
+        })
+    }
+
     onAddCart(product: Product) {
 
         this.userService.showLoadingState(true);
         this.cart.product._id = product._id;
         console.log(product._id);
 
-        var storedCart = JSON.parse(localstorage.getItem('cart'));
+        var storedCartProducts = JSON.parse(localstorage.getItem('cart'));
+        console.log('SSSS:::TTTT:::CCC:::', storedCartProducts);
 
-        if (storedCart.products.length != 0) {
-            for (var i = 0; i < storedCart.products.length; i++) {
-                if (product._id == storedCart.products[i]._id) {
-                    var quantity = parseInt(storedCart.products[i].quantity) + 1;
-                    this.cart.product.quantity = quantity.toString();
-                    this.updateCart(storedCart._id);
-                    break;
-                }
-                else {
-                    this.cart.product.quantity = "1";
-                    this.updateCart(storedCart._id);
-                }
-            }
+        if (storedCartProducts.length != 0) {
+            this.productExistance(product).then((res) => {
+
+            }, error => {
+                console.log("IN PPPPP::")
+                console.log('After For')
+                this.cart.product.quantity = "1";
+                storedCartProducts.push(new Product(product));
+                localstorage.setItem(JSON.stringify(storedCartProducts));
+                this.updateCart();
+            })
+
         }
         else {
+            console.log('After For no products')
             this.cart.product.quantity = "1";
-            this.updateCart(storedCart._id);
+            storedCartProducts.push(new Product(product));
+            localstorage.setItem(JSON.stringify(storedCartProducts));
+            this.updateCart();
         }
 
 
@@ -409,23 +463,42 @@ export class HomeUserComponent implements OnInit {
         //     });
     }
 
-    updateCart(cardId: string) {
-        this.backgroundHttpService
-            .put(Values.BASE_URL + `carts/update/${cardId}`, {}, this.cart)
-            .then((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        localstorage.setItem('cart', JSON.stringify(res.data));
-                        Toast.makeText("Product is added to cart!!!", "long").show();
-                        this.updateCartCount();
+    updateCart() {
+        var tempCart = [];
+        console.log('In api')
+
+        if (!this.hasBeenHitOnce) {
+            console.log('In api call')
+
+            this.hasBeenHitOnce = true;
+            this.backgroundHttpService
+                .put(Values.BASE_URL + `carts/update/${localstorage.getItem('cartId')}`, {}, this.cart)
+                .then((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            console.log("CART:::RES:::", res.data)
+                            console.log("CART:::RES:::", res.data.products)
+                            console.log("CART:::RES:::", res.data.products.length)
+                            if (res.data && res.data.products) {
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                    tempCart.push(new Product(res.data.products[i]));
+                                }
+                            }
+                            console.log("CART:::RES:::reachedd")
+                            localstorage.setItem('cart', JSON.stringify(tempCart));
+                            Toast.makeText("Product is added to cart!!!", "long").show();
+                            this.updateCartCount();
+                            this.cart = new Cart();
+                            this.cart.product = new Product();
+                        }
                     }
-                }
-            }, error => {
-                console.log(error.error.error);
-            });
+                    this.hasBeenHitOnce = false;
+                }, error => {
+                    this.hasBeenHitOnce = false;
+                    console.log(error.error.error);
+                });
 
-
-
+        }
         // this.userService.showLoadingState(true);
         // this.http
         //     .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)

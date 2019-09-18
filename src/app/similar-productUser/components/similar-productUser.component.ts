@@ -34,11 +34,13 @@ export class SimilarProductUserComponent implements OnInit {
     similarInit = true;
     isRendering: boolean;
     isLoading: boolean;
+    hasBeenHitOnce: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
+        this.hasBeenHitOnce = false;
 
         this.product = new Product();
         this.cart = new Cart();
@@ -117,9 +119,9 @@ export class SimilarProductUserComponent implements OnInit {
     updateCartCount() {
         var storedCart = JSON.parse(localstorage.getItem('cart'));
 
-        if (storedCart.products.length != 0) {
+        if (storedCart.length != 0) {
             this.isCartCount = true;
-            this.cartCount = storedCart.products.length;
+            this.cartCount = storedCart.length;
         }
     }
 
@@ -142,7 +144,7 @@ export class SimilarProductUserComponent implements OnInit {
     onBack() {
         let navigationExtras: NavigationExtras = {
             queryParams: {
-                "index": "1"
+                "index": "5"
             },
         };
         // this.routerExtensions.navigate(['./homeUser'], {
@@ -151,54 +153,112 @@ export class SimilarProductUserComponent implements OnInit {
         //     },
         //     clearHistory: true,
         // });
-        this.routerExtensions.back();
+        this.routerExtensions.back(navigationExtras);
     }
+
+
+    productExistance = async (product: Product): Promise<boolean> => {
+
+        var storedCartProducts = JSON.parse(localstorage.getItem('cart'));
+
+        return new Promise<boolean>((resolve, reject) => {
+            for (var i = 0; i < storedCartProducts.length; i++) {
+                if (product._id == storedCartProducts[i]._id) {
+                    var quantity = parseInt(storedCartProducts[i].quantity) + 1;
+                    this.cart.product.quantity = quantity.toString();
+                    // this.updateCart(storedCart._id);
+                    alert("Product already in cart, Please increase quantity in cart");
+                    resolve(true);
+                    return;
+                }
+            }
+            reject(false);
+        })
+    }
+
 
     onAddCart(product: Product) {
         this.cart.product._id = product._id;
         this.cart.product.isSimilarProduct = true;
 
-        var storedCart = JSON.parse(localstorage.getItem('cart'));
+        var storedCartProducts = JSON.parse(localstorage.getItem('cart'));
 
 
-        if (storedCart.products.length != 0) {
-            for (var i = 0; i < storedCart.products.length; i++) {
-                if (product._id == storedCart.products[i]._id) {
-                    var quantity = parseInt(storedCart.products[i].quantity) + 1;
-                    this.cart.product.quantity = quantity.toString();
-                    this.updateCart(storedCart._id);
-                    break;
-                }
-                else {
-                    this.cart.product.quantity = "1";
-                    this.updateCart(storedCart._id);
-                }
-            }
+        if (storedCartProducts.length != 0) {
+
+
+            this.productExistance(product).then((res) => {
+
+            }, error => {
+                console.log("IN PPPPP::")
+                console.log('After For')
+                this.cart.product.quantity = "1";
+                storedCartProducts.push(new Product(product));
+                localstorage.setItem(JSON.stringify(storedCartProducts));
+                this.updateCart();
+            })
+
+
+
+            // for (var i = 0; i < storedCart.products.length; i++) {
+            //     if (product._id == storedCart.products[i]._id) {
+            //         var quantity = parseInt(storedCart.products[i].quantity) + 1;
+            //         this.cart.product.quantity = quantity.toString();
+            //         this.updateCart(storedCart._id);
+            //         break;
+            //     }
+            //     else {
+            //         this.cart.product.quantity = "1";
+            //         this.updateCart(storedCart._id);
+            //     }
+            // }
         }
         else {
             this.cart.product.quantity = "1";
-            this.updateCart(storedCart._id);
+            storedCartProducts.push(new Product(product));
+            localstorage.setItem(JSON.stringify(storedCartProducts));
+            this.updateCart();
         }
     }
 
 
-    updateCart(cardId: string) {
+    updateCart() {
 
-        this.backgroundHttpService
-            .put(Values.BASE_URL + `carts/update/${cardId}`, {}, this.cart)
-            .then((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        console.log(res);
-                        // this.userService.showLoadingState(false);
-                        Toast.makeText("Product is added to cart!!!", "long").show();
-                        this.updateCartCount();
+        var tempCart = [];
+
+        if (!this.hasBeenHitOnce) {
+            console.log('In api call')
+
+            this.hasBeenHitOnce = true;
+
+            this.backgroundHttpService
+                .put(Values.BASE_URL + `carts/update/${localstorage.getItem('cartId')}`, {}, this.cart)
+                .then((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            console.log("CART:::RES:::", res.data)
+                            console.log("CART:::RES:::", res.data.products)
+                            console.log("CART:::RES:::", res.data.products.length)
+                            if (res.data && res.data.products) {
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                    tempCart.push(new Product(res.data.products[i]));
+                                }
+                            }
+                            console.log("CART:::RES:::reachedd")
+                            localstorage.setItem('cart', JSON.stringify(tempCart));
+                            Toast.makeText("Product is added to cart!!!", "long").show();
+                            this.updateCartCount();
+                            this.cart = new Cart();
+                            this.cart.product = new Product();
+                        }
                     }
-                }
-            }, error => {
-                // this.userService.showLoadingState(false);
-                console.log(error.error.error);
-            });
+                    this.hasBeenHitOnce = false;
+                }, error => {
+                    // this.userService.showLoadingState(false);
+                    this.hasBeenHitOnce = false;
+                    console.log(error.error.error);
+                });
+        }
     }
 
     onCartClick() {

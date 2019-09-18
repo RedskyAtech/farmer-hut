@@ -9,6 +9,8 @@ import { Page } from "tns-core-modules/ui/page/page";
 
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
+import { Router } from "@angular/router";
+import { NavigationEnd } from "@angular/router";
 
 
 @Component({
@@ -36,7 +38,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     isVisibleProfile: string;
     listener: any;
 
-    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService, private page: Page, private router: Router) {
         this.page.actionBarHidden = true;
         this.city = "Abohar";
         this.district = "Fazilka";
@@ -47,15 +49,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.mapAddress = "";
         this.isVisibleProfile = "hidden";
 
+        this.routerExtensions.router.events.subscribe((val) => {
+            if (val instanceof NavigationEnd) {
+                if (this.router.url == "/address") {
+                    console.log("navigation end");
+                };
+            }
+        });
+
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page");
-            this.getProfileDetails()
+
+            if (data.isBackNavigation) {
+                this.getProfileDetails()
+            }
         })
     }
 
     ngOnInit(): void {
-        
+        this.getProfileDetails()
     }
 
     getProfileDetails() {
@@ -216,7 +229,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     onLogout() {
         Toast.makeText("Logout successfully!!!", "long").show();
-        this.routerExtensions.navigate(['./login']);
+
+        setTimeout(() => {
+            this.routerExtensions.navigate(['./login']);
+        }, 5)
+
         localstorage.removeItem('userToken');
         localstorage.removeItem('adminToken');
         localstorage.removeItem('userId');

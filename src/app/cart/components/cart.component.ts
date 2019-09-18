@@ -109,10 +109,10 @@ export class CartComponent implements OnInit {
 
         if (product.isSimilarProduct == true) {
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
-            if (storedCart.products.length != 0) {
-                for (var i = 0; i < storedCart.products.length; i++) {
-                    if (product._id == storedCart.products[i]._id) {
-                        var quantity = parseInt(storedCart.products[i].quantity) + 1;
+            if (storedCart.length != 0) {
+                for (var i = 0; i < storedCart.length; i++) {
+                    if (product._id == storedCart[i]._id) {
+                        var quantity = parseInt(storedCart[i].quantity) + 1;
                         this.cart.product.quantity = quantity.toString();
                         this.notifyUpdateCartQuantity();
                     }
@@ -123,10 +123,10 @@ export class CartComponent implements OnInit {
             this.cart.product.isSimilarProduct = false;
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
 
-            if (storedCart.products.length != 0) {
-                for (var i = 0; i < storedCart.products.length; i++) {
-                    if (product._id == storedCart.products[i]._id) {
-                        var quantity = parseInt(storedCart.products[i].quantity) + 1;
+            if (storedCart.length != 0) {
+                for (var i = 0; i < storedCart.length; i++) {
+                    if (product._id == storedCart[i]._id) {
+                        var quantity = parseInt(storedCart[i].quantity) + 1;
                         this.cart.product.quantity = quantity.toString();
                         this.notifyUpdateCartQuantity();
                     }
@@ -152,10 +152,10 @@ export class CartComponent implements OnInit {
             console.log(product.isSimilarProduct);
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
 
-            if (storedCart.products.length != 0) {
-                for (var i = 0; i < storedCart.products.length; i++) {
-                    if (product._id == storedCart.products[i]._id) {
-                        var quantity = parseInt(storedCart.products[i].quantity) - 1;
+            if (storedCart.length != 0) {
+                for (var i = 0; i < storedCart.length; i++) {
+                    if (product._id == storedCart[i]._id) {
+                        var quantity = parseInt(storedCart[i].quantity) - 1;
                         this.cart.product.quantity = quantity.toString();
                         this.notifyUpdateCartQuantity();
                     }
@@ -165,10 +165,10 @@ export class CartComponent implements OnInit {
         else {
             this.cart.product.isSimilarProduct = false;
 
-            if (storedCart.products.length != 0) {
-                for (var i = 0; i < storedCart.products.length; i++) {
-                    if (product._id == storedCart.products[i]._id) {
-                        var quantity = parseInt(storedCart.products[i].quantity) - 1;
+            if (storedCart.length != 0) {
+                for (var i = 0; i < storedCart.length; i++) {
+                    if (product._id == storedCart[i]._id) {
+                        var quantity = parseInt(storedCart[i].quantity) - 1;
                         this.cart.product.quantity = quantity.toString();
                         this.notifyUpdateCartQuantity();
                     }
@@ -178,12 +178,20 @@ export class CartComponent implements OnInit {
     }
 
     notifyUpdateCartQuantity() {
+        var tempCart = [];
+
         this.backgroundHttpService
             .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), {}, this.cart)
             .then((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        localstorage.setItem('cart', JSON.stringify(res.data))
+                        if (res.data && res.data.products) {
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                tempCart.push(new Product(res.data.products[i]));
+                            }
+                        }
+                        localstorage.setItem('cart', JSON.stringify(tempCart));
+                        // localstorage.setItem('cart', JSON.stringify(res.data.products))
                     }
                 }
             }, error => {
