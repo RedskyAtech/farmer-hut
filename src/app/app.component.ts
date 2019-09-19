@@ -8,10 +8,11 @@ import { HttpClient } from "@angular/common/http";
 import { HTTP } from "./services/http.service";
 import * as application from "tns-core-modules/application";
 import * as Toast from 'nativescript-toast';
-import * as permissions from "nativescript-permissions";
+import { requestPermissions } from "nativescript-permissions";
 import { ad } from "tns-core-modules/utils/utils"
 import { BackgroundService } from "./services/background.service"
 import { BackgroundHttpService } from "./services/background.http.service";
+import { Folder, File } from "tns-core-modules/file-system/file-system";
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
@@ -33,11 +34,14 @@ export class AppComponent {
     tries: number;
     listener: any;
     context: any;
+    file: File;
+    folder: Folder;
 
     constructor(private userService: UserService, private routerExtensions: RouterExtensions, private ngZone: NgZone, private navigationService: NavigationService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService) {
 
         HTTP.http = this.http;
         this.context = ad.getApplicationContext();
+
 
         this.userService.showloadingState.subscribe((state: boolean) => {
             if (state != undefined) {
@@ -75,9 +79,16 @@ export class AppComponent {
         // if (application.android) {
         //     GMSServices.provideAPIKey('AIzaSyAtRVvG3Be3xXiZFR7xp-K-9hy4nZ4hMFs');
         // }
+        var permissions: Array<any> = new Array<any>();
+        permissions.push(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        permissions.push(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        permissions.push(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
-        permissions.requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, 'Application needs location access for its functioning.').then(() => {
-            console.log('Permission Granted')
+
+        requestPermissions(permissions, 'Application needs location access for its functioning.').then(() => {
+            console.log('Permission Granted');
+            this.folder = Folder.fromPath('/storage/emulated/0/farmersHut')
+            this.file = this.folder.getFile('FarmersHut.jpg')
         })
     }
 }

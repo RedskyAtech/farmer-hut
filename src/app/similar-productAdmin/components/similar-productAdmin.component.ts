@@ -9,6 +9,7 @@ import { session, Request } from 'nativescript-background-http';
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: "ns-similarProducts",
@@ -33,31 +34,37 @@ export class SimilarProductAdminComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private page: Page, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
+    constructor(private routerExtensions: RouterExtensions, private router: ActivatedRoute, private page: Page, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.page.actionBarHidden = true;
         this.product = new Product();
         this.extension = "jpg";
         this.userService.showLoadingState(false);
         this.heading = "";
         this.categoryId = "";
+
+        this.router.queryParams.subscribe((params) => {
+            this.heading = params['name'];
+            this.categoryId = params['categoryId'];
+        })
+
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
             this.getSimilarProducts();
         }
         this.navigationService.backTo = "homeAdmin";
         this.isLoading = false;
         this.isRendering = false;
-        this.http
-            .get(Values.BASE_URL + "categories/" + this.categoryId)
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        this.heading = res.data.name;
-                    }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                alert(error.error.error);
-            });
+        // this.http
+        //     .get(Values.BASE_URL + "categories/" + this.categoryId)
+        //     .subscribe((res: any) => {
+        //         if (res != null && res != undefined) {
+        //             if (res.isSuccess == true) {
+        //                 this.heading = res.data.name;
+        //             }
+        //         }
+        //     }, error => {
+        //         this.userService.showLoadingState(false);
+        //         alert(error.error.error);
+        //     });
     }
 
     ngOnInit(): void {
@@ -75,15 +82,18 @@ export class SimilarProductAdminComponent implements OnInit {
     }
 
     getSimilarProducts() {
-        if (localstorage.getItem("categoryId") != null && localstorage.getItem("categoryId") != undefined) {
-            this.categoryId = localstorage.getItem("categoryId");
+        if (this.categoryId != null && this.categoryId != undefined) {
+            // this.categoryId = localstorage.getItem("categoryId");
+            console.log('Category:::', this.categoryId)
             this.userService.showLoadingState(true);
+
             // this.isLoading = true;
             this.http
-                .get(Values.BASE_URL + "similarProducts?_id=" + localstorage.getItem("categoryId") + `&pageNo=${this.similarPageNo}&items=10`)
+                .get(Values.BASE_URL + "similarProducts?_id=" + this.categoryId + `&pageNo=${this.similarPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
+                            console.trace("RES:::SIMILAR:::", res)
                             this.userService.showLoadingState(false);
                             // this.isLoading = false;
                             for (var i = 0; i < res.data.products.length; i++) {
@@ -94,7 +104,11 @@ export class SimilarProductAdminComponent implements OnInit {
                                     brandName: res.data.products[i].brand,
                                     name: res.data.products[i].name,
                                     weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                    price: "Rs " + res.data.products[i].price.value,
+                                    weightUnit: res.data.products[i].dimensions[0].unit,
+                                    weightValue: res.data.products[i].dimensions[0].value,
+                                    price: res.data.products[i].price.value,
+                                    heading: res.data.products[i].heading.title,
+                                    description: res.data.products[i].heading.description
                                 })
                             }
                             this.similarInit = true;
@@ -111,7 +125,7 @@ export class SimilarProductAdminComponent implements OnInit {
     onEdit(product: Product) {
         this.routerExtensions.navigate(['./addProduct'], {
             queryParams: {
-                "similarProductId": product._id,
+                "similarProduct": product,
                 "classType": "similarProduct",
                 "type": "edit"
             },

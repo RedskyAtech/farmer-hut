@@ -12,6 +12,7 @@ import { BackgroundHttpService } from "~/app/services/background.http.service";
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
 import { Product } from "~/app/models/product.model";
+import { File, Folder } from "tns-core-modules/file-system/file-system";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -39,11 +40,15 @@ export class LoginComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
 
+
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
         this.isRendering = false;
         this.isLoading = false;
         this.user = new User();
+   
+        // this.file = File.fromPath(path.join(this.folder.)'FarmersHut.jpg');
+
         this.userService.showLoadingState(false);
         if (localstorage.getItem('cartId') && localstorage.getItem('cartId') != null && localstorage.getItem('cartId') != undefined && localstorage.getItem('cartId') != "") {
             this.getCart(localstorage.getItem('cartId'));

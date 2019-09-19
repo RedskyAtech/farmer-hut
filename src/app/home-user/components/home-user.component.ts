@@ -102,7 +102,7 @@ export class HomeUserComponent implements OnInit {
             console.log("navigating to this pageNF:::", data.context);
         })
 
-    
+
         // this.route.queryParams.subscribe(params => {
         //     console.log("NNNNNNNN::::", params)
         //     if (params["index"] == "1" && params["index"] != undefined) {
@@ -341,8 +341,8 @@ export class HomeUserComponent implements OnInit {
         return new Promise<boolean>((resolve, reject) => {
             for (var i = 0; i < storedCartProducts.length; i++) {
                 if (product._id == storedCartProducts[i]._id) {
-                    var quantity = parseInt(storedCartProducts[i].quantity) + 1;
-                    this.cart.product.quantity = quantity.toString();
+                    // var quantity = parseInt(storedCartProducts[i].quantity) + 1;
+                    this.cart.product.quantity = "1";
                     // this.updateCart(storedCart._id);
                     alert("Product already in cart, Please increase quantity in cart");
                     resolve(true);

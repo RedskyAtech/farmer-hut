@@ -87,15 +87,15 @@ export class HomeAdminComponent implements OnInit {
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
-        this.route.queryParams.subscribe(params => {
-            if (params["index"] == "1" && params["index"] != undefined) {
-                this.tabSelectedIndex = 1;
-                this.addButtonText = "Add Category";
-            } else {
-                this.tabSelectedIndex = 0;
-                this.addButtonText = "Add Product";
-            }
-        });
+        // this.route.queryParams.subscribe(params => {
+        //     if (params["index"] == "1" && params["index"] != undefined) {
+        //         this.tabSelectedIndex = 1;
+        //         this.addButtonText = "Add Category";
+        //     } else {
+        //         this.tabSelectedIndex = 0;
+        //         this.addButtonText = "Add Product";
+        //     }
+        // });
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
             if (this.getProducts()) {
                 if (this.getCategories()) {
@@ -211,7 +211,11 @@ export class HomeAdminComponent implements OnInit {
                                 brandName: res.data.products[i].brand,
                                 name: res.data.products[i].name,
                                 weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                price: "Rs " + res.data.products[i].price.value,
+                                weightUnit: res.data.products[i].dimensions[0].unit,
+                                weightValue: res.data.products[i].dimensions[0].value,
+                                price: res.data.products[i].price.value,
+                                heading: res.data.products[i].heading.title,
+                                description: res.data.products[i].heading.description
                             })
                         }
                         // this.getCategories();
@@ -277,7 +281,14 @@ export class HomeAdminComponent implements OnInit {
         if (category._id != undefined && category._id != null) {
             localstorage.removeItem("categoryId");
             localstorage.setItem('categoryId', category._id);
-            this.routerExtensions.navigate(['/similarProductAdmin']);
+
+
+            this.routerExtensions.navigate(['/similarProductAdmin'], {
+                queryParams: {
+                    "categoryId": category._id,
+                    "name": category.name
+                },
+            });
         }
     }
 
@@ -288,7 +299,7 @@ export class HomeAdminComponent implements OnInit {
     onProductEdit(product: Product) {
         this.routerExtensions.navigate(['./addProduct'], {
             queryParams: {
-                "productId": product._id,
+                "product": JSON.stringify(product),
                 "type": "edit"
             }
         });

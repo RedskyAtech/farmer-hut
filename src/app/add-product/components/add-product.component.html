@@ -52,20 +52,20 @@
                 <StackLayout row="1" width="80%" height="10%" marginTop="5%">
                     <TextField [hint]="brandHint" [text]="brandName" (textChange)="onBrandTextChanged($event)"
                         secure="false" padding="0" [borderColor]="brandBorderColor" returnKeyType="done"
-                        autocorrect="false" class="input input-border input-field">
+                        autocorrect="false" [class]="brandNameClass?'focussed':'input input-border input-field'">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="2" width="80%" height="10%">
                     <TextField [hint]="nameHint" [text]="productName" (textChange)="onNameTextChanged($event)"
                         secure="false" padding="0" [borderColor]="nameBorderColor" returnKeyType="done"
-                        autocorrect="false" class="input input-border input-field">
+                        autocorrect="false" [class]="productNameClass?'focussed':'input input-border input-field'">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="3" width="80%" height="10%" orientation="horizontal">
                     <TextField [hint]="weightHint" [text]="weight" width="80%"
                         (textChange)="onWeightTextChanged($event)" maxLength="3" keyboardType="number" secure="false"
                         [borderColor]="weightBorderColor" padding="0" returnKeyType="done" autocorrect="false"
-                        class="input input-border input-field">
+                        [class]="weightClass?'focussed':'input input-border input-field'">
                     </TextField>
                     <StackLayout class="dimensionContainer">
                         <Button class="dimensionSelectButton" width="100%" [text]="weightDimension"
@@ -75,21 +75,21 @@
                 <StackLayout row="4" width="80%" height="10%">
                     <TextField [hint]="priceHint" [text]="price" (textChange)="onPriceTextChanged($event)"
                         keyboardType="number" secure="false" returnKeyType="done" [borderColor]="priceBorderColor"
-                        autocorrect="false" class="input input-border input-field">
+                        autocorrect="false" [class]="priceClass?'focussed':'input input-border input-field'">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="5" width="80%" height="10%">
                     <TextField [hint]="detailHeadingHint" [text]="detailHeading"
                         (textChange)="onDetailHeadingTextChanged($event)" secure="false" returnKeyType="done"
                         [borderColor]="detailHeadingBorderColor" padding="0" autocorrect="false"
-                        class="input input-border input-field">
+                        [class]="headingClass?'focussed':'input input-border input-field'">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="6" width="80%" height="10%">
                     <TextField [hint]="detailDescriptionHint" [text]="detailDescription"
                         (textChange)="onDetailDescriptionTextChanged($event)" secure="false" returnKeyType="done"
                         [borderColor]="detailDescriptionBorderColor" padding="0" autocorrect="false"
-                        class="input input-border input-field">
+                        [class]="descriptionClass?'focussed':'input input-border input-field'">
                     </TextField>
                 </StackLayout>
                 <StackLayout *ngIf="showAddButton" row="7" width="80%" height="10%">

@@ -64,8 +64,8 @@ export class AddProductComponent implements OnInit {
     detailDescription = "";
     weightDimension = "kg";
     currency = "Rs";
-    product: Product;
-    similarProduct: SimilarProduct;
+    product: any;
+    similarProduct: any;
     imageUrl: any;
     productId: string;
     similarProductId: string;
@@ -80,6 +80,13 @@ export class AddProductComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
 
+    brandNameClass: boolean;
+    productNameClass: boolean;
+    weightClass: boolean;
+    priceClass: boolean;
+    headingClass: boolean;
+    descriptionClass: boolean;
+
     private imageCropper: ImageCropper;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private page: Page) {
@@ -90,14 +97,14 @@ export class AddProductComponent implements OnInit {
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
 
-        this.product = new Product();
+        // this.product = new Product();
         this.similarProduct = new SimilarProduct();
         this.similarProduct.products = [];
-        this.product.heading = new Heading();
-        this.product.image = new Image();
-        this.product.category = new Category();
-        this.product.dimensions = [];
-        this.product.price = new Price();
+        // this.product.heading = new Heading();
+        // this.product.image = new Image();
+        // this.product.category = new Category();
+        // this.product.dimensions = [];
+        // this.product.price = new Price();
         this.productImage = "res://add_image_icon";
 
         this.brandBorderColor = "white";
@@ -112,15 +119,17 @@ export class AddProductComponent implements OnInit {
         this.extension = 'jpg';
         this.shouldImageUpdate = "true";
 
-        this.userService.showLoadingState(false);
+        // this.userService.showLoadingState(false);
         this.navigationService.backTo = "homeAdmin";
 
         this.route.queryParams.subscribe(params => {
-            if (params["productId"] != undefined) {
-                this.productId = params["productId"];
+            if (params["product"] != undefined) {
+                console.log('sdsadasd:::', params["product"])
+                this.product = JSON.parse(params["product"]);
+                console.log('pppppp:::', this.product)
             }
-            if (params["similarProductId"] != undefined) {
-                this.similarProductId = params["similarProductId"];
+            if (params["similarProduct"] != undefined) {
+                this.similarProduct = params["similarProduct"];
             }
             if (params["type"] != undefined) {
                 this.type = params["type"];
@@ -131,56 +140,169 @@ export class AddProductComponent implements OnInit {
         });
 
         if (this.classType == "similarProduct") {
-            if (this.similarProductId != undefined) {
-                this.isLoading = true;
-                this.userService.showLoadingState(true);
-                this.http
-                    .get(Values.BASE_URL + "similarProducts/" + this.similarProductId)
-                    .subscribe((res: any) => {
-                        if (res != null && res != undefined) {
-                            if (res.isSuccess == true) {
-                                this.isLoading = false;
-                                this.userService.showLoadingState(false);
-                                this.productImage = res.data.image.resize_url;
-                                this.brandName = res.data.brand;
-                                this.productName = res.data.name;
-                                this.detailHeading = res.data.heading.title;
-                                this.detailDescription = res.data.heading.description;
-                                this.weight = res.data.dimensions[0].value;
-                                this.price = res.data.price.value;
-                            }
-                        }
-                    }, error => {
-                        this.isLoading = false;
-                        this.userService.showLoadingState(false);
-                        alert(error.error.error);
-                    });
+
+
+
+            if (this.similarProduct != undefined) {
+                if (this.similarProduct.image) {
+                    this.productImage = this.similarProduct.image;
+                }
+                if (this.similarProduct.brandName != undefined) {
+                    this.brandNameClass = true;
+                    this.brandName = this.similarProduct.brandName;
+                } else {
+                    this.brandNameClass = false;
+                }
+                if (this.similarProduct.name != undefined) {
+                    this.productNameClass = true;
+                    this.productName = this.similarProduct.name;
+                } else {
+                    this.productNameClass = false;
+                }
+
+                if (this.similarProduct.heading != undefined) {
+                    this.headingClass = true;
+                    this.detailHeading = this.similarProduct.heading;
+                } else {
+                    this.headingClass = false;
+                }
+
+                if (this.similarProduct.description != undefined) {
+                    this.descriptionClass = true;
+                    this.detailDescription = this.similarProduct.description;
+                } else {
+                    this.descriptionClass = false;
+                }
+
+                if (this.similarProduct.price != undefined) {
+                    this.priceClass = true;
+                    this.price = this.similarProduct.price;
+                } else {
+                    this.priceClass = false;
+                }
+
+                if (this.similarProduct.weight != undefined) {
+                    this.weightClass = true;
+                    this.weight = this.similarProduct.weightValue;
+                } else {
+                    this.weightClass = false;
+                }
+
+                if (this.similarProduct.weightUnit != undefined) {
+                    this.weightDimension = this.similarProduct.weightUnit;
+                }
+
+
+
+
+
+                // if (this.similarProductId != undefined) {
+                //     this.isLoading = true;
+                //     this.userService.showLoadingState(true);
+                //     this.http
+                //         .get(Values.BASE_URL + "similarProducts/" + this.similarProductId)
+                //         .subscribe((res: any) => {
+                //             if (res != null && res != undefined) {
+                //                 if (res.isSuccess == true) {
+                //                     this.isLoading = false;
+                //                     this.userService.showLoadingState(false);
+                //                     this.productImage = res.data.image.resize_url;
+                //                     this.brandName = res.data.brand;
+                //                     this.productName = res.data.name;
+                //                     this.detailHeading = res.data.heading.title;
+                //                     this.detailDescription = res.data.heading.description;
+                //                     this.weight = res.data.dimensions[0].value;
+                //                     this.price = res.data.price.value;
+                //                 }
+                //             }
+                //         }, error => {
+                //             this.isLoading = false;
+                //             this.userService.showLoadingState(false);
+                //             alert(error.error.error);
+                //         });
             }
         }
         else {
-            if (this.productId != undefined) {
-                this.isLoading = true;
-                this.userService.showLoadingState(true);
-                this.http
-                    .get(Values.BASE_URL + "products/" + this.productId)
-                    .subscribe((res: any) => {
-                        if (res != null && res != undefined) {
-                            if (res.isSuccess == true) {
-                                this.isLoading = false;
-                                this.userService.showLoadingState(false);
-                                this.productImage = res.data.image.resize_url;
-                                this.brandName = res.data.brand;
-                                this.productName = res.data.name;
-                                this.detailHeading = res.data.heading.title;
-                                this.detailDescription = res.data.heading.description;
-                                this.weight = res.data.dimensions[0].value;
-                                this.price = res.data.price.value;
-                            }
-                        }
-                    }, error => {
-                        this.isLoading = false;
-                        alert(error.error.error);
-                    });
+
+            if (this.product != undefined) {
+                if (this.product.image) {
+                    this.productImage = this.product.image;
+                }
+                if (this.product.brandName != undefined) {
+                    this.brandNameClass = true;
+                    this.brandName = this.product.brandName;
+                } else {
+                    this.brandNameClass = false;
+                }
+                if (this.product.name != undefined) {
+                    this.productNameClass = true;
+                    this.productName = this.product.name;
+                } else {
+                    this.productNameClass = false;
+                }
+
+                if (this.product.heading != undefined) {
+                    this.headingClass = true;
+                    this.detailHeading = this.product.heading;
+                } else {
+                    this.headingClass = false;
+                }
+
+                if (this.product.description != undefined) {
+                    this.descriptionClass = true;
+                    this.detailDescription = this.product.description;
+                } else {
+                    this.descriptionClass = false;
+                }
+
+                if (this.product.price != undefined) {
+                    this.priceClass = true;
+                    this.price = this.product.price;
+                } else {
+                    this.priceClass = false;
+                }
+
+                if (this.product.weightValue != undefined) {
+                    this.weightClass = true;
+                    this.weight = this.product.weightValue;
+                } else {
+                    this.weightClass = false;
+                }
+                if (this.product.weightUnit != undefined) {
+                    this.weightDimension = this.product.weightUnit;
+                }
+
+                // this.brandName = this.product.brandName;
+                // this.productName = this.product.name;
+                // this.detailHeading = this.product.heading;
+                // this.detailDescription = this.product.description;
+                // this.price = this.product.price;
+                // this.weightDimension = this.product.weightUnit;
+                // this.weight = this.product.weightValue;
+
+
+                // this.isLoading = true;
+                // this.userService.showLoadingState(true);
+                // this.http
+                //     .get(Values.BASE_URL + "products/" + this.productId)
+                //     .subscribe((res: any) => {
+                //         if (res != null && res != undefined) {
+                //             if (res.isSuccess == true) {
+                //                 this.isLoading = false;
+                //                 this.userService.showLoadingState(false);
+                //                 this.productImage = res.data.image.resize_url;
+                //                 this.brandName = res.data.brand;
+                //                 this.productName = res.data.name;
+                //                 this.detailHeading = res.data.heading.title;
+                //                 this.detailDescription = res.data.heading.description;
+                //                 this.weight = res.data.dimensions[0].value;
+                //                 this.price = res.data.price.value;
+                //             }
+                //         }
+                //     }, error => {
+                //         this.isLoading = false;
+                //         alert(error.error.error);
+                //     });
             }
         }
     }
@@ -196,62 +318,68 @@ export class AddProductComponent implements OnInit {
     }
 
     onBrandTextChanged(args) {
-        this.brandBorderColor = "#00C012";
-        this.nameBorderColor = "white";
-        this.weightBorderColor = "white";
-        this.priceBorderColor = "white";
-        this.detailHeadingBorderColor = "white";
-        this.detailDescriptionBorderColor = "white";
+        // this.brandBorderColor = "#00C012";
+        // this.nameBorderColor = "white";
+        // this.weightBorderColor = "white";
+        // this.priceBorderColor = "white";
+        // this.detailHeadingBorderColor = "white";
+        // this.detailDescriptionBorderColor = "white";
+        this.brandNameClass = true;
         this.brandName = args.object.text;
     }
 
     onNameTextChanged(args) {
-        this.brandBorderColor = "white";
-        this.nameBorderColor = "#00C012";
-        this.weightBorderColor = "white";
-        this.priceBorderColor = "white";
-        this.detailHeadingBorderColor = "white";
-        this.detailDescriptionBorderColor = "white";
+        // this.brandBorderColor = "white";
+        // this.nameBorderColor = "#00C012";
+        // this.weightBorderColor = "white";
+        // this.priceBorderColor = "white";
+        // this.detailHeadingBorderColor = "white";
+        // this.detailDescriptionBorderColor = "white";
+        this.productNameClass = true;
         this.productName = args.object.text;
     }
 
     onWeightTextChanged(args) {
-        this.brandBorderColor = "white";
-        this.nameBorderColor = "white";
-        this.weightBorderColor = "#00C012";
-        this.priceBorderColor = "white";
-        this.detailHeadingBorderColor = "white";
-        this.detailDescriptionBorderColor = "white";
+        // this.brandBorderColor = "white";
+        // this.nameBorderColor = "white";
+        // this.weightBorderColor = "#00C012";
+        // this.priceBorderColor = "white";
+        // this.detailHeadingBorderColor = "white";
+        // this.detailDescriptionBorderColor = "white";
+        this.weightClass = true;
         this.weight = args.object.text;
     }
 
     onPriceTextChanged(args) {
-        this.brandBorderColor = "white";
-        this.nameBorderColor = "white";
-        this.weightBorderColor = "white";
-        this.priceBorderColor = "#00C012";
-        this.detailHeadingBorderColor = "white";
-        this.detailDescriptionBorderColor = "white";
+        // this.brandBorderColor = "white";
+        // this.nameBorderColor = "white";
+        // this.weightBorderColor = "white";
+        // this.priceBorderColor = "#00C012";
+        // this.detailHeadingBorderColor = "white";
+        // this.detailDescriptionBorderColor = "white";
+        this.priceClass = true;
         this.price = args.object.text;
     }
 
     onDetailHeadingTextChanged(args) {
-        this.brandBorderColor = "white";
-        this.nameBorderColor = "white";
-        this.weightBorderColor = "white";
-        this.priceBorderColor = "white";
-        this.detailHeadingBorderColor = "#00C012";
-        this.detailDescriptionBorderColor = "white";
+        // this.brandBorderColor = "white";
+        // this.nameBorderColor = "white";
+        // this.weightBorderColor = "white";
+        // this.priceBorderColor = "white";
+        // this.detailHeadingBorderColor = "#00C012";
+        // this.detailDescriptionBorderColor = "white";
+        this.headingClass = true;
         this.detailHeading = args.object.text;
     }
 
     onDetailDescriptionTextChanged(args) {
-        this.brandBorderColor = "white";
-        this.nameBorderColor = "white";
-        this.weightBorderColor = "white";
-        this.priceBorderColor = "white";
-        this.detailHeadingBorderColor = "white";
-        this.detailDescriptionBorderColor = "#00C012";
+        // this.brandBorderColor = "white";
+        // this.nameBorderColor = "white";
+        // this.weightBorderColor = "white";
+        // this.priceBorderColor = "white";
+        // this.detailHeadingBorderColor = "white";
+        // this.detailDescriptionBorderColor = "#00C012";
+        this.descriptionClass = true;
         this.detailDescription = args.object.text;
     }
 
@@ -375,7 +503,7 @@ export class AddProductComponent implements OnInit {
         }
         else {
             this.isLoading = true;
-            this.userService.showLoadingState(true);
+            // this.userService.showLoadingState(true);
             var that = this;
             var mimeType = "image/" + this.extension;
             var uploadSession = session('image-upload');
@@ -414,7 +542,7 @@ export class AddProductComponent implements OnInit {
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
-                        this.userService.showLoadingState(false);
+                        // this.userService.showLoadingState(false);
                         this.isLoading = false;
                         this.routerExtensions.navigate(['./similarProductAdmin'], {
                             clearHistory: true,
@@ -451,7 +579,7 @@ export class AddProductComponent implements OnInit {
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
-                        this.userService.showLoadingState(false);
+                        // this.userService.showLoadingState(false);
                         this.isLoading = false;
                         this.routerExtensions.navigate(['./homeAdmin'], {
                             clearHistory: true,
@@ -490,7 +618,7 @@ export class AddProductComponent implements OnInit {
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
                         this.isLoading = false;
-                        this.userService.showLoadingState(false);
+                        // this.userService.showLoadingState(false);
                         this.routerExtensions.navigate(['./similarProductAdmin'], {
                             clearHistory: true,
                         });
@@ -522,7 +650,7 @@ export class AddProductComponent implements OnInit {
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
                     setTimeout(() => {
-                        this.userService.showLoadingState(false);
+                        // this.userService.showLoadingState(false);
                         this.isLoading = false;
                         this.routerExtensions.navigate(['./homeAdmin'], {
                             clearHistory: true,
@@ -537,7 +665,7 @@ export class AddProductComponent implements OnInit {
     respondedEvent(e) {
         // var that = this;
         console.log("RESPONSE: " + e.data);
-        this.userService.showLoadingState(false);
+        // this.userService.showLoadingState(false);
     }
 
     errorEvent(e) {
