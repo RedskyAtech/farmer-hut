@@ -137,6 +137,7 @@ export class OrderHistoryComponent implements OnInit {
                                 else {
                                     this.isRenderingMessage = true;
                                 }
+                                this.orderInit = true;
                             }
                         }
                     }, error => {
@@ -178,6 +179,7 @@ export class OrderHistoryComponent implements OnInit {
                                 else {
                                     this.isRenderingMessage = true;
                                 }
+                                this.orderInit = true;
                             }
                         }
                     }, error => {
