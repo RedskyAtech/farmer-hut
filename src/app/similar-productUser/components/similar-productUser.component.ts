@@ -53,6 +53,15 @@ export class SimilarProductUserComponent implements OnInit {
         });
         this.navigationService.backTo = "homeUser";
 
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page");
+
+            if (data.isBackNavigation) {
+                this.updateCartCount();
+            }
+        })
+
         this.http
             .get(Values.BASE_URL + "categories/" + this.categoryId)
             .subscribe((res: any) => {
@@ -69,6 +78,7 @@ export class SimilarProductUserComponent implements OnInit {
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             this.getSimilarProducts();
         }
+        this.updateCartCount();
     }
 
     ngOnInit(): void {
@@ -102,7 +112,8 @@ export class SimilarProductUserComponent implements OnInit {
                                 name: res.data.products[i].name,
                                 heading: res.data.products[i].heading.title,
                                 weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                price: "Rs " + res.data.products[i].price.value,
+                                price: res.data.products[i].price.value,
+                                description: res.data.products[i].heading.description
                             })
                         }
                         // this.updateCartCount();
@@ -122,6 +133,8 @@ export class SimilarProductUserComponent implements OnInit {
         if (storedCart.length != 0) {
             this.isCartCount = true;
             this.cartCount = storedCart.length;
+        } else {
+            this.isCartCount = false;
         }
     }
 
@@ -135,7 +148,7 @@ export class SimilarProductUserComponent implements OnInit {
         // };
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
-                "productId": product._id,
+                "product": JSON.stringify(product),
                 "classType": "similarProduct"
             },
         });
@@ -227,7 +240,6 @@ export class SimilarProductUserComponent implements OnInit {
         var tempCart = [];
 
         if (!this.hasBeenHitOnce) {
-            console.log('In api call')
 
             this.hasBeenHitOnce = true;
 
@@ -236,15 +248,11 @@ export class SimilarProductUserComponent implements OnInit {
                 .then((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            console.log("CART:::RES:::", res.data)
-                            console.log("CART:::RES:::", res.data.products)
-                            console.log("CART:::RES:::", res.data.products.length)
                             if (res.data && res.data.products) {
                                 for (var i = 0; i < res.data.products.length; i++) {
                                     tempCart.push(new Product(res.data.products[i]));
                                 }
                             }
-                            console.log("CART:::RES:::reachedd")
                             localstorage.setItem('cart', JSON.stringify(tempCart));
                             Toast.makeText("Product is added to cart!!!", "long").show();
                             this.updateCartCount();
@@ -254,7 +262,6 @@ export class SimilarProductUserComponent implements OnInit {
                     }
                     this.hasBeenHitOnce = false;
                 }, error => {
-                    // this.userService.showLoadingState(false);
                     this.hasBeenHitOnce = false;
                     console.log(error.error.error);
                 });

@@ -93,12 +93,11 @@ export class HomeUserComponent implements OnInit {
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
-            console.log("navigating to this page:::", data.context);
-        })
+            console.log("navigating to this page");
 
-        this.page.on('navigatedFrom', (data) => {
-            console.log("ddataNF:::", data.isBackNavigation);
-            console.log("navigating to this pageNF:::", data.context);
+            if (data.isBackNavigation) {
+                this.updateCartCount();
+            }
         })
 
 
@@ -122,6 +121,8 @@ export class HomeUserComponent implements OnInit {
                 }, 6000);
             }
         }, 6000);
+
+        this.updateCartCount();
 
     }
 
@@ -196,7 +197,8 @@ export class HomeUserComponent implements OnInit {
                                 heading: res.data.products[i].heading.title,
                                 name: res.data.products[i].name,
                                 weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                price: "Rs " + res.data.products[i].price.value,
+                                price: res.data.products[i].price.value,
+                                description: res.data.products[i].heading.description
                             })
                         }
                         // if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
@@ -304,12 +306,17 @@ export class HomeUserComponent implements OnInit {
             this.isCartCount = true;
             this.cartCount = storedCart.length;
         }
+        else {
+            this.isCartCount = false;
+        }
     }
 
     onViewDetail(product: Product) {
+        console.log("SentPro:::", product)
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
-                "productId": product._id,
+                "product": JSON.stringify(product),
+                "classType": "product"
             }
         });
 
@@ -357,14 +364,11 @@ export class HomeUserComponent implements OnInit {
         console.log(product._id);
 
         var storedCartProducts = JSON.parse(localstorage.getItem('cart'));
-        console.log('SSSS:::TTTT:::CCC:::', storedCartProducts);
 
         if (storedCartProducts.length != 0) {
             this.productExistance(product).then((res) => {
 
             }, error => {
-                console.log("IN PPPPP::")
-                console.log('After For')
                 this.cart.product.quantity = "1";
                 storedCartProducts.push(new Product(product));
                 localstorage.setItem(JSON.stringify(storedCartProducts));
@@ -373,99 +377,19 @@ export class HomeUserComponent implements OnInit {
 
         }
         else {
-            console.log('After For no products')
             this.cart.product.quantity = "1";
             storedCartProducts.push(new Product(product));
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart();
         }
 
-
-        // this.http
-        //     .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-        //     .subscribe((res: any) => {
-        //         if (res != null && res != undefined) {
-        //             if (res.isSuccess == true) {
-        //                 if (res.data.products.length != 0) {
-        //                     for (var i = 0; i < res.data.products.length; i++) {
-        //                         if (product._id == res.data.products[i]._id) {
-        //                             var quantity = parseInt(res.data.products[i].quantity) + 1;
-        //                             this.cart.product.quantity = quantity.toString();
-        //                             this.updateCart();
-        //                             break;
-        //                         }
-        //                         else {
-        //                             this.cart.product.quantity = "1";
-        //                             this.updateCart();
-        //                         }
-        //                     }
-        //                 }
-        //                 else {
-        //                     this.cart.product.quantity = "1";
-        //                     this.updateCart();
-        //                 }
-        //             }
-        //         }
-        //     }, error => {
-        //         this.userService.showLoadingState(false);
-        //         console.log(error.error.error);
-        //     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // this.userService.showLoadingState(true);
-        // this.cart.product._id = product._id;
-        // console.log(product._id);
-        // // console.log(localstorage.getItem("cartId"));
-        // this.http
-        //     .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-        //     .subscribe((res: any) => {
-        //         if (res != null && res != undefined) {
-        //             if (res.isSuccess == true) {
-        //                 if (res.data.products.length != 0) {
-        //                     for (var i = 0; i < res.data.products.length; i++) {
-        //                         if (product._id == res.data.products[i]._id) {
-        //                             var quantity = parseInt(res.data.products[i].quantity) + 1;
-        //                             this.cart.product.quantity = quantity.toString();
-        //                             this.updateCart();
-        //                             break;
-        //                         }
-        //                         else {
-        //                             this.cart.product.quantity = "1";
-        //                             this.updateCart();
-        //                         }
-        //                     }
-        //                 }
-        //                 else {
-        //                     this.cart.product.quantity = "1";
-        //                     this.updateCart();
-        //                 }
-        //             }
-        //         }
-        //     }, error => {
-        //         this.userService.showLoadingState(false);
-        //         console.log(error.error.error);showLoadingState
-        //     });
+        this.updateCartCount();
     }
 
     updateCart() {
         var tempCart = [];
-        console.log('In api')
 
         if (!this.hasBeenHitOnce) {
-            console.log('In api call')
 
             this.hasBeenHitOnce = true;
             this.backgroundHttpService
@@ -473,15 +397,11 @@ export class HomeUserComponent implements OnInit {
                 .then((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            console.log("CART:::RES:::", res.data)
-                            console.log("CART:::RES:::", res.data.products)
-                            console.log("CART:::RES:::", res.data.products.length)
                             if (res.data && res.data.products) {
                                 for (var i = 0; i < res.data.products.length; i++) {
                                     tempCart.push(new Product(res.data.products[i]));
                                 }
                             }
-                            console.log("CART:::RES:::reachedd")
                             localstorage.setItem('cart', JSON.stringify(tempCart));
                             Toast.makeText("Product is added to cart!!!", "long").show();
                             this.updateCartCount();

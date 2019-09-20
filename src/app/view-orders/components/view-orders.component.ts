@@ -38,13 +38,13 @@ export class ViewOrdersComponent implements OnInit {
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
         this.navigationService.backTo = "profile";
+        this.getOrders();
     }
 
     ngOnInit(): void {
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
-        this.getOrders();
     }
 
     getOrders() {
