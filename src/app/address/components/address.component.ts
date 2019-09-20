@@ -238,6 +238,8 @@ export class AddressComponent implements OnInit {
 
     addAddress(id: string) {
         if (this.from == "cart") {
+            localstorage.setItem("address", this.address);
+            localstorage.setItem("mapAddress", this.mapAddress);
             this.user.deliveryAddress.line1 = this.address;
             this.user.deliveryAddress.line2 = this.mapAddress;
             this.user.deliveryAddress.location.latitude = this.finalLatitude.toString();
@@ -336,7 +338,6 @@ export class AddressComponent implements OnInit {
         geolocation.enableLocationRequest();
 
         var that = this;
-
 
         // geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 2, maximumAge: 20000, timeout: 20000 }).
         //     then(function (location) {

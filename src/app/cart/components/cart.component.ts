@@ -257,6 +257,10 @@ export class CartComponent implements OnInit {
     }
 
     onViewAddress() {
+        if (localstorage.getItem("address") != null && localstorage.getItem("address") != undefined && localstorage.getItem("mapAddress") != null && localstorage.getItem("mapAddress") != undefined) {
+            this.mapAddress = localstorage.getItem("mapAddress");
+            this.address = localstorage.getItem("address");
+        }
         if (this.mapAddress != "" && this.address != "") {
             this.viewAddressDialog.show();
         }

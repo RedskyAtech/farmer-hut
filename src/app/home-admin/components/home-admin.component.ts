@@ -12,6 +12,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
 import { Page } from "tns-core-modules/ui/page/page";
+import { User } from "~/app/models/user.model";
 
 
 @Component({
@@ -50,7 +51,7 @@ export class HomeAdminComponent implements OnInit {
     isLoading: boolean;
     fileId: string;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private http: HttpClient, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private route: ActivatedRoute, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
         this.addButtonText = "Add Product";
         this.product = new Product();
@@ -81,6 +82,15 @@ export class HomeAdminComponent implements OnInit {
                 }, 6000);
             }
         }, 6000);
+
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page:::", data.context);
+            if (data.isBackNavigation) {
+                this.userService.activeScreen("homeAdmin");
+            }
+        })
+
     }
 
     ngOnInit(): void {

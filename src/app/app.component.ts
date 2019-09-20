@@ -13,6 +13,7 @@ import { ad } from "tns-core-modules/utils/utils"
 import { BackgroundService } from "./services/background.service"
 import { BackgroundHttpService } from "./services/background.http.service";
 import { Folder, File } from "tns-core-modules/file-system/file-system";
+import { Router } from "@angular/router";
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
@@ -37,7 +38,7 @@ export class AppComponent {
     file: File;
     folder: Folder;
 
-    constructor(private userService: UserService, private routerExtensions: RouterExtensions, private ngZone: NgZone, private navigationService: NavigationService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService) {
+    constructor(private userService: UserService, private routerExtensions: RouterExtensions, private router: Router, private ngZone: NgZone, private navigationService: NavigationService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService) {
 
         HTTP.http = this.http;
         this.context = ad.getApplicationContext();
@@ -52,18 +53,32 @@ export class AppComponent {
         this.ngZone.run(() => {
             this.tries = 0;
             application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
-                if (this.navigationService.backTo != undefined) {
-                    // data.cancel = true;
-                    // this.navigationService.goTo(this.navigationService.backTo);
-                    this.routerExtensions.back();
-                }
-                else {
-                    data.cancel = (this.tries++ > 0) ? false : true;
-                    if (data.cancel) Toast.makeText("Press again to exit", "long").show();
-                    setTimeout(() => {
-                        this.tries = 0;
-                    }, 2000);
-                }
+
+                this.userService.activescreen.subscribe((screen: string) => {
+                    if (screen == "homeUser" || screen == "homeAdmin") {
+                        data.cancel = (this.tries++ > 0) ? false : true;
+                        if (data.cancel) Toast.makeText("Press again to exit", "short").show();
+                        setTimeout(() => {
+                            this.tries = 0;
+                        }, 1000);
+                    }
+                    else {
+                        data.cancel = true;
+                        this.routerExtensions.back();
+                    }
+                });
+                // if (this.navigationService.backTo != undefined) {
+                //     data.cancel = true;
+                //     this.navigationService.goTo(this.navigationService.backTo);
+                //     // this.routerExtensions.back();
+                // }
+                // else {
+                //     data.cancel = (this.tries++ > 0) ? false : true;
+                //     if (data.cancel) Toast.makeText("Press again to exit", "long").show();
+                //     setTimeout(() => {
+                //         this.tries = 0;
+                //     }, 2000);
+                // }
                 //     if (this.router.url == "/profile" && localstorage.getItem("userType") == "admin") {
                 //         this.router.navigate(['/homeAdmin']);
                 //         return;
@@ -74,6 +89,7 @@ export class AppComponent {
                 //     }
                 // }
             });
+            // application.android.off(this.listener);
         });
 
         // if (application.android) {

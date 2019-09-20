@@ -17,6 +17,7 @@ export class NavigationService {
         //     this.routerExtensions.navigate([path], extras)
         // } else {
         this.routerExtensions.navigate([path])
+        // this.routerExtensions.back();
         // }
     }
 

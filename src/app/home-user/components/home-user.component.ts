@@ -93,7 +93,11 @@ export class HomeUserComponent implements OnInit {
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
-            console.log("navigating to this page");
+            console.log("navigating to this page:::", data.context);
+            if (data.isBackNavigation) {
+                this.userService.activeScreen("homeUser");
+            }
+        })
 
             if (data.isBackNavigation) {
                 this.updateCartCount();
