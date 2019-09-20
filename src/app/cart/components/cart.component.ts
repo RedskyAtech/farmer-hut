@@ -304,12 +304,16 @@ export class CartComponent implements OnInit {
     onConfirm() {
         this.userService.showLoadingState(true);
         this.cart.order._id = localstorage.getItem("cartId");
+
+        var storedCartProducts = JSON.parse(localstorage.getItem('cart'));
+
         this.http
             .post(Values.BASE_URL + "orders/", this.cart)
             .subscribe((res: any) => {
                 if (res != "" && res != undefined) {
                     if (res.isSuccess == true) {
                         this.placeOrderDialog.hide();
+                        localstorage.setItem('cart', "[]");
                         this.routerExtensions.navigate(['/homeUser'], {
                             clearHistory: true,
                         });
