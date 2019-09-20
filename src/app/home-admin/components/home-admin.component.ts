@@ -70,6 +70,7 @@ export class HomeAdminComponent implements OnInit {
         this.fileId = "";
         this.pageNo = 1;
         this.navigationService.backTo = undefined;
+        this.tabSelectedIndex = 0;
         this.getFileId();
 
         setInterval(() => {
