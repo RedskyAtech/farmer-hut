@@ -38,7 +38,8 @@
             <GridLayout row="1" width="100%" height="92%" rows="auto,auto,auto">
                 <StackLayout row="0" width="50%" height="25%" borderRadius="10" backgroundColor="white"
                     verticalAlignment="middle" (tap)="onUploadImage()">
-                    <Image class="sliderImage" [src]="sliderImage"></Image>
+                    <Image *ngIf="isVisibleImage" class="sliderImage" src="res://add_image_icon"></Image>
+                    <Image *ngIf="!isVisibleImage" class="sliderImage" [src]="sliderImage"></Image>
                 </StackLayout>
                 <StackLayout *ngIf="showAddButton" row="1" width="80%" height="10%" marginTop="5%">
                     <Button class="button" text="Add to Slider" (tap)="onAddToSlider()"></Button>

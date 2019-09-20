@@ -6,7 +6,7 @@ import { ModalComponent } from "../../modals/modal.component";
 import { ImageCropper } from 'nativescript-imagecropper';
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
-import { ImageSource } from "tns-core-modules/image-source/image-source";
+import { ImageSource, fromFile } from "tns-core-modules/image-source/image-source";
 import { Values } from "~/app/values/values";
 import { HttpClient } from "@angular/common/http";
 import { UserService } from "../../services/user.service";
@@ -16,7 +16,9 @@ import * as Toast from 'nativescript-toast';
 import { NavigationService } from "~/app/services/navigation.service";
 import * as BitmapFactory from "nativescript-bitmap-factory"
 import { Page } from "tns-core-modules/ui/page/page";
-
+import { Folder, path, File } from "tns-core-modules/file-system";
+import { session, Request } from 'nativescript-background-http';
+import * as localstorage from "nativescript-localstorage";
 
 declare var android: any;
 
@@ -32,7 +34,7 @@ export class AddSliderComponent implements OnInit {
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
     @ViewChild('warningDialog') warningDialog: ModalComponent;
 
-    sliderImage: string;
+    sliderImage: string | ImageSource;
     private imageCropper: ImageCropper;
     imageUrl: any;
     product: Product;
@@ -40,6 +42,12 @@ export class AddSliderComponent implements OnInit {
     errorMessage: string;
     isRendering: boolean;
     isLoading: boolean;
+    file: any;
+    name: string;
+    extension: string;
+    shouldImageUpdate: string;
+    fileId: string;
+    isVisibleImage: boolean
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
@@ -47,13 +55,15 @@ export class AddSliderComponent implements OnInit {
         this.isRendering = false;
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
-        this.sliderImage = "res://add_image_icon";
+        this.sliderImage = "";
+        this.isVisibleImage = true;
         this.product = new Product();
         this.product.image = new Image();
         this.userService.showLoadingState(false);
         this.showAddButton = false;
         this.errorMessage = "";
         this.navigationService.backTo = "homeAdmin";
+        this.fileId = "";
     }
 
     ngOnInit(): void {
@@ -100,31 +110,40 @@ export class AddSliderComponent implements OnInit {
         let context = imagepicker.create({
             mode: "single"
         });
-        context
-            .authorize()
+        permissions.requestPermission([android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE])
             .then(() => {
-                return context.present();
-            })
-            .then(selection => {
-                selection.forEach(function (selected) {
-                    var image = new ImageSource();
-                    image.fromAsset(selected).then((source) => {
-                        that.imageCropper.show(source, { lockSquare: true }).then((args) => {
-                            if (args.image !== null) {
-                                that.imageUrl = args.image.toBase64String('png', 10);
-                                that.imageUrl = that.imageUrl.replace(/\=/g, "");
-                                that.imageUrl = 'data:image/png;base64,' + that.imageUrl;
-                                that.sliderImage = that.imageUrl;
-                                that.showAddButton = true;
-                            }
-                        })
-                            .catch(function (e) {
-                                console.log(e);
+                context
+                    .authorize()
+                    .then(() => {
+                        return context.present();
+                    })
+                    .then(selection => {
+                        selection.forEach(function (selected) {
+                            let source = new ImageSource();
+                            source.fromAsset(selected).then((source) => {
+                                that.imageCropper.show(source, { lockSquare: true }).then((args) => {
+                                    if (args.image !== null) {
+                                        var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
+                                        var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                        args.image.saveToFile(file.path, 'jpg');
+                                        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+                                        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+                                        that.sliderImage = undefined;
+                                        that.sliderImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                        that.shouldImageUpdate = "true";
+                                        that.isVisibleImage = false;
+                                        that.showAddButton = true;
+                                    }
+                                })
+                                    .catch(function (e) {
+                                        console.log(e);
+                                    });
+                            }).catch((err) => {
+                                console.log("Error -> " + err.message);
                             });
-                    }).catch((err) => {
-                        console.log("Error -> " + err.message);
+                        });
                     });
-                });
             });
     }
 
@@ -135,16 +154,21 @@ export class AddSliderComponent implements OnInit {
             permissions.requestPermission([android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE])
                 .then(() => {
                     camera.takePicture({ width: 512, height: 512, keepAspectRatio: true })
-                        .then((imageAsset) => {
+                        .then((selected) => {
                             let source = new ImageSource();
-                            source.fromAsset(imageAsset).then((source) => {
-                                this.imageCropper.show(source, { lockSquare: true }).then((args) => {
+                            source.fromAsset(selected).then((source) => {
+                                this.imageCropper.show(source, { lockSquare: true }).then((args: any) => {
                                     if (args.image !== null) {
-                                        that.imageUrl = that.compressImage(args.image)
-                                        // that.imageUrl = args.image.toBase64String('png', 10);
-                                        that.imageUrl = that.imageUrl.replace(/\=/g, "");
-                                        that.imageUrl = 'data:image/png;base64,' + that.imageUrl;
-                                        that.sliderImage = that.imageUrl;
+                                        var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
+                                        var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                        args.image.saveToFile(file.path, 'jpg');
+                                        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+                                        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+                                        that.sliderImage = "";
+                                        that.sliderImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                        that.shouldImageUpdate = "true";
+                                        that.isVisibleImage = false;
                                         that.showAddButton = true;
                                     }
                                 })
@@ -163,48 +187,96 @@ export class AddSliderComponent implements OnInit {
     }
 
     onAddToSlider() {
-        if (this.imageUrl == null) {
+        if (this.sliderImage == null) {
             this.warningDialog.show();
             this.errorMessage = "Please select slider image.";
         }
         else {
-            this.product.image.url = this.imageUrl;
-            if (this.product.image.url != null) {
+            if (localstorage.getItem("fileId") != null && localstorage.getItem("fileId") != undefined) {
+                this.fileId = localstorage.getItem("fileId");
+            }
+            var that = this;
+            var mimeType = "image/" + this.extension;
+            var uploadSession = session('image-upload');
+            if (this.file != null) {
                 this.isLoading = true;
-                this.userService.showLoadingState(true);
-                this.http
-                    .get(Values.BASE_URL + "files")
-                    .subscribe((res: any) => {
-                        if (res != null && res != undefined) {
-                            if (res.isSuccess == true) {
-                                var id = res.data[0]._id;
-                                this.http
-                                    .put(Values.BASE_URL + "files/update/" + id, this.product)
-                                    .subscribe((res: any) => {
-                                        if (res != null && res != undefined) {
-                                            if (res.isSuccess == true) {
-                                                this.userService.showLoadingState(false);
-                                                this.isLoading = false;
-                                                Toast.makeText("Image is added successfully!!!", "long").show();
-                                                this.routerExtensions.navigate(['./homeAdmin'], {
-                                                    clearHistory: true,
-                                                });
-                                            }
-                                        }
-                                    }, error => {
-                                        this.userService.showLoadingState(false);
-                                        this.isLoading = false;
-                                        alert(error.error.error);
-                                    });
-                            }
-                        }
-                    }, error => {
-                        this.userService.showLoadingState(false);
-                        this.isLoading = false;
-                        console.log(error.error.error);
+                var request = {
+                    url: Values.BASE_URL + "files",
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/octet-stream",
+                        "File-Name": "my"
+                    },
+                    description: "{'uploading':" + "my" + "}"
+                }
+                const params = [
+                    { name: "file", filename: that.file, mimeType: mimeType },
+                    { name: "shouldImageUpdate", value: that.shouldImageUpdate },
+                    { name: "isUpdate", value: "true" },
+                    { name: "file_id", value: that.fileId },
+                ]
+                console.log(params);
+                console.log(request);
+                var task = uploadSession.multipartUpload(params, request);
+                task.on("responded", this.respondedEvent);
+                task.on("error", this.errorEvent);
+                task.on("complete", this.completeEvent);
+                setTimeout(() => {
+                    // this.userService.showLoadingState(false);
+                    this.isLoading = false;
+                    this.routerExtensions.navigate(['./homeAdmin'], {
+                        clearHistory: true,
                     });
+                }, 10000);
+
+
+                // this.http
+                //     .get(Values.BASE_URL + "files")
+                //     .subscribe((res: any) => {
+                //         if (res != null && res != undefined) {
+                //             if (res.isSuccess == true) {
+                //                 var id = res.data[0]._id;
+                //                 this.http
+                //                     .put(Values.BASE_URL + "files/update/" + id, this.product)
+                //                     .subscribe((res: any) => {
+                //                         if (res != null && res != undefined) {
+                //                             if (res.isSuccess == true) {
+                //                                 this.userService.showLoadingState(false);
+                //                                 this.isLoading = false;
+                //                                 Toast.makeText("Image is added successfully!!!", "long").show();
+                //                                 this.routerExtensions.navigate(['./homeAdmin'], {
+                //                                     clearHistory: true,
+                //                                 });
+                //                             }
+                //                         }
+                //                     }, error => {
+                //                         this.userService.showLoadingState(false);
+                //                         this.isLoading = false;
+                //                         alert(error.error.error);
+                //                     });
+                //             }
+                //         }
+                //     }, error => {
+                //         this.userService.showLoadingState(false);
+                //         this.isLoading = false;
+                //         console.log(error.error.error);
+                //     });
             }
         }
+    }
+
+    respondedEvent(e) {
+        // var that = this;
+        console.log("RESPONSE: " + e.data);
+        // this.userService.showLoadingState(false);
+    }
+
+    errorEvent(e) {
+        console.log("Error is: " + JSON.stringify(e));
+    }
+
+    completeEvent(e) {
+        console.log("Completed :" + JSON.stringify(e));
     }
 
     compressImage(imageSource: ImageSource): string {

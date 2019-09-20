@@ -48,28 +48,28 @@ export class HomeAdminComponent implements OnInit {
     categoryInit = true;
     isRendering: boolean;
     isLoading: boolean;
+    fileId: string;
 
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
-        console.log('HOME')
         this.addButtonText = "Add Product";
         this.product = new Product();
         this.products = [];
         this.category = new Category();
-        this.sliderImage1 = "";
-        this.sliderImage2 = "";
-        this.sliderImage3 = "";
-        this.sliderImage4 = "";
+        this.sliderImage1 = "res://slider_background";
+        this.sliderImage2 = "res://slider_background";
+        this.sliderImage3 = "res://slider_background";
+        this.sliderImage4 = "res://slider_background";
         this.selectedPage = 0;
         this.isRenderingProducts = false;
         this.isRenderingSlider = false;
         this.extension = "jpg";
         this.isLoading = false;
         this.isRendering = false;
-
+        this.fileId = "";
         this.pageNo = 1;
-
         this.navigationService.backTo = undefined;
+        this.getFileId();
 
         setInterval(() => {
             setTimeout(() => {
@@ -106,43 +106,49 @@ export class HomeAdminComponent implements OnInit {
         }
     }
 
-
-
+    getFileId() {
+        this.http
+            .get(Values.BASE_URL + "files")
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.fileId = res.data[0]._id;
+                        localstorage.setItem("fileId", this.fileId);
+                    }
+                }
+            }, error => {
+                console.log(error.error.error);
+            });
+    }
 
     updateSlider(count: number) {
         if (count > 0 && count < 5) {
             this.isRenderingSlider = true;
             this.http
-                .get(Values.BASE_URL + `files?pageNo=${count}&items=1`)
+                .get(Values.BASE_URL + `files?pageNo=${0}&items=${count}`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             switch (count) {
                                 case 1:
-                                    this.sliderImage1 = res.data.url;
+                                    this.sliderImage1 = res.data.resize_url;
                                     break;
                                 case 2:
-                                    this.sliderImage2 = res.data.url;
+                                    this.sliderImage2 = res.data.resize_url;
                                     break;
                                 case 3:
-                                    this.sliderImage3 = res.data.url;
+                                    this.sliderImage3 = res.data.resize_url;
                                     break;
                                 case 4:
-                                    this.sliderImage4 = res.data.url;
+                                    this.sliderImage4 = res.data.resize_url;
                                     break;
                             }
                             if (count + 1 < 5) {
                                 this.updateSlider(count + 1)
                             }
-                            // this.sliderImage1 = res.data.url;
-                            // this.sliderImage2 = res.data[0].images[1].url;
-                            // this.sliderImage3 = res.data[0].images[2].url;
-                            // this.sliderImage4 = res.data[0].images[3].url;
                         }
-                        // this.pullRefreshPage.refreshing = false;
                     }
                 }, error => {
-                    // this.pullRefreshPage.refreshing = false;
                     console.log(error.error.error);
                 });
         }
@@ -199,7 +205,7 @@ export class HomeAdminComponent implements OnInit {
         this.http
             .get(Values.BASE_URL + `products?pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
-                console.log("RES:::ADMIN", res)
+                // console.log("RES:::ADMIN", res)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         // this.isLoading = false;

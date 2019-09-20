@@ -18,7 +18,7 @@ import * as geolocation from "nativescript-geolocation";
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
 import * as location from "nativescript-geolocation"
-
+import * as application from "tns-core-modules/application";
 
 @Component({
     selector: "ns-address",
@@ -73,6 +73,7 @@ export class AddressComponent implements OnInit {
 
     isLoading: boolean;
     mapLabelClass: boolean;
+    listener: any;
 
     constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private changeDetector: ChangeDetectorRef) {
         this.page.actionBarHidden = true;
@@ -119,6 +120,11 @@ export class AddressComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // this.listener = application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
+        //     this.routerExtensions.back();
+        //     args.cancel = true;
+        // });
+        // application.android.off(this.listener);
     }
 
     onOK() {
@@ -234,8 +240,8 @@ export class AddressComponent implements OnInit {
         if (this.from == "cart") {
             this.user.deliveryAddress.line1 = this.address;
             this.user.deliveryAddress.line2 = this.mapAddress;
-            this.user.deliveryAddress.location.latitude = this.latitude;
-            this.user.deliveryAddress.location.longitude = this.longitude;
+            this.user.deliveryAddress.location.latitude = this.finalLatitude.toString();
+            this.user.deliveryAddress.location.longitude = this.finalLongitude.toString();
             this.http
                 .put(Values.BASE_URL + "users/update/" + id, this.user)
                 .subscribe((res: any) => {

@@ -12,6 +12,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 import { Page, NavigatedData } from "tns-core-modules/ui/page/page";
 import { BackgroundHttpService } from "~/app/services/background.http.service";
 import { Marker, MapView } from "nativescript-google-maps-sdk";
+import * as application from "tns-core-modules/application";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
@@ -71,10 +72,10 @@ export class HomeUserComponent implements OnInit {
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
 
-        this.sliderImage1 = "res://image_background";
-        this.sliderImage2 = "res://image_background";
-        this.sliderImage3 = "res://image_background";
-        this.sliderImage4 = "res://image_background";
+        this.sliderImage1 = "res://slider_background";
+        this.sliderImage2 = "res://slider_background";
+        this.sliderImage3 = "res://slider_background";
+        this.sliderImage4 = "res://slider_background";
         this.isRenderingSlider = false;
         this.isRenderingTabView = false;
         this.product = new Product();
@@ -89,8 +90,6 @@ export class HomeUserComponent implements OnInit {
         this.hasBeenHitOnce = false;
 
         this.userService.showLoadingState(false);
-
-
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -127,6 +126,10 @@ export class HomeUserComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
+        //     this.routerExtensions.back();
+        //     args.cancel = true;
+        // });
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
@@ -263,38 +266,32 @@ export class HomeUserComponent implements OnInit {
         if (count > 0 && count < 5) {
             this.isRenderingSlider = true;
             this.http
-                .get(Values.BASE_URL + `files?pageNo=${count}&items=1`)
+                .get(Values.BASE_URL + `files?pageNo=${0}&items=${count}`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             switch (count) {
                                 case 1:
-                                    this.sliderImage1 = res.data.url;
+                                    this.sliderImage1 = res.data.resize_url;
                                     break;
                                 case 2:
-                                    this.sliderImage2 = res.data.url;
+                                    this.sliderImage2 = res.data.resize_url;
                                     break;
                                 case 3:
-                                    this.sliderImage3 = res.data.url;
+                                    this.sliderImage3 = res.data.resize_url;
                                     break;
                                 case 4:
-                                    this.sliderImage4 = res.data.url;
+                                    this.sliderImage4 = res.data.resize_url;
                                     break;
                             }
                             if (count + 1 < 5) {
                                 this.updateSlider(count + 1)
                             }
-                            // this.sliderImage1 = res.data.url;
-                            // this.sliderImage2 = res.data[0].images[1].url;
-                            // this.sliderImage3 = res.data[0].images[2].url;
-                            // this.sliderImage4 = res.data[0].images[3].url;
                         }
-                        // this.pullRefreshPage.refreshing = false;
                     }
                 }, error => {
                     this.userService.showLoadingState(false);
-                    // this.pullRefreshPage.refreshing = false;
                     console.log(error.error.error);
                 });
         }

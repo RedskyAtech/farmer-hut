@@ -86,8 +86,8 @@ export class AddProductComponent implements OnInit {
     priceClass: boolean;
     headingClass: boolean;
     descriptionClass: boolean;
-
     private imageCropper: ImageCropper;
+    isVisibleImage: boolean;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private page: Page) {
 
@@ -118,6 +118,7 @@ export class AddProductComponent implements OnInit {
 
         this.extension = 'jpg';
         this.shouldImageUpdate = "true";
+        this.isVisibleImage = true;
 
         // this.userService.showLoadingState(false);
         this.navigationService.backTo = "homeAdmin";
@@ -140,8 +141,6 @@ export class AddProductComponent implements OnInit {
         });
 
         if (this.classType == "similarProduct") {
-
-
 
             if (this.similarProduct != undefined) {
                 if (this.similarProduct.image) {
@@ -414,6 +413,7 @@ export class AddProductComponent implements OnInit {
                                         that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
                                         that.productImage = undefined;
                                         that.productImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                        that.isVisibleImage = false;
                                         that.shouldImageUpdate = "true";
                                     }
                                 })
@@ -449,6 +449,7 @@ export class AddProductComponent implements OnInit {
                                         that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
                                         that.productImage = undefined;
                                         that.productImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                        that.isVisibleImage = false;
                                         that.shouldImageUpdate = "true";
                                     }
                                 })

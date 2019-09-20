@@ -6,7 +6,7 @@ import { User } from "~/app/models/user.model";
 import { UserService } from "../../services/user.service";
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
-
+import * as application from "tns-core-modules/application";
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
 import { Router } from "@angular/router";
@@ -69,6 +69,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.getProfileDetails()
+        // this.listener = application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
+        //     this.routerExtensions.back();
+        //     args.cancel = true;
+        // });
+        // application.android.off(this.listener);
     }
 
     getProfileDetails() {
@@ -153,6 +158,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
                             }
                             if (res.data.address.line1 != null && res.data.address.line1 != undefined) {
                                 this.address = res.data.address.line1;
+                                this.addressButton = "Change address";
+                            }
+                            if (res.data.address.line2 != null && res.data.address.line2 != undefined) {
+                                this.mapAddress = res.data.address.line2;
                                 this.addressButton = "Change address";
                             }
                             else {

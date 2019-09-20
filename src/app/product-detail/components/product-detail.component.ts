@@ -149,6 +149,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         // this.addedCartButton = true;
         this.userService.showLoadingState(true);
         this.cart.product._id = this.productId;
+
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
@@ -182,12 +183,15 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     }
 
     updateCart() {
+        console.log(this.cart);
         this.userService.showLoadingState(true);
+        this.cart.product.isSimilarProduct = true;
         this.http
             .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
+                        console.log(res);
                         Toast.makeText("Product is added to cart!!!", "long").show();
                         this.userService.showLoadingState(false);
                         this.updateCartCount();

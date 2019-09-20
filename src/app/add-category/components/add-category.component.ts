@@ -49,6 +49,7 @@ export class AddCategoryComponent implements OnInit {
     shouldImageUpdate: string;
     isRendering: boolean;
     isLoading: boolean;
+    isVisibleImage: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
@@ -65,6 +66,7 @@ export class AddCategoryComponent implements OnInit {
         this.extension = 'jpg';
         this.shouldImageUpdate = "true";
         this.navigationService.backTo = "homeAdmin";
+        this.isVisibleImage = true;
 
         this.route.queryParams.subscribe(params => {
             if (params["categoryId"] != undefined) {
@@ -147,6 +149,7 @@ export class AddCategoryComponent implements OnInit {
                                 that.categoryImage = undefined;
                                 that.categoryImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
                                 that.shouldImageUpdate = "true";
+                                that.isVisibleImage = false;
                             }
                         })
                             .catch(function (e) {
@@ -180,6 +183,7 @@ export class AddCategoryComponent implements OnInit {
                                         that.categoryImage = undefined;
                                         that.categoryImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
                                         that.shouldImageUpdate = "true";
+                                        that.isVisibleImage = false;
                                     }
                                 })
                                     .catch(function (e) {

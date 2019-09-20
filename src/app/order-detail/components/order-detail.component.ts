@@ -332,7 +332,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                         that.userService.showLoadingState(false);
                         that.isLoading = false;
                         openUrl("google.navigation:q=" + that.latitude.toString() + "," + that.longitude.toString());
-
                         // directions.navigate({
                         //     // from: { // optional, default 'current location'
                         //     // },
