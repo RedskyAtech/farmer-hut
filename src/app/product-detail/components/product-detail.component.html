@@ -1,10 +1,10 @@
 <Page>
     <GridLayout *ngIf="isRendering" rows="auto,auto,auto,auto" class="page">
         <GridLayout row="0" columns="auto,auto,auto" width="100%" height="8%">
-            <StackLayout col="0" height="80%" verticalAlignment="middle" width="20%">
+            <StackLayout col="0" height="100%" verticalAlignment="middle" width="20%">
                 <Button class="backButton" (tap)="onBack()"></Button>
             </StackLayout>
-            <StackLayout col="1" height="100%" verticalAlignment="middle" width="60%">
+            <StackLayout col="1" height="80%" verticalAlignment="middle" width="60%">
                 <Label class="pageHeading" text="Product detail"></Label>
             </StackLayout>
             <StackLayout col="2" height="80%" width="20%">
