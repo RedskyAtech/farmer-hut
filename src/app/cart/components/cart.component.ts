@@ -179,7 +179,7 @@ export class CartComponent implements OnInit {
 
     notifyUpdateCartQuantity() {
         var tempCart = [];
-
+        console.log(this.cart);
         this.backgroundHttpService
             .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), {}, this.cart)
             .then((res: any) => {

@@ -96,15 +96,10 @@ export class HomeUserComponent implements OnInit {
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
                 this.userService.activeScreen("homeUser");
-            }
-        })
-
-            if (data.isBackNavigation) {
                 this.updateCartCount();
             }
         })
-
-
+     
         // this.route.queryParams.subscribe(params => {
         //     console.log("NNNNNNNN::::", params)
         //     if (params["index"] == "1" && params["index"] != undefined) {

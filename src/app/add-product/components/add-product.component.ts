@@ -130,7 +130,8 @@ export class AddProductComponent implements OnInit {
                 console.log('pppppp:::', this.product)
             }
             if (params["similarProduct"] != undefined) {
-                this.similarProduct = params["similarProduct"];
+                this.similarProduct = JSON.parse(params["similarProduct"]);
+                console.log(this.similarProduct);
             }
             if (params["type"] != undefined) {
                 this.type = params["type"];
@@ -144,6 +145,7 @@ export class AddProductComponent implements OnInit {
 
             if (this.similarProduct != undefined) {
                 if (this.similarProduct.image) {
+                    this.isVisibleImage = false;
                     this.productImage = this.similarProduct.image;
                 }
                 if (this.similarProduct.brandName != undefined) {
@@ -225,6 +227,7 @@ export class AddProductComponent implements OnInit {
 
             if (this.product != undefined) {
                 if (this.product.image) {
+                    this.isVisibleImage = false;
                     this.productImage = this.product.image;
                 }
                 if (this.product.brandName != undefined) {

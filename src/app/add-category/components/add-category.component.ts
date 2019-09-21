@@ -88,6 +88,7 @@ export class AddCategoryComponent implements OnInit {
                             this.categoryImage = res.data.image.resize_url;
                             this.categoryName = res.data.name;
                             this.categoryBorderColor = "#00C012";
+                            this.isVisibleImage = false;
                         }
                     }
                 }, error => {

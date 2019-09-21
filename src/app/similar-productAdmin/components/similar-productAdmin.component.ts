@@ -125,7 +125,7 @@ export class SimilarProductAdminComponent implements OnInit {
     onEdit(product: Product) {
         this.routerExtensions.navigate(['./addProduct'], {
             queryParams: {
-                "similarProduct": product,
+                "similarProduct": JSON.stringify(product),
                 "classType": "similarProduct",
                 "type": "edit"
             },

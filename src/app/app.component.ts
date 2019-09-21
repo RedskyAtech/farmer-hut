@@ -53,7 +53,6 @@ export class AppComponent {
         this.ngZone.run(() => {
             this.tries = 0;
             application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
-
                 this.userService.activescreen.subscribe((screen: string) => {
                     if (screen == "homeUser" || screen == "homeAdmin") {
                         data.cancel = (this.tries++ > 0) ? false : true;
