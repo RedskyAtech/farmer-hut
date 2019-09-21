@@ -48,7 +48,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         // this.isLoading = false;
         this.page.actionBarHidden = true;
         this.hasBeenHitOnce = false;
-
+        this.updateCartCount();
         this.route.queryParams.subscribe(params => {
             if (params["product"] != undefined) {
                 this.genricProduct = JSON.parse(params["product"]);

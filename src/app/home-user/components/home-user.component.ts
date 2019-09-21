@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Product } from "~/app/models/product.model";
 import { Cart } from "~/app/models/cart.model";
@@ -9,16 +8,13 @@ import { UserService } from '../../services/user.service';
 import { Category } from "../../models/category.model";
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
-import { Page, NavigatedData } from "tns-core-modules/ui/page/page";
+import { Page } from "tns-core-modules/ui/page/page";
 import { BackgroundHttpService } from "~/app/services/background.http.service";
 import { Marker, MapView } from "nativescript-google-maps-sdk";
-import * as application from "tns-core-modules/application";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
 import * as Location from "nativescript-geolocation"
-import { element } from "@angular/core/src/render3";
-import { async } from "rxjs/internal/scheduler/async";
 
 
 @Component({
@@ -70,7 +66,7 @@ export class HomeUserComponent implements OnInit {
     hasBeenHitOnce: boolean;
     errorMessage: string;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
+    constructor(private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
 
         this.sliderImage1 = "res://slider_background";
@@ -128,10 +124,6 @@ export class HomeUserComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
-        //     this.routerExtensions.back();
-        //     args.cancel = true;
-        // });
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
@@ -140,27 +132,9 @@ export class HomeUserComponent implements OnInit {
                 if (this.getCategory()) {
                     this.updateSlider(1)
                 }
-                // this.updateCartCount();
             }
         }
     }
-
-
-    // onNavigatedFrom(args: NavigatedData) {
-    //     console.log(args.eventName);
-    //     console.log(args.object);
-    //     console.log(args.context);
-    //     console.log(args.isBackNavigation);
-    // }
-
-
-    // onNavigatedTo(args: NavigatedData) {
-    //     console.log(args.eventName);
-    //     console.log(args.object);
-    //     console.log(args.context);
-    //     console.log(args.isBackNavigation);
-    // }
-
 
     onLoadMoreMainItems() {
         console.log("111")
@@ -181,14 +155,12 @@ export class HomeUserComponent implements OnInit {
     }
 
     getProducts() {
-        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
                 // console.trace('RES:::', res.data)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true && res.data && res.data.products) {
-                        // this.isLoading = false;
                         for (var i = 0; i < res.data.products.length; i++) {
                             this.products.push({
                                 _id: res.data.products[i]._id,
@@ -202,17 +174,11 @@ export class HomeUserComponent implements OnInit {
                                 description: res.data.products[i].heading.description
                             })
                         }
-                        // if (localstorage.getItem("cartId") != null && localstorage.getItem("cartId")) {
-                        //     this.getCategory();
-                        // }
-                        // this.pageNo = this.pageNo + 1;
-                        // this.updateSlider(1);
                         this.isRenderingSlider = true;     //remove it
                         this.mainInit = true;
                     }
                 }
             }, error => {
-                // this.isLoading = false;
                 this.userService.showLoadingState(false);
                 // this.pullRefreshPage.refreshing = false;
                 if (error.error.error == undefined) {
@@ -230,14 +196,12 @@ export class HomeUserComponent implements OnInit {
     }
 
     getCategory() {
-        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `categories?status=active&pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
                 console.log('RES:::CATEGORY:::', res)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        // this.isLoading = false;
                         if (res.data && res.data.categories) {
                             for (var i = 0; i < res.data.categories.length; i++) {
                                 this.productCategories.push({
@@ -252,7 +216,6 @@ export class HomeUserComponent implements OnInit {
                     }
                 }
             }, error => {
-                // this.isLoading = false;
                 this.userService.showLoadingState(false);
                 // this.pullRefreshPage.refreshing = false;
                 if (error.error.error == undefined) {
@@ -274,10 +237,8 @@ export class HomeUserComponent implements OnInit {
         if (args.oldIndex !== -1) {
             const newIndex = args.newIndex;
             if (newIndex === 0) {
-                // this.tabSelectedIndexResult = "Profile Tab (tabSelectedIndex = 0 )";
                 this.tabSelectedIndex = 0;
             } else if (newIndex === 1) {
-                // this.tabSelectedIndexResult = "Stats Tab (tabSelectedIndex = 1 )";
                 this.tabSelectedIndex = 1;
             }
         }
@@ -372,9 +333,7 @@ export class HomeUserComponent implements OnInit {
         return new Promise<boolean>((resolve, reject) => {
             for (var i = 0; i < storedCartProducts.length; i++) {
                 if (product._id == storedCartProducts[i]._id) {
-                    // var quantity = parseInt(storedCartProducts[i].quantity) + 1;
                     this.cart.product.quantity = "1";
-                    // this.updateCart(storedCart._id);
                     alert("Product already in cart, Please increase quantity in cart");
                     resolve(true);
                     return;
@@ -443,20 +402,6 @@ export class HomeUserComponent implements OnInit {
                 });
 
         }
-        // this.userService.showLoadingState(true);
-        // this.http
-        //     .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), this.cart)
-        //     .subscribe((res: any) => {
-        //         if (res != null && res != undefined) {
-        //             if (res.isSuccess == true) {
-        //                 Toast.makeText("Product is added to cart!!!", "long").show();
-        //                 this.updateCartCount();
-        //             }
-        //         }
-        //     }, error => {
-        //         this.userService.showLoadingState(false);
-        //         console.log(error.error.error);
-        //     });
     }
 
 }

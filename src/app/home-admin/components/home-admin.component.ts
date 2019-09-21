@@ -12,7 +12,6 @@ import { NavigationService } from "~/app/services/navigation.service";
 
 import * as localstorage from "nativescript-localstorage";
 import { Page } from "tns-core-modules/ui/page/page";
-import { User } from "~/app/models/user.model";
 
 
 @Component({
@@ -98,21 +97,12 @@ export class HomeAdminComponent implements OnInit {
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
-        // this.route.queryParams.subscribe(params => {
-        //     if (params["index"] == "1" && params["index"] != undefined) {
-        //         this.tabSelectedIndex = 1;
-        //         this.addButtonText = "Add Category";
-        //     } else {
-        //         this.tabSelectedIndex = 0;
-        //         this.addButtonText = "Add Product";
-        //     }
-        // });
+
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
             if (this.getProducts()) {
                 if (this.getCategories()) {
                     this.updateSlider(1)
                 }
-                // this.updateCartCount();
             }
         }
     }
@@ -174,33 +164,6 @@ export class HomeAdminComponent implements OnInit {
         }
     }
 
-    // updateSlider() {
-    //     this.http
-    //         .get(Values.BASE_URL + "files")
-    //         .subscribe((res: any) => {
-    //             if (res != null && res != undefined) {
-    //                 if (res.isSuccess == true) {
-    //                     if (res.data[0].images[0].url) {
-    //                         this.sliderImage1 = res.data[0].images[0].url;
-    //                     }
-    //                     if (res.data[0].images[1].url) {
-    //                         this.sliderImage2 = res.data[0].images[1].url;
-    //                     }
-    //                     if (res.data[0].images[2].url) {
-    //                         this.sliderImage3 = res.data[0].images[2].url;
-    //                     }
-    //                     if (res.data[0].images[3].url) {
-    //                         this.sliderImage4 = res.data[0].images[3].url;
-    //                     }
-    //                     // this.pullRefreshPage.refreshing = false;
-    //                 }
-    //             }
-    //         }, error => {
-    //             console.log(error.error.error);
-    //         });
-    // }
-
-
     onLoadMoreMainItems() {
         if (!this.mainInit) {
             this.pageNo = this.pageNo + 1;
@@ -219,14 +182,11 @@ export class HomeAdminComponent implements OnInit {
 
     getProducts() {
         console.log('HOME:::PRO')
-        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `products?pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
-                // console.log("RES:::ADMIN", res)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        // this.isLoading = false;
                         for (var i = 0; i < res.data.products.length; i++) {
                             this.products.push({
                                 _id: res.data.products[i]._id,
@@ -242,8 +202,6 @@ export class HomeAdminComponent implements OnInit {
                                 description: res.data.products[i].heading.description
                             })
                         }
-                        // this.getCategories();
-                        // this.isRenderingProducts = true;
                         this.mainInit = true;
                     }
                 }
@@ -266,14 +224,12 @@ export class HomeAdminComponent implements OnInit {
 
     getCategories() {
         console.log('HOME:::CAT')
-        // this.isLoading = true;
         this.http
             .get(Values.BASE_URL + `categories?pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
 
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        // this.isLoading = false;
                         for (var i = 0; i < res.data.categories.length; i++) {
                             this.productCategories.push({
                                 _id: res.data.categories[i]._id,
@@ -283,10 +239,8 @@ export class HomeAdminComponent implements OnInit {
                             })
                         }
                         this.isRenderingProducts = true;
-                        // this.updateSlider();
                         this.categoryInit = true;
                     }
-                    // this.isRenderingProducts = true;
                 }
             }, error => {
                 // this.isLoading = false;
@@ -308,11 +262,9 @@ export class HomeAdminComponent implements OnInit {
         if (args.oldIndex !== -1) {
             const newIndex = args.newIndex;
             if (newIndex === 0) {
-                // this.tabSelectedIndexResult = "Profile Tab (tabSelectedIndex = 0 )";
                 this.tabSelectedIndex = 0;
                 this.addButtonText = "Add Product";
             } else if (newIndex === 1) {
-                // this.tabSelectedIndexResult = "Stats Tab (tabSelectedIndex = 1 )";
                 this.tabSelectedIndex = 1;
                 this.addButtonText = "Add Category";
             }
@@ -405,31 +357,6 @@ export class HomeAdminComponent implements OnInit {
             that.productCategories = [];
             that.getProducts();
         }, 5000);
-
-
-        // var formBody: FormData = new FormData();
-        // formBody.append('status', 'disabled')
-        // console.log(formBody);
-        // let headers = {
-        //     'Content-Type': 'application/multipart/form-data'
-        // }
-
-        // this.http
-        //     .put(Values.BASE_URL + "products/update/" + product._id, formBody, { headers: headers })
-        //     .subscribe((res: any) => {
-        //         console.trace('RES:::', res)
-        //         if (res != null && res != undefined) {
-        //             if (res.isSuccess == true) {
-        //                 this.userService.showLoadingState(false);
-        //                 this.products = [];
-        //                 this.productCategories = [];
-        //                 this.getProducts();
-        //             }
-        //         }
-        //     }, error => {
-        //         this.userService.showLoadingState(false);
-        //         console.log(error.error);
-        //     });
     }
 
     respondedEvent(e) {

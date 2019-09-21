@@ -80,6 +80,9 @@ export class CartComponent implements OnInit {
     }
 
     onRemoveItem(product: Product) {
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+
+
         this.cart.product._id = product._id;
         this.cart.product.quantity = "0";
 
@@ -94,6 +97,19 @@ export class CartComponent implements OnInit {
         if (this.cartProducts.length == 0) {
             this.isRenderingMessage = true;
         }
+
+        if (storedCart.length != 0) {
+            for (var i = 0; i < storedCart.length; i++) {
+                if (product._id == storedCart[i]._id) {
+                    storedCart[i].quantity = "0";
+                    localstorage.setItem('cart', JSON.stringify(storedCart));
+                    this.notifyUpdateCartQuantity();
+                }
+            }
+        }
+        this.totalAmount = this.getGrandTotal().toString();
+        console.log('Prices:::', this.totalAmount, typeof (this.totalAmount))
+
         this.notifyUpdateCartQuantity();
     }
 
@@ -106,6 +122,7 @@ export class CartComponent implements OnInit {
         var index = this.cartProducts.indexOf(product)
 
         this.cartProducts[index].quantity = (parseInt(this.cartProducts[index].quantity) + 1).toString();
+        this.cartProducts[index].totalPrice = this.cartProducts[index].totalPrice + this.cartProducts[index].price;
 
         if (product.isSimilarProduct == true) {
             this.cart.product.isSimilarProduct = product.isSimilarProduct;
@@ -114,6 +131,9 @@ export class CartComponent implements OnInit {
                     if (product._id == storedCart[i]._id) {
                         var quantity = parseInt(storedCart[i].quantity) + 1;
                         this.cart.product.quantity = quantity.toString();
+                        storedCart[i].quantity = quantity;
+                        storedCart[i].totalPrice = storedCart[i].totalPrice + storedCart[i].price;
+                        localstorage.setItem('cart', JSON.stringify(storedCart));
                         this.notifyUpdateCartQuantity();
                     }
                 }
@@ -121,18 +141,21 @@ export class CartComponent implements OnInit {
         }
         else {
             this.cart.product.isSimilarProduct = false;
-            this.cart.product.isSimilarProduct = product.isSimilarProduct;
-
             if (storedCart.length != 0) {
                 for (var i = 0; i < storedCart.length; i++) {
                     if (product._id == storedCart[i]._id) {
                         var quantity = parseInt(storedCart[i].quantity) + 1;
                         this.cart.product.quantity = quantity.toString();
+                        storedCart[i].quantity = quantity;
+                        storedCart[i].totalPrice = storedCart[i].totalPrice + storedCart[i].price;
+                        localstorage.setItem('cart', JSON.stringify(storedCart));
                         this.notifyUpdateCartQuantity();
                     }
                 }
             }
         }
+        this.totalAmount = this.getGrandTotal().toString();
+        console.log('Prices:::', this.totalAmount, typeof (this.totalAmount))
     }
 
     onMinus(product: Product) {
@@ -146,6 +169,7 @@ export class CartComponent implements OnInit {
             this.onRemoveItem(product);
         } else {
             this.cartProducts[index].quantity = (parseInt(this.cartProducts[index].quantity) - 1).toString();
+            this.cartProducts[index].totalPrice = this.cartProducts[index].totalPrice - this.cartProducts[index].price;
         }
 
         if (product.isSimilarProduct == true) {
@@ -157,6 +181,9 @@ export class CartComponent implements OnInit {
                     if (product._id == storedCart[i]._id) {
                         var quantity = parseInt(storedCart[i].quantity) - 1;
                         this.cart.product.quantity = quantity.toString();
+                        storedCart[i].quantity = quantity;
+                        storedCart[i].totalPrice = storedCart[i].totalPrice - storedCart[i].price;
+                        localstorage.setItem('cart', JSON.stringify(storedCart));
                         this.notifyUpdateCartQuantity();
                     }
                 }
@@ -170,11 +197,16 @@ export class CartComponent implements OnInit {
                     if (product._id == storedCart[i]._id) {
                         var quantity = parseInt(storedCart[i].quantity) - 1;
                         this.cart.product.quantity = quantity.toString();
+                        storedCart[i].quantity = quantity;
+                        storedCart[i].totalPrice = storedCart[i].totalPrice - storedCart[i].price;
+                        localstorage.setItem('cart', JSON.stringify(storedCart));
                         this.notifyUpdateCartQuantity();
                     }
                 }
             }
         }
+        this.totalAmount = this.getGrandTotal().toString();
+        console.log('Prices:::', this.totalAmount, typeof (this.totalAmount))
     }
 
     notifyUpdateCartQuantity() {
@@ -191,10 +223,12 @@ export class CartComponent implements OnInit {
                             }
                         }
                         localstorage.setItem('cart', JSON.stringify(tempCart));
+                        this.totalAmount = this.getGrandTotal().toString();
                         // localstorage.setItem('cart', JSON.stringify(res.data.products))
                     }
                 }
             }, error => {
+                this.totalAmount = this.getGrandTotal().toString();
                 console.log(error.error.error);
             });
     }
@@ -217,9 +251,9 @@ export class CartComponent implements OnInit {
                                     image: res.data.products[i].image.resize_url,
                                     fullName: res.data.products[i].name,
                                     quantity: res.data.products[i].quantity,
-                                    totalPrice: "RS" + " " + res.data.products[i].total,
+                                    totalPrice: res.data.products[i].total,
                                     weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                    price: "Rs " + res.data.products[i].price.value
+                                    price: res.data.products[i].price.value
                                 })
                             }
                             this.totalAmount = res.data.grandTotal;
@@ -406,5 +440,18 @@ export class CartComponent implements OnInit {
             // this.changeDetector.detectChanges();
         }, 400)
 
+    }
+
+    getGrandTotal(): number {
+        var storedCart = JSON.parse(localstorage.getItem('cart'));
+        var grandTotal = 0;
+
+        for (var i = 0; i < storedCart.length; i++) {
+            for (var j = 0; j < parseInt(storedCart[i].quantity); j++) {
+                console.log('Prices:::', storedCart[i].price, typeof (storedCart[i].price))
+                grandTotal = grandTotal + storedCart[i].price.value;
+            }
+        }
+        return grandTotal;
     }
 }

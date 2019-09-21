@@ -412,6 +412,7 @@ export class AddressComponent implements OnInit {
     }
 
     onSelectLocation() {
+        this.mapView.removeAllMarkers();
 
         this.pinLocation = false;
         this.isLoading = true;
