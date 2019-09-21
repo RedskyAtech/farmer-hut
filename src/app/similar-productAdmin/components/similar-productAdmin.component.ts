@@ -48,11 +48,16 @@ export class SimilarProductAdminComponent implements OnInit {
         })
 
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
+            if (localstorage.getItem("categoryId") != null && localstorage.getItem("categoryId") != undefined) {
+                this.categoryId = localstorage.getItem("categoryId");
+                console.log("idddddddd::::::::", this.categoryId);
+            }
             this.getSimilarProducts();
         }
         this.navigationService.backTo = "homeAdmin";
         this.isLoading = false;
         this.isRendering = false;
+
         // this.http
         //     .get(Values.BASE_URL + "categories/" + this.categoryId)
         //     .subscribe((res: any) => {
@@ -117,7 +122,16 @@ export class SimilarProductAdminComponent implements OnInit {
                 }, error => {
                     // this.isLoading = false;
                     this.userService.showLoadingState(false);
-                    alert(error.error.error);
+                    if (error.error.error == undefined) {
+                        // this.errorMessage = "May be your network connection is low.";
+                        // this.warningDialog.show();
+                        alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        // this.errorMessage = error.error.error;
+                        // this.warningDialog.show();
+                        alert(error.error.error);
+                    }
                 });
         }
     }

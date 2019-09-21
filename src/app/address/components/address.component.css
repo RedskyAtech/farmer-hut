@@ -112,3 +112,22 @@
     border-bottom-width: 1;
     height:40;
 }
+
+.select-button{
+    border-color:white;
+    border-width:1;
+    border-radius:10;
+    color:white;
+    font-size: 20;
+    text-transform: initial;
+    text-align: center;
+    height:40;
+    padding:0;
+    background-color: #00C012;
+}
+.select-button:highlighted{
+    background-color: transparent;
+    z-index: 1;    
+    border-color: #00C012;
+    color:#00C012;
+}

@@ -39,8 +39,7 @@
             <StackLayout row="3" width="80%" height="10%">
                 <TextField [hint]="mapAddressHint" [text]="mapAddress" edimapAddressClasstable="false"
                     (textChange)="onMapAddressTextChanged($event)" secure="false" padding="0" returnKeyType="done"
-                    [class]="mapLabelClass?'input-field input input-border':'map-focus'"
-                    autocorrect="false">
+                    [class]="mapLabelClass?'input-field input input-border':'map-focus'" autocorrect="false">
                 </TextField>
             </StackLayout>
             <StackLayout row="4" width="80%" height="10%">
@@ -81,7 +80,7 @@
             (coordinateTapped)="onCoordinateTapped($event)" (cameraChanged)="onCameraChanged($event)"
             (cameraMove)="onCameraMove($event)"></MapView>
 
-        <Button verticalAlignment="bottom" horizontalAlignment="center" text="Select"
+        <Button class="select-button" verticalAlignment="bottom" horizontalAlignment="center" text="Select"
             (tap)="onSelectLocation()"></Button>
 
     </GridLayout>

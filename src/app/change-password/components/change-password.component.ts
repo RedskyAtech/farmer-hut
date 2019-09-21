@@ -34,12 +34,12 @@ export class ChangePasswordComponent implements OnInit {
     user: User;
     userId: string;
     errorMessage: string;
-    isRendering: boolean;
+    // isRendering: boolean;
     isLoading: boolean;
 
     constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
-        this.isRendering = false;
+        // this.isRendering = false;
         this.isLoading = false;
 
         this.user = new User();
@@ -60,9 +60,9 @@ export class ChangePasswordComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        setTimeout(() => {
-            this.isRendering = false;
-        })
+        // setTimeout(() => {
+        //     this.isRendering = true;
+        // })
     }
 
     onOK() {
@@ -132,7 +132,16 @@ export class ChangePasswordComponent implements OnInit {
                 }, error => {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
-                    alert(error.error.error);
+                    if (error.error.error == undefined) {
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                        // alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        this.errorMessage = error.error.error;
+                        this.warningDialog.show();
+                        // alert(error.error.error);
+                    }
                 });
         }
     }

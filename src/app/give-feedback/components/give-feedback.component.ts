@@ -65,7 +65,7 @@ export class GiveFeedbackComponent implements OnInit {
             if (localStorage.getItem("userId") != null && localStorage.getItem("userId") != undefined) {
                 this.userId = localStorage.getItem("userId");
             }
-            this.isLoading=true;
+            this.isLoading = true;
             this.feedback.message = this.feedbackMessage;
             this.feedback.userId = this.userId;
             this.http
@@ -81,7 +81,16 @@ export class GiveFeedbackComponent implements OnInit {
                 }, error => {
                     this.isLoading = false;
                     this.routerExtensions.back();
-                    console.log(error.error.error);
+                    if (error.error.error == undefined) {
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                        // alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        this.errorMessage = error.error.error;
+                        this.warningDialog.show();
+                        // alert(error.error.error);
+                    }
                 });
 
             // this.routerExtensions.navigate(['./profile'], {

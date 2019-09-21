@@ -144,6 +144,9 @@ export class AddProductComponent implements OnInit {
         if (this.classType == "similarProduct") {
 
             if (this.similarProduct != undefined) {
+                if (this.similarProduct._id) {
+                    this.similarProductId = this.similarProduct._id;
+                }
                 if (this.similarProduct.image) {
                     this.isVisibleImage = false;
                     this.productImage = this.similarProduct.image;
@@ -226,6 +229,10 @@ export class AddProductComponent implements OnInit {
         else {
 
             if (this.product != undefined) {
+                console.log(this.product._id);
+                if (this.product._id) {
+                    this.productId = this.product._id;
+                }
                 if (this.product.image) {
                     this.isVisibleImage = false;
                     this.productImage = this.product.image;
@@ -386,6 +393,7 @@ export class AddProductComponent implements OnInit {
     }
 
     onUploadImage() {
+        this.isVisibleImage = true;
         this.photoUploadDialog.show();
     }
 
@@ -578,6 +586,8 @@ export class AddProductComponent implements OnInit {
                         { name: "isUpdate", value: "true" },
                         { name: "product_id", value: that.productId },
                     ]
+                    console.log(params);
+                    console.log(request);
                     var task = uploadSession.multipartUpload(params, request);
                     task.on("responded", this.respondedEvent);
                     task.on("error", this.errorEvent);

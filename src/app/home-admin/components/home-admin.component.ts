@@ -160,7 +160,16 @@ export class HomeAdminComponent implements OnInit {
                         }
                     }
                 }, error => {
-                    console.log(error.error.error);
+                    if (error.error.error == undefined) {
+                        // this.errorMessage = "May be your network connection is low.";
+                        // this.warningDialog.show();
+                        alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        // this.errorMessage = error.error.error;
+                        // this.warningDialog.show();
+                        alert(error.error.error);
+                    }
                 });
         }
     }
@@ -193,7 +202,6 @@ export class HomeAdminComponent implements OnInit {
 
 
     onLoadMoreMainItems() {
-        console.log("111")
         if (!this.mainInit) {
             this.pageNo = this.pageNo + 1;
             this.getProducts();
@@ -202,7 +210,6 @@ export class HomeAdminComponent implements OnInit {
     }
 
     onLoadMoreCategoryItems() {
-        console.log("111")
         if (!this.categoryInit) {
             this.categoryPageNo = this.categoryPageNo + 1;
             this.getCategories();
@@ -242,7 +249,16 @@ export class HomeAdminComponent implements OnInit {
                 }
             }, error => {
                 // this.isLoading = false;
-                alert(error.error.error);
+                if (error.error.error == undefined) {
+                    // this.errorMessage = "May be your network connection is low.";
+                    // this.warningDialog.show();
+                    alert("Something went wrong!!! May be your network connection is low.");
+                }
+                else {
+                    // this.errorMessage = error.error.error;
+                    // this.warningDialog.show();
+                    alert(error.error.error);
+                }
             });
 
         return true;
@@ -274,7 +290,16 @@ export class HomeAdminComponent implements OnInit {
                 }
             }, error => {
                 // this.isLoading = false;
-                alert(error.error.error);
+                if (error.error.error == undefined) {
+                    // this.errorMessage = "May be your network connection is low.";
+                    // this.warningDialog.show();
+                    alert("Something went wrong!!! May be your network connection is low.");
+                }
+                else {
+                    // this.errorMessage = error.error.error;
+                    // this.warningDialog.show();
+                    alert(error.error.error);
+                }
             });
         return true;
     }

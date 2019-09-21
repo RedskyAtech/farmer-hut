@@ -120,6 +120,7 @@ export class AddCategoryComponent implements OnInit {
     }
 
     onUploadImage() {
+        this.isVisibleImage = true;
         this.photoUploadDialog.show();
     }
 

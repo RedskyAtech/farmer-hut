@@ -14,6 +14,7 @@ import { BackgroundService } from "./services/background.service"
 import { BackgroundHttpService } from "./services/background.http.service";
 import { Folder, File } from "tns-core-modules/file-system/file-system";
 import { Router } from "@angular/router";
+import { exit } from 'nativescript-exit';
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
@@ -51,15 +52,20 @@ export class AppComponent {
         });
 
         this.ngZone.run(() => {
-            this.tries = 0;
             application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
                 this.userService.activescreen.subscribe((screen: string) => {
                     if (screen == "homeUser" || screen == "homeAdmin") {
+                        this.tries = 0;
                         data.cancel = (this.tries++ > 0) ? false : true;
-                        if (data.cancel) Toast.makeText("Press again to exit", "short").show();
+                        if (data.cancel) {
+                            Toast.makeText("Press again to exit", "short").show();
+                        }
                         setTimeout(() => {
                             this.tries = 0;
                         }, 1000);
+                        if (this.tries == 2) {
+                            exit();
+                        }
                     }
                     else {
                         data.cancel = true;

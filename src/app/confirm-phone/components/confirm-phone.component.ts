@@ -94,73 +94,81 @@ export class ConfirmPhoneComponent implements OnInit {
                             this.userService.showLoadingState(false);
                             // this.router.navigate(['./login']);
                             Toast.makeText("Registered successfully!!!").show();
-                            this.http
-                                .post(Values.BASE_URL + "users/login", this.user)
-                                .subscribe((res: any) => {
-                                    if (res != null && res != undefined) {
-                                        if (res.isSuccess == true) {
-                                            this.isLoading = false;
-                                            this.userService.showLoadingState(false);
-                                            if (res.data.isVerified == false) {
-                                                this.user.name = res.data.name;
-                                                this.user.email = res.data.email;
-                                            }
-                                            else {
-                                                if (res.data.type == "admin") {
-                                                    localstorage.removeItem('userToken');
-                                                    localstorage.removeItem('userId');
-                                                    if (res.data.token != "" && res.data.token != undefined) {
-                                                        localstorage.setItem('adminToken', res.data.token);
-                                                    }
-                                                    if (res.data._id != null && res.data._id != undefined) {
-                                                        localstorage.setItem('adminId', res.data._id);
-                                                    }
-                                                    localstorage.setItem('userType', res.data.type);
-                                                    Toast.makeText("Login successfully!!!", "long").show();
-                                                    this.routerExtensions.navigate(['./homeAdmin'], {
-                                                        clearHistory: true,
-                                                    });
-                                                }
-                                                else {
-                                                    localstorage.removeItem('adminToken');
-                                                    localstorage.removeItem('adminId');
-                                                    if (res.data.token != "" && res.data.token != undefined) {
-                                                        localstorage.setItem('userToken', res.data.token);
-                                                    }
-                                                    if (res.data._id != null && res.data._id != undefined) {
-                                                        localstorage.setItem('userId', res.data._id);
-                                                        this.http
-                                                            .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
-                                                            .subscribe((res: any) => {
-                                                                if (res != "" && res != undefined) {
-                                                                    if (res.isSuccess == true) {
-                                                                        localstorage.setItem('cartId', res.data.cartId);
-                                                                    }
-                                                                }
-                                                            }, error => {
-                                                                alert(error.error.error);
-                                                            });
-                                                    }
-                                                    localstorage.setItem('userType', res.data.type);
-                                                    // Toast.makeText("Login successfully!!!", "long").show();
-                                                    this.routerExtensions.navigate(['./homeUser'], {
-                                                        clearHistory: true,
-                                                    });
-                                                }
-                                            }
-                                        }
-                                    }
-                                }, error => {
-                                    this.isLoading = false;
-                                    this.userService.showLoadingState(false);
-                                    alert(error.error.error);
-                                });
+                            this.routerExtensions.navigate(['/login']);
+                            // this.http
+                            //     .post(Values.BASE_URL + "users/login", this.user)
+                            //     .subscribe((res: any) => {
+                            //         if (res != null && res != undefined) {
+                            //             if (res.isSuccess == true) {
+                            //                 this.isLoading = false;
+                            //                 this.userService.showLoadingState(false);
+                            //                 if (res.data.isVerified == false) {
+                            //                     this.user.name = res.data.name;
+                            //                     this.user.email = res.data.email;
+                            //                 }
+                            //                 else {
+                            // if (res.data.type == "admin") {
+                            //     localstorage.removeItem('userToken');
+                            //     localstorage.removeItem('userId');
+                            //     if (res.data.token != "" && res.data.token != undefined) {
+                            //         localstorage.setItem('adminToken', res.data.token);
+                            //     }
+                            //     if (res.data._id != null && res.data._id != undefined) {
+                            //         localstorage.setItem('adminId', res.data._id);
+                            //     }
+                            //     localstorage.setItem('userType', res.data.type);
+                            //     Toast.makeText("Login successfully!!!", "long").show();
+                            //     this.routerExtensions.navigate(['./homeAdmin'], {
+                            //         clearHistory: true,
+                            //     });
+                            // }
+                            // else {
+                            //                 localstorage.removeItem('adminToken');
+                            //                 localstorage.removeItem('adminId');
+                            //                 if (res.data.token != "" && res.data.token != undefined) {
+                            //                     localstorage.setItem('userToken', res.data.token);
+                            //                 }
+                            //                 if (res.data._id != null && res.data._id != undefined) {
+                            //                     localstorage.setItem('userId', res.data._id);
+                            //                     this.http
+                            //                         .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
+                            //                         .subscribe((res: any) => {
+                            //                             if (res != "" && res != undefined) {
+                            //                                 if (res.isSuccess == true) {
+                            //                                     localstorage.setItem('cartId', res.data.cartId);
+                            //                                 }
+                            //                             }
+                            //                         }, error => {
+                            //                             alert(error.error.error);
+                            //                         });
+                            //                 }
+                            //                 localstorage.setItem('userType', res.data.type);
+                            //                 Toast.makeText("Login successfully!!!", "long").show();
+                            //                 this.routerExtensions.navigate(['./homeUser'], {
+                            //                     clearHistory: true,
+                            //                 });
+                            //                 // }
+                            //             }
+                            //         }
+                            //     }
+                            // }, error => {
+                            //     this.isLoading = false;
+                            //     this.userService.showLoadingState(false);
+                            //     alert(error.error.error);
+                            // });
                         }
                     }
                 }, error => {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
-                    alert(error.error.error);
+                    if (error.error.error == undefined) {
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                    }
+                    else {
+                        this.errorMessage = error.error.error;
+                        this.warningDialog.show();
+                    }
                 });
         }
     }
@@ -190,7 +198,14 @@ export class ConfirmPhoneComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                console.log(error.error.error);
+                if (error.error.error == undefined) {
+                    this.errorMessage = "May be your network connection is low.";
+                    this.warningDialog.show();
+                }
+                else {
+                    this.errorMessage = error.error.error;
+                    this.warningDialog.show();
+                }
             });
     }
 

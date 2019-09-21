@@ -68,6 +68,7 @@ export class HomeUserComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
     hasBeenHitOnce: boolean;
+    errorMessage: string;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
@@ -88,6 +89,7 @@ export class HomeUserComponent implements OnInit {
         this.isRendering = false;
         this.isLoading = false;
         this.hasBeenHitOnce = false;
+        this.errorMessage = "";
 
         this.userService.showLoadingState(false);
 
@@ -99,7 +101,7 @@ export class HomeUserComponent implements OnInit {
                 this.updateCartCount();
             }
         })
-     
+
         // this.route.queryParams.subscribe(params => {
         //     console.log("NNNNNNNN::::", params)
         //     if (params["index"] == "1" && params["index"] != undefined) {
@@ -183,7 +185,7 @@ export class HomeUserComponent implements OnInit {
         this.http
             .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
-                console.trace('RES:::', res.data)
+                // console.trace('RES:::', res.data)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true && res.data && res.data.products) {
                         // this.isLoading = false;
@@ -213,7 +215,16 @@ export class HomeUserComponent implements OnInit {
                 // this.isLoading = false;
                 this.userService.showLoadingState(false);
                 // this.pullRefreshPage.refreshing = false;
-                console.log(error.error.error);
+                if (error.error.error == undefined) {
+                    // this.errorMessage = "May be your network connection is low.";
+                    // this.warningDialog.show();
+                    alert("Something went wrong!!! May be your network connection is low.");
+                }
+                else {
+                    // this.errorMessage = error.error.error;
+                    // this.warningDialog.show();
+                    alert(error.error.error);
+                }
             });
         return true
     }
@@ -244,7 +255,16 @@ export class HomeUserComponent implements OnInit {
                 // this.isLoading = false;
                 this.userService.showLoadingState(false);
                 // this.pullRefreshPage.refreshing = false;
-                console.log(error.error.error);
+                if (error.error.error == undefined) {
+                    // this.errorMessage = "May be your network connection is low.";
+                    // this.warningDialog.show();
+                    alert("Something went wrong!!! May be your network connection is low.");
+                }
+                else {
+                    // this.errorMessage = error.error.error;
+                    // this.warningDialog.show();
+                    alert(error.error.error);
+                }
             });
 
         return true;
@@ -293,15 +313,24 @@ export class HomeUserComponent implements OnInit {
                     }
                 }, error => {
                     this.userService.showLoadingState(false);
-                    console.log(error.error.error);
+                    if (error.error.error == undefined) {
+                        // this.errorMessage = "May be your network connection is low.";
+                        // this.warningDialog.show();
+                        alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        // this.errorMessage = error.error.error;
+                        // this.warningDialog.show();
+                        alert(error.error.error);
+                    }
                 });
         }
     }
 
     updateCartCount() {
         var storedCart = JSON.parse(localstorage.getItem('cart'));
-
-        if (storedCart.products != 0) {
+        console.log(storedCart);
+        if (storedCart != null && storedCart.length != null && storedCart.length != 0) {
             this.isCartCount = true;
             this.cartCount = storedCart.length;
         }
@@ -311,7 +340,6 @@ export class HomeUserComponent implements OnInit {
     }
 
     onViewDetail(product: Product) {
-        console.log("SentPro:::", product)
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
                 "product": JSON.stringify(product),

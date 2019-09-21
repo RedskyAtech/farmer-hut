@@ -174,7 +174,14 @@ export class RegisterComponent implements OnInit {
                 }, error => {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
-                    console.log(error.error.error);
+                    if (error.error.error == undefined) {
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                    }
+                    else {
+                        this.errorMessage = error.error.error;
+                        this.warningDialog.show();
+                    }
                 });
         }
     }
@@ -197,7 +204,14 @@ export class RegisterComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                console.log(error.error.error);
+                if (error.error.error == undefined) {
+                    this.errorMessage = "May be your network connection is low.";
+                    this.warningDialog.show();
+                }
+                else {
+                    this.errorMessage = error.error.error;
+                    this.warningDialog.show();
+                }
             });
     }
 

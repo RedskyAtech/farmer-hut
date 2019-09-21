@@ -130,7 +130,14 @@ export class AboutUsAdminComponent implements OnInit {
                 }, error => {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
-                    alert(error.error.error);
+                    if (error.error.error == undefined) {
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                    }
+                    else {
+                        this.errorMessage = error.error.error;
+                        this.warningDialog.show();
+                    }
                 });
         }
     }
@@ -151,7 +158,14 @@ export class AboutUsAdminComponent implements OnInit {
             }, error => {
                 this.isLoading = false;
                 this.userService.showLoadingState(false);
-                alert(error.error.error);
+                if (error.error.error == undefined) {
+                    this.errorMessage = "May be your network connection is low.";
+                    this.warningDialog.show();
+                }
+                else {
+                    this.errorMessage = error.error.error;
+                    this.warningDialog.show();
+                }
             });
     }
 

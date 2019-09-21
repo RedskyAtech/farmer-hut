@@ -22,7 +22,7 @@
 }
 .pageHeading{
     color:#00C012;
-    font-size: 25%;
+    font-size: 22%;
     padding:0;
     text-align: center;
     font-weight: 500;
@@ -91,4 +91,24 @@
     z-index:1;
     color:#00C012;
     border-color: #00C012;
+}
+.backButton{
+    border-color:#00C012;
+    border-width:1;
+    border-radius:15;
+    text-transform: initial;
+    height:50%;
+    width:70%;
+    padding:0;
+    background-image: url("res://back_icon");
+    background-size:60% 80%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center;
+}
+
+.backButton:highlighted{
+    background-color: transparent;
+    z-index: 1;
+    border-color: white;
 }

@@ -165,7 +165,16 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                 }, error => {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
-                    console.log(error.error.error);
+                    if (error.error.error == undefined) {
+                        // this.errorMessage = "May be your network connection is low.";
+                        // this.warningDialog.show();
+                        alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        // this.errorMessage = error.error.error;
+                        // this.warningDialog.show();
+                        alert(error.error.error);
+                    }
                 });
         }
     }
@@ -243,7 +252,16 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                 }, error => {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
-                    console.log(error.error.error);
+                    if (error.error.error == undefined) {
+                        // this.errorMessage = "May be your network connection is low.";
+                        // this.warningDialog.show();
+                        alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        // this.errorMessage = error.error.error;
+                        // this.warningDialog.show();
+                        alert(error.error.error);
+                    }
                 });
         }
         if (this.orderStatus == "confirmed") {
@@ -285,7 +303,16 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
             }, error => {
                 this.isLoading = false;
                 this.userService.showLoadingState(false);
-                console.log(error.error.error);
+                if (error.error.error == undefined) {
+                    // this.errorMessage = "May be your network connection is low.";
+                    // this.warningDialog.show();
+                    alert("Something went wrong!!! May be your network connection is low.");
+                }
+                else {
+                    // this.errorMessage = error.error.error;
+                    // this.warningDialog.show();
+                    alert(error.error.error);
+                }
             });
     }
 

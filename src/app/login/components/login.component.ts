@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
         this.isRendering = false;
         this.isLoading = false;
         this.user = new User();
-   
+
         // this.file = File.fromPath(path.join(this.folder.)'FarmersHut.jpg');
 
         this.userService.showLoadingState(false);
@@ -173,8 +173,15 @@ export class LoginComponent implements OnInit {
                                                     }
                                                 }
                                             }, error => {
-                                                alert(error.error.error);
                                                 this.isLoading = false;
+                                                if (error.error.error == undefined) {
+                                                    this.errorMessage = "May be your network connection is low.";
+                                                    this.warningDialog.show();
+                                                }
+                                                else {
+                                                    this.errorMessage = error.error.error;
+                                                    this.warningDialog.show();
+                                                }
                                             });
                                     }
                                     localstorage.setItem('userType', res.data.type);
@@ -188,7 +195,14 @@ export class LoginComponent implements OnInit {
                     }
                 }, error => {
                     this.userService.showLoadingState(false);
-                    alert(error.error.error);
+                    if (error.error.error == undefined) {
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                    }
+                    else {
+                        this.errorMessage = error.error.error;
+                        this.warningDialog.show();
+                    }
                     this.isLoading = false;
                 });
         }
@@ -212,7 +226,15 @@ export class LoginComponent implements OnInit {
                 }
             }, error => {
                 // this.userService.showLoadingState(false);
-                alert(error.error.error);
+                // alert(error.error.error);
+                if (error.error.error == undefined) {
+                    this.errorMessage = "May be your network connection is low.";
+                    this.warningDialog.show();
+                }
+                else {
+                    this.errorMessage = error.error.error;
+                    this.warningDialog.show();
+                }
                 this.isLoading = false;
             });
     }
@@ -280,9 +302,14 @@ export class LoginComponent implements OnInit {
             }
         }
             , error => {
-                this.userService.showLoadingState(false);
-                // console.log(error.error.error);
-                console.log(error);
+                if (error.error.error == undefined) {
+                    this.errorMessage = "May be your network connection is low.";
+                    this.warningDialog.show();
+                }
+                else {
+                    this.errorMessage = error.error.error;
+                    this.warningDialog.show();
+                }
             });
     }
 
