@@ -15,6 +15,7 @@ import { BackgroundHttpService } from "./services/background.http.service";
 import { Folder, File } from "tns-core-modules/file-system/file-system";
 import { Router } from "@angular/router";
 import { exit } from 'nativescript-exit';
+import { initializeOnAngular } from 'nativescript-image-cache';
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
@@ -40,6 +41,8 @@ export class AppComponent {
     folder: Folder;
 
     constructor(private userService: UserService, private routerExtensions: RouterExtensions, private router: Router, private ngZone: NgZone, private navigationService: NavigationService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService) {
+
+        initializeOnAngular();
 
         HTTP.http = this.http;
         this.context = ad.getApplicationContext();

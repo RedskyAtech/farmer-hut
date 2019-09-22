@@ -550,16 +550,24 @@ export class AddProductComponent implements OnInit {
                         { name: "product_id", value: that.similarProductId }
                     ]
                     var task = uploadSession.multipartUpload(params, request);
-                    task.on("responded", this.respondedEvent);
+                    task.on("responded", (e) => {
+                        console.log("RESPONSE: " + e.data);
+                        this.isLoading = false;
+
+                        localStorage.setItem('fromSimilarProducts', 'true');
+
+                        this.routerExtensions.back();
+                    });
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
-                    setTimeout(() => {
-                        // this.userService.showLoadingState(false);
-                        this.isLoading = false;
-                        this.routerExtensions.navigate(['./similarProductAdmin'], {
-                            clearHistory: true,
-                        });
-                    }, 10000);
+
+                    // setTimeout(() => {
+                    //     // this.userService.showLoadingState(false);
+                    //     this.isLoading = false;
+                    //     this.routerExtensions.navigate(['./similarProductAdmin'], {
+                    //         clearHistory: true,
+                    //     });
+                    // }, 10000);
                 }
                 else {
                     var request = {
@@ -589,16 +597,23 @@ export class AddProductComponent implements OnInit {
                     console.log(params);
                     console.log(request);
                     var task = uploadSession.multipartUpload(params, request);
-                    task.on("responded", this.respondedEvent);
+                    task.on("responded", (e) => {
+                        console.log("RESPONSE: " + e.data);
+                        this.isLoading = false;
+                        localStorage.setItem('fromHome', 'true');
+
+                        this.routerExtensions.back();
+                    });
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
-                    setTimeout(() => {
-                        // this.userService.showLoadingState(false);
-                        this.isLoading = false;
-                        this.routerExtensions.navigate(['./homeAdmin'], {
-                            clearHistory: true,
-                        });
-                    }, 10000);
+
+                    // setTimeout(() => {
+                    //     // this.userService.showLoadingState(false);
+                    //     this.isLoading = false;
+                    //     this.routerExtensions.navigate(['./homeAdmin'], {
+                    //         clearHistory: true,
+                    //     });
+                    // }, 10000);
                 }
             } else {
                 if (that.classType == "similarProduct") {
@@ -627,16 +642,23 @@ export class AddProductComponent implements OnInit {
                         { name: "dimensions[unit]", value: that.weightDimension }
                     ]
                     var task = uploadSession.multipartUpload(params, request);
-                    task.on("responded", this.respondedEvent);
+                    task.on("responded", (e) => {
+                        console.log("RESPONSE: " + e.data);
+                        this.isLoading = false;
+
+                        localStorage.setItem('fromSimilarProducts', 'true');
+
+                        this.routerExtensions.back();
+                    });
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
-                    setTimeout(() => {
-                        this.isLoading = false;
-                        // this.userService.showLoadingState(false);
-                        this.routerExtensions.navigate(['./similarProductAdmin'], {
-                            clearHistory: true,
-                        });
-                    }, 10000);
+                    // setTimeout(() => {
+                    //     this.isLoading = false;
+                    //     // this.userService.showLoadingState(false);
+                    //     this.routerExtensions.navigate(['./similarProductAdmin'], {
+                    //         clearHistory: true,
+                    //     });
+                    // }, 10000);
                 }
                 else {
                     var request = {
@@ -660,16 +682,21 @@ export class AddProductComponent implements OnInit {
                         { name: "dimensions[unit]", value: that.weightDimension }
                     ]
                     var task = uploadSession.multipartUpload(params, request);
-                    task.on("responded", this.respondedEvent);
+                    task.on("responded", (e) => {
+                        console.log("RESPONSE: " + e.data);
+                        this.isLoading = false;
+                        localStorage.setItem('fromHome', 'true');
+                        this.routerExtensions.back();
+                    });
                     task.on("error", this.errorEvent);
                     task.on("complete", this.completeEvent);
-                    setTimeout(() => {
-                        // this.userService.showLoadingState(false);
-                        this.isLoading = false;
-                        this.routerExtensions.navigate(['./homeAdmin'], {
-                            clearHistory: true,
-                        });
-                    }, 10000);
+                    // setTimeout(() => {
+                    //     // this.userService.showLoadingState(false);
+                    //     this.isLoading = false;
+                    //     this.routerExtensions.navigate(['./homeAdmin'], {
+                    //         clearHistory: true,
+                    //     });
+                    // }, 10000);
 
                 }
             }
@@ -679,6 +706,21 @@ export class AddProductComponent implements OnInit {
     respondedEvent(e) {
         // var that = this;
         console.log("RESPONSE: " + e.data);
+        this.isLoading = false;
+        localStorage.setItem('fromHome', 'true');
+
+        this.routerExtensions.back();
+        // this.userService.showLoadingState(false);
+    }
+
+    similarProductRespondedEvent(e) {
+        // var that = this;
+        console.log("RESPONSE: " + e.data);
+        this.isLoading = false;
+
+        localStorage.setItem('fromSimilarProducts', 'true');
+
+        this.routerExtensions.back();
         // this.userService.showLoadingState(false);
     }
 

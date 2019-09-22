@@ -17,7 +17,7 @@
         </GridLayout>
         <GridLayout *ngIf="isRenderingDetail" row="1" width="100%" height="32%" backgroundColor="white">
             <StackLayout height="100%" width=" 100%">
-                <Image class="productImage" [src]="image"></Image>
+                <NSImage class="productImage" [src]="image" placeholder="res://slider_background"></NSImage>
             </StackLayout>
         </GridLayout>
         <GridLayout *ngIf="isRenderingDetail" row="2" rows="auto,auto,auto,auto,auto,auto,auto,*" width="100%"

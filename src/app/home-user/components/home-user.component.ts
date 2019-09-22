@@ -65,6 +65,8 @@ export class HomeUserComponent implements OnInit {
     isLoading: boolean;
     hasBeenHitOnce: boolean;
     errorMessage: string;
+    isScrolling: boolean;
+    scrollingTimeout;
 
     constructor(private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
@@ -86,6 +88,7 @@ export class HomeUserComponent implements OnInit {
         this.isLoading = false;
         this.hasBeenHitOnce = false;
         this.errorMessage = "";
+        this.isScrolling = false;
 
         this.userService.showLoadingState(false);
 
@@ -110,11 +113,15 @@ export class HomeUserComponent implements OnInit {
 
         setInterval(() => {
             setTimeout(() => {
-                this.selectedPage++;
+                if (!this.isScrolling) {
+                    this.selectedPage++;
+                }
             }, 6000)
             if (this.selectedPage == 3) {
                 setTimeout(() => {
-                    this.selectedPage = 0;
+                    if (!this.isScrolling) {
+                        this.selectedPage = 0;
+                    }
                 }, 6000);
             }
         }, 6000);
@@ -152,6 +159,20 @@ export class HomeUserComponent implements OnInit {
             this.getCategory();
         }
         this.categoryInit = false;
+    }
+
+    onGridViewScroll() {
+        if (this.isScrolling) {
+            clearTimeout(this.scrollingTimeout)
+            this.scrollingTimeout = setTimeout(() => {
+                this.isScrolling = false;
+            }, 1)
+        } else {
+            this.isScrolling = true;
+            this.scrollingTimeout = setTimeout(() => {
+                this.isScrolling = false;
+            }, 1)
+        }
     }
 
     getProducts() {

@@ -34,6 +34,7 @@
     "nativescript-geolocation": "^5.1.0",
     "nativescript-google-maps-sdk": "^2.7.0",
     "nativescript-grid-view": "^5.1.0",
+    "nativescript-image-cache": "^1.1.6",
     "nativescript-image-cache-it": "^5.0.0-alpha.3",
     "nativescript-imagecropper": "^1.0.6",
     "nativescript-imagepicker": "^6.2.0",

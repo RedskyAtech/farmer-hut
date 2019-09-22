@@ -42,6 +42,21 @@ export class SimilarProductAdminComponent implements OnInit {
         this.heading = "";
         this.categoryId = "";
 
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page:::", data.context);
+            if (data.isBackNavigation) {
+
+                console.log('Value:::', localStorage.getItem('fromSimilarProducts'))
+                if (localStorage.getItem('fromSimilarProducts') == 'true') {
+                    this.similarProducts = [];
+                    this.categoryId = localstorage.getItem("categoryId");
+                    localStorage.setItem('fromSimilarProducts', '');
+                    this.getSimilarProducts();
+                }
+            }
+        })
+
         this.router.queryParams.subscribe((params) => {
             this.heading = params['name'];
             this.categoryId = params['categoryId'];
@@ -50,6 +65,8 @@ export class SimilarProductAdminComponent implements OnInit {
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
             if (localstorage.getItem("categoryId") != null && localstorage.getItem("categoryId") != undefined) {
                 this.categoryId = localstorage.getItem("categoryId");
+                this.heading = localstorage.getItem("categoryHeading");
+
                 console.log("idddddddd::::::::", this.categoryId);
             }
             this.getSimilarProducts();
@@ -88,7 +105,8 @@ export class SimilarProductAdminComponent implements OnInit {
 
     getSimilarProducts() {
         if (this.categoryId != null && this.categoryId != undefined) {
-            // this.categoryId = localstorage.getItem("categoryId");
+            localstorage.setItem("categoryId", this.categoryId);
+            localstorage.setItem("categoryHeading", this.heading);
             console.log('Category:::', this.categoryId)
             this.userService.showLoadingState(true);
 

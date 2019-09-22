@@ -72,6 +72,7 @@ export class HomeAdminComponent implements OnInit {
         this.tabSelectedIndex = 0;
         this.getFileId();
 
+
         setInterval(() => {
             setTimeout(() => {
                 this.selectedPage++;
@@ -88,6 +89,19 @@ export class HomeAdminComponent implements OnInit {
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
                 this.userService.activeScreen("homeAdmin");
+                if (localStorage.getItem('fromCategory') == 'true') {
+                    this.page.requestLayout();
+                    this.productCategories = [];
+                    localStorage.setItem('fromCategory', '');
+                    this.getCategories();
+                }
+                if (localStorage.getItem('fromHome') == 'true') {
+                    this.page.requestLayout();
+                    this.products = [];
+                    localStorage.setItem('fromHome', '');
+                    this.isRenderingProducts = true;
+                    this.getProducts();
+                }
             }
         })
 
@@ -164,6 +178,13 @@ export class HomeAdminComponent implements OnInit {
         }
     }
 
+    onProductGridViewLoaded(args: any) {
+    }
+
+    onSimilarProductGridViewLoaded(args: any) {
+
+    }
+
     onLoadMoreMainItems() {
         if (!this.mainInit) {
             this.pageNo = this.pageNo + 1;
@@ -203,6 +224,7 @@ export class HomeAdminComponent implements OnInit {
                             })
                         }
                         this.mainInit = true;
+                        this.isRenderingProducts = true;
                     }
                 }
             }, error => {

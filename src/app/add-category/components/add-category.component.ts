@@ -62,7 +62,7 @@ export class AddCategoryComponent implements OnInit {
         this.category.image = new Image();
         this.showAddButton = true;
         this.errorMessage = "";
-        this.userService.showLoadingState(false);
+        // this.userService.showLoadingState(false);
         this.extension = 'jpg';
         this.shouldImageUpdate = "true";
         this.navigationService.backTo = "homeAdmin";
@@ -78,13 +78,13 @@ export class AddCategoryComponent implements OnInit {
         });
 
         if (this.categoryId != undefined) {
-            this.userService.showLoadingState(true);
+            // this.userService.showLoadingState(true);
             this.http
                 .get(Values.BASE_URL + "categories/" + this.categoryId)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            this.userService.showLoadingState(false);
+                            // this.userService.showLoadingState(false);
                             this.categoryImage = res.data.image.resize_url;
                             this.categoryName = res.data.name;
                             this.categoryBorderColor = "#00C012";
@@ -214,7 +214,7 @@ export class AddCategoryComponent implements OnInit {
         }
         else {
             this.isLoading = true;
-            this.userService.showLoadingState(true);
+            // this.userService.showLoadingState(true);
             var that = this;
             var mimeType = "image/" + that.extension;
             var uploadSession = session('image-upload');
@@ -240,24 +240,25 @@ export class AddCategoryComponent implements OnInit {
                     { name: "shouldImageUpdate", value: that.shouldImageUpdate }
                 ]
                 var task = uploadSession.multipartUpload(params, request);
-                task.on("responded", this.respondedEvent);
+                task.on("responded", (e) => {
+                    this.routerExtensions.back();
+                    this.isLoading = false;
+                });
                 task.on("error", this.errorEvent);
                 task.on("complete", this.completeEvent);
-                setTimeout(() => {
-                    this.userService.showLoadingState(false);
-                    this.isLoading = false;
-                    let navigationExtras: NavigationExtras = {
-                        queryParams: {
-                            "index": "1"
-                        },
-                    };
-                    this.routerExtensions.navigate(['./homeAdmin'], {
-                        queryParams: {
-                            "index": "1"
-                        },
-                        clearHistory: true
-                    });
-                }, 10000);
+                // setTimeout(() => {
+                //     // this.userService.showLoadingState(false);
+                //     this.isLoading = false;
+
+                //     // this.routerExtensions.navigate(['./homeAdmin'], {
+                //     //     queryParams: {
+                //     //         "index": "1"
+                //     //     },
+                //     //     clearHistory: true
+                //     // });
+
+
+                // }, 10000);
             }
             else {
                 var request = {
@@ -274,32 +275,39 @@ export class AddCategoryComponent implements OnInit {
                     { name: "name", value: that.categoryName },
                 ]
                 var task = uploadSession.multipartUpload(params, request);
-                task.on("responded", this.respondedEvent);
+                task.on("responded", (e) => {
+                    localStorage.setItem('fromCategory', 'true')
+                    this.routerExtensions.back();
+                    this.isLoading = false;
+                });
                 task.on("error", this.errorEvent);
                 task.on("complete", this.completeEvent);
 
-                setTimeout(() => {
-                    this.userService.showLoadingState(false);
-                    this.isLoading = false;
-                    let navigationExtras: NavigationExtras = {
-                        queryParams: {
-                            "index": "1"
-                        },
-                    };
-                    this.routerExtensions.navigate(['./homeAdmin'], {
-                        queryParams: {
-                            "index": "1"
-                        },
-                        clearHistory: true
-                    });
-                }, 10000);
+                // setTimeout(() => {
+                //     // this.userService.showLoadingState(false);
+                //     this.isLoading = false;
+                //     let navigationExtras: NavigationExtras = {
+                //         queryParams: {
+                //             "index": "1"
+                //         },
+                //     };
+                //     this.routerExtensions.navigate(['./homeAdmin'], {
+                //         queryParams: {
+                //             "index": "1"
+                //         },
+                //         clearHistory: true
+                //     });
+                // }, 10000);
             }
         }
     }
 
     respondedEvent(e) {
         console.log("RESPONSE: " + e.data);
-        this.userService.showLoadingState(false);
+        localStorage.setItem('fromCategory', 'true')
+        this.routerExtensions.back();
+
+        // this.userService.showLoadingState(false);
         this.isLoading = false;
     }
 
@@ -309,7 +317,7 @@ export class AddCategoryComponent implements OnInit {
 
     completeEvent(e) {
         console.log("Completed :" + JSON.stringify(e));
-        this.userService.showLoadingState(false);
+        // this.userService.showLoadingState(false);
         this.isLoading = false;
     }
 
