@@ -74,6 +74,8 @@ export class AddressComponent implements OnInit {
     isLoading: boolean;
     mapLabelClass: boolean;
     listener: any;
+    mapCount: number;
+    isVisibleMapIcon: boolean;
 
     constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private changeDetector: ChangeDetectorRef) {
         this.page.actionBarHidden = true;
@@ -86,6 +88,8 @@ export class AddressComponent implements OnInit {
         this.address = "";
         this.mapAddress = "";
         this.mapLabelClass = true;
+        this.mapCount = 1;
+        this.isVisibleMapIcon = false;
         // this.route.queryParams.subscribe(params => {
         //     this.city = params["city"];
         //     this.district = params["district"];
@@ -412,6 +416,22 @@ export class AddressComponent implements OnInit {
     }
 
     onSelectLocation() {
+        this.mapCount++;
+        if (this.mapCount >= 2) {
+            this.isVisibleMapIcon = true;
+        }
+        else {
+            this.isVisibleMapIcon = false;
+        }
+        // if (localstorage.getItem("mapCount") == 2) {
+        //     this.mapCount = 0;
+        //     this.isVisibleMapIcon = true;
+        // }
+        // else {
+        //     this.isVisibleMapIcon = false;
+        //     this.mapCount++;
+        // }
+        // localstorage.setItem("mapCount", this.mapCount);
         this.mapView.removeAllMarkers();
 
         this.pinLocation = false;

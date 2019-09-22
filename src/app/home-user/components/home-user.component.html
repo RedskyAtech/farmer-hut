@@ -22,7 +22,7 @@
                 indicatorColorUnselected="#D4D4D4">
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" placeholder="res://slider_background" [src]="sliderImage1">
+                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage1">
                         </NSImage>
 
                         <!-- <ImageCacheIt stretch="aspectFill"
@@ -32,7 +32,7 @@
                 </CarouselItem>
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" placeholder="res://slider_background" [src]="sliderImage2">
+                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage2">
                         </NSImage>
                         <!-- <ImageCacheIt stretch="aspectFill"
                             src="http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/files/FarmersHut-1568716012669.jpg">
@@ -41,7 +41,7 @@
                 </CarouselItem>
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" placeholder="res://slider_background" [src]="sliderImage3">
+                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage3">
                         </NSImage>
                         <!-- <ImageCacheIt stretch="aspectFill"
                             src="http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/files/FarmersHut-1568716012669.jpg">
@@ -50,7 +50,7 @@
                 </CarouselItem>
                 <CarouselItem>
                     <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" placeholder="res://slider_background" [src]="sliderImage4">
+                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage4">
                         </NSImage>
                         <!-- <ImageCacheIt stretch="aspectFill"
                             src="http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/files/FarmersHut-1568716012669.jpg">
@@ -77,8 +77,8 @@
                                     </StackLayout>
                                     <GridLayout row="1" columns="auto,auto" width="100%" height="80%">
                                         <StackLayout col="0" height="100%" width="40%">
-                                            <NSImage height="90%" width="90%" placeholder="res://slider_background"
-                                                [src]="item.image">
+                                            <NSImage height="100%" width="100%" stretch="aspectFit"
+                                                placeholder="res://slider_background" [src]="item.image">
                                             </NSImage>
                                         </StackLayout>
                                         <GridLayout col="1" rows="auto,auto,auto,auto" height="100%" width="60%">
@@ -130,7 +130,7 @@
                                     rows="auto,auto">
                                     <StackLayout row="0" width="100%" height="100%" borderRadius="10">
                                         <NSImage height="100%" width="100%" placeholder="res://slider_background"
-                                            [src]="item.image" stretch="aspectFill" borderRadius="10"
+                                            [src]="item.image" stretch="aspectFit" borderRadius="10"
                                             (tap)="onCategory(item)">
                                         </NSImage>
                                     </StackLayout>

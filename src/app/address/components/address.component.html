@@ -80,6 +80,9 @@
             (coordinateTapped)="onCoordinateTapped($event)" (cameraChanged)="onCameraChanged($event)"
             (cameraMove)="onCameraMove($event)"></MapView>
 
+        <Image *ngIf="isVisibleMapIcon" src="res://map_icon" width="10%" height="8%" stretch="aspectFit"
+            verticalAlignment="middle" horizontalAlignment="center"></Image>
+
         <Button class="select-button" verticalAlignment="bottom" horizontalAlignment="center" text="Select"
             (tap)="onSelectLocation()"></Button>
 
