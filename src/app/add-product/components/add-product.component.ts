@@ -1,11 +1,8 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { ActivatedRoute } from "@angular/router";
 import * as imagepicker from "nativescript-imagepicker";
 import { Values } from "~/app/values/values";
-import { Product } from "~/app/models/product.model";
-import { Heading } from "~/app/models/heading.model";
-import { Image } from "~/app/models/image.model";
 import { HttpClient } from "@angular/common/http";
 import { ImageSource, fromFile } from "tns-core-modules/image-source/image-source";
 import { Folder, path, File } from "tns-core-modules/file-system";
@@ -15,14 +12,13 @@ import { ImageCropper } from 'nativescript-imagecropper';
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
 import { SimilarProduct } from "~/app/models/similarProduct.model";
-import { Category } from "~/app/models/category.model";
-import { Price } from "~/app/models/price.model";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { UserService } from "~/app/services/user.service";
 import { session, Request } from 'nativescript-background-http';
 import * as Toast from 'nativescript-toast';
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
+import { TextField } from "tns-core-modules/ui/text-field";
 
 registerElement("CardView", () => CardView);
 
@@ -42,6 +38,7 @@ export class AddProductComponent implements OnInit {
     @ViewChild('selectDimensionDialog') selectDimensionDialog: ModalComponent;
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
     @ViewChild('warningDialog') warningDialog: ModalComponent;
+    @ViewChild("brandTextField") brandTextField: ElementRef;
 
     productImage: string | ImageSource;
     brandBorderColor: string;
@@ -434,7 +431,6 @@ export class AddProductComponent implements OnInit {
                             }).catch((err) => {
                                 console.log("Error -> " + err.message);
                             });
-
                         });
                     });
             });
@@ -553,9 +549,7 @@ export class AddProductComponent implements OnInit {
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
-
                         localStorage.setItem('fromSimilarProducts', 'true');
-
                         this.routerExtensions.back();
                     });
                     task.on("error", this.errorEvent);
@@ -697,7 +691,6 @@ export class AddProductComponent implements OnInit {
                     //         clearHistory: true,
                     //     });
                     // }, 10000);
-
                 }
             }
         }
@@ -708,7 +701,6 @@ export class AddProductComponent implements OnInit {
         console.log("RESPONSE: " + e.data);
         this.isLoading = false;
         localStorage.setItem('fromHome', 'true');
-
         this.routerExtensions.back();
         // this.userService.showLoadingState(false);
     }
