@@ -6,9 +6,9 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 import * as localstorage from "nativescript-localstorage";
-import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -63,19 +63,13 @@ export class ForgotPasswordComponent implements OnInit {
         if (this.phone == "") {
             this.errorMessage = "Please enter phone number.";
             this.warningDialog.show();
-            // alert("Please enter phone number!!!");
         }
         else if (this.phone.length < 10) {
             this.errorMessage = "Please enter ten digit phone number.";
             this.warningDialog.show();
-            // alert("Please enter ten digit phone number!!!");
         }
-        // if (this.email == "") {
-        //     alert("Please enter email!!!");
-        // }
         else {
             this.isLoading = true;
-            // this.user.email = this.email;
             this.userService.showLoadingState(true);
             this.http
                 .post(Values.BASE_URL + `users/sendSms?phone=${this.phone}`, {})

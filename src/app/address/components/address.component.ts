@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Directions } from "nativescript-directions";
 import { ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
@@ -18,7 +17,6 @@ import * as geolocation from "nativescript-geolocation";
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
 import * as location from "nativescript-geolocation"
-import * as application from "tns-core-modules/application";
 
 @Component({
     selector: "ns-address",
@@ -30,22 +28,15 @@ export class AddressComponent implements OnInit {
     @ViewChild('warningDialog') warningDialog: ModalComponent;
 
     addressBorderColor;
-    // mapAddressBorderColor;
     cityBorderColor = "#00C012";
     districtBorderColor = "#00C012";
     stateBorderColor = "#00C012";
-    // pincodeBorderColor = "white";
     addressHint = "Address (House/Street/Town)";
     mapAddressHint = "Map Address";
-    // cityHint = "City";
-    // districtHint = "District";
-    // stateHint = "State";
-    // pincodeHint = "Pincode"
     address: string;
     mapAddress: string;
     city = "";
     district = "";
-    // pincode = "";
     latitude: any;
     longitude: any;
     user: User;
@@ -77,7 +68,7 @@ export class AddressComponent implements OnInit {
     mapCount: number;
     isVisibleMapIcon: boolean;
 
-    constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private changeDetector: ChangeDetectorRef) {
+    constructor(private http: HttpClient, private navigationService: NavigationService, private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.user = new User();
@@ -90,13 +81,7 @@ export class AddressComponent implements OnInit {
         this.mapLabelClass = true;
         this.mapCount = 1;
         this.isVisibleMapIcon = false;
-        // this.route.queryParams.subscribe(params => {
-        //     this.city = params["city"];
-        //     this.district = params["district"];
-        //     this.state = params["state"];
-        // });
         this.addressBorderColor = "white";
-        // this.mapAddressBorderColor = "white";
 
         this.city = "Abohar";
         this.district = "Fazilka";
@@ -124,11 +109,6 @@ export class AddressComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // this.listener = application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
-        //     this.routerExtensions.back();
-        //     args.cancel = true;
-        // });
-        // application.android.off(this.listener);
     }
 
     onOK() {
@@ -138,16 +118,10 @@ export class AddressComponent implements OnInit {
     onAddressTextChanged(args) {
         this.addressBorderColor = "#00C012";
         this.address = args.object.text;
-        // this.changeDetector.detectChanges();
     }
     onMapAddressTextChanged(args) {
-        // this.mapAddressBorderColor = "#00C012";
         this.mapAddress = args.object.text;
-        // this.changeDetector.detectChanges();
     }
-
-
-
 
     //Map events
     onMapReady(event) {
@@ -157,12 +131,8 @@ export class AddressComponent implements OnInit {
 
         console.log("Setting a marker...");
 
-        // this.marker.position = Position.positionFromLatLng(this.latitude, this.longitude)
-
-        // this.marker.icon = this.image;
         setTimeout(async () => {
             await location.getCurrentLocation({ desiredAccuracy: 0, timeout: 120000, maximumAge: 120000 }).then((location: location.Location) => {
-                // this.location = location;
                 this.marker.position = Position.positionFromLatLng(location.latitude, location.longitude)
                 this.intialLatitude = location.latitude;
                 this.intialLongitude = location.longitude;
@@ -176,7 +146,6 @@ export class AddressComponent implements OnInit {
                 console.log('Error:', error)
             })
         }, 1)
-
     }
 
     onCoordinateTapped(args) {
@@ -191,54 +160,14 @@ export class AddressComponent implements OnInit {
 
     onCameraChanged(args) {
         console.log("Camera changed: " + JSON.stringify(args.camera));
-
         this.finalLatitude = args.camera.latitude;
         this.finalLongitude = args.camera.longitude;
-
     }
 
     onCameraMove(args) {
         this.marker.position = Position.positionFromLatLng(args.camera.latitude, args.camera.longitude)
         console.log("Camera moving: " + JSON.stringify(args.camera));
     }
-
-
-
-
-
-
-    // onCityTextChanged(args) {
-    //     this.addressBorderColor = "white";
-    //     this.cityBorderColor = "#00C012";
-    //     this.districtBorderColor = "white";
-    //     this.stateBorderColor = "white";
-    //     this.pincodeBorderColor = "white";
-    //     this.city = args.object.text.toLowerCase();
-    // }
-    // onDistrictTextChanged(args) {
-    //     this.addressBorderColor = "white";
-    //     this.cityBorderColor = "white";
-    //     this.districtBorderColor = "#00C012";
-    //     this.stateBorderColor = "white";
-    //     this.pincodeBorderColor = "white";
-    //     this.district = args.object.text.toLowerCase();
-    // }
-    // onStateTextChanged(args) {
-    //     this.addressBorderColor = "white";
-    //     this.cityBorderColor = "white";
-    //     this.districtBorderColor = "white";
-    //     this.stateBorderColor = "#00C012";
-    //     this.pincodeBorderColor = "white";
-    //     this.state = args.object.text.toLowerCase();
-    // }
-    // onPincodeTextChanged(args) {
-    //     this.addressBorderColor = "white";
-    //     this.cityBorderColor = "white";
-    //     this.districtBorderColor = "white";
-    //     this.stateBorderColor = "white";
-    //     this.pincodeBorderColor = "#00C012";
-    //     this.pincode = args.object.text.toLowerCase();
-    // }
 
     addAddress(id: string) {
         if (this.from == "cart") {
@@ -255,10 +184,6 @@ export class AddressComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Delivery address added successfully!!!", "long").show();
-                            // this.routerExtensions.navigate(['./cart'], {
-                            //     clearHistory: true,
-                            // });
-
                             this.routerExtensions.back();
                         }
                     }
@@ -267,12 +192,10 @@ export class AddressComponent implements OnInit {
                     if (error.error.error == undefined) {
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
-                        // alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
                         this.errorMessage = error.error.error;
                         this.warningDialog.show();
-                        // alert(error.error.error);
                     }
                 });
         } else {
@@ -287,18 +210,7 @@ export class AddressComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Address added successfully!!!", "long").show();
-                            // this.routerExtensions.navigate(['./profile'], {
-                            //     clearHistory: true,
-                            // });
-
                             this.routerExtensions.back();
-
-                            // if (this.from == "cart") {
-                            //     this.router.navigate(['./cart']);
-                            // }
-                            // else {
-                            //     this.router.navigate(['./profile']);
-                            // }
                         }
                     }
                 }, error => {
@@ -306,12 +218,10 @@ export class AddressComponent implements OnInit {
                     if (error.error.error == undefined) {
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
-                        // alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
                         this.errorMessage = error.error.error;
                         this.warningDialog.show();
-                        // alert(error.error.error);
                     }
                 });
         }
@@ -321,12 +231,10 @@ export class AddressComponent implements OnInit {
         if (this.address == "") {
             this.errorMessage = "Please enter address.";
             this.warningDialog.show();
-            // alert("Please enter address!!!");
         }
         else if (this.mapAddress == "") {
             this.errorMessage = "Please select map address.";
             this.warningDialog.show();
-            // alert("Please select map address!!!");
         }
         else {
             this.userService.showLoadingState(true);
@@ -341,78 +249,12 @@ export class AddressComponent implements OnInit {
 
     onBack() {
         this.routerExtensions.back();
-        // if (this.from == "cart") {
-        //     this.routerExtensions.navigate(['./cart'], {
-        //         clearHistory: true,
-        //     });
-        // } else {
-        //     this.routerExtensions.navigate(['./profile'], {
-        //         clearHistory: true,
-        //     });
-        // }
     }
 
     onMap() {
         this.pinLocation = true;
         this.mapAddress = "";
-        // this.userService.showLoadingState(true);
-
         geolocation.enableLocationRequest();
-
-        var that = this;
-
-        // geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 2, maximumAge: 20000, timeout: 20000 }).
-        //     then(function (location) {
-        //         if (location) {
-        //             that.latitude = location.latitude;
-        //             that.longitude = location.longitude;
-
-        //             // directions.navigate({
-        //             //     from: { // optional, default 'current location'
-        //             //         lat: location.latitude,
-        //             //         lng: location.longitude
-
-        //             //     },
-        //             //     // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
-        //             //     //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
-        //             //     // },
-        //             //     // {
-        //             //     //     address: "Aak 98, Wieringerwerf, Netherlands"
-        //             //     // }],
-        //             //     to: {
-        //             //         // address: "Ivy Hospital, sector 71, Mohali"
-        //             //         // lat: location.latitude,
-        //             //         // lng: location.longitude
-        //             //         lat: 30.7091987,
-        //             //         lng: 76.7023474
-        //             //     },
-        //             //     type: "driving", // optional, can be: driving, transit, bicycling or walking
-        //             //     ios: {
-        //             //         preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
-        //             //         allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
-        //             //     }
-        //             // }).then(() => {
-        //             //     console.log("Maps app launched.");
-        //             // }, error => {
-        //             //     console.log(error);
-        //             // });
-
-        //             that.http
-        //                 .get(Values.GOOGLE_MAP_URL + "latlng=" + that.latitude + "," + that.longitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
-        //                 .subscribe((res: any) => {
-        //                     that.userService.showLoadingState(false);
-        //                     // that.address = res.results[0].address_components[0].long_name;
-        //                     that.mapAddress = res.results[0].formatted_address;
-        //                 }, error => {
-        //                     console.log(error);
-        //                 });
-
-        //         }
-        //     }, function (e) {
-        //         console.log("Error: " + e.message);
-        //     });
-
-
     }
 
     onSelectLocation() {

@@ -4,9 +4,9 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 import * as localstorage from "nativescript-localstorage";
-import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-viewFeedback",
@@ -53,13 +53,9 @@ export class ViewFeedbackComponent implements OnInit {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });
@@ -73,10 +69,6 @@ export class ViewFeedbackComponent implements OnInit {
     }
 
     onBack() {
-        // this.routerExtensions.navigate(['/profile'], {
-        //     clearHistory: true,
-        // });
-
         this.routerExtensions.back();
     }
 }

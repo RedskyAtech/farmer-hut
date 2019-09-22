@@ -37,7 +37,6 @@ export class CartComponent implements OnInit {
     cart: Cart;
     product: Product;
     order: Order;
-    // myOrders: MyOrders;
     isRendering: boolean;
     address: string;
     mapAddress: string;
@@ -75,7 +74,6 @@ export class CartComponent implements OnInit {
     }
 
     onBack() {
-        // this.routerExtensions.navigate(['/homeUser']);
         this.routerExtensions.back();
     }
 
@@ -224,7 +222,6 @@ export class CartComponent implements OnInit {
                         }
                         localstorage.setItem('cart', JSON.stringify(tempCart));
                         this.totalAmount = this.getGrandTotal().toString();
-                        // localstorage.setItem('cart', JSON.stringify(res.data.products))
                     }
                 }
             }, error => {
@@ -277,13 +274,9 @@ export class CartComponent implements OnInit {
                                 }, error => {
                                     this.isRendering = true;
                                     if (error.error.error == undefined) {
-                                        // this.errorMessage = "May be your network connection is low.";
-                                        // this.warningDialog.show();
                                         alert("Something went wrong!!! May be your network connection is low.");
                                     }
                                     else {
-                                        // this.errorMessage = error.error.error;
-                                        // this.warningDialog.show();
                                         alert(error.error.error);
                                     }
                                 });
@@ -296,13 +289,9 @@ export class CartComponent implements OnInit {
             }, error => {
                 this.userService.showLoadingState(false);
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -354,13 +343,9 @@ export class CartComponent implements OnInit {
                 }
             }, error => {
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -369,8 +354,6 @@ export class CartComponent implements OnInit {
     onConfirm() {
         this.userService.showLoadingState(true);
         this.cart.order._id = localstorage.getItem("cartId");
-
-        var storedCartProducts = JSON.parse(localstorage.getItem('cart'));
 
         this.http
             .post(Values.BASE_URL + "orders/", this.cart)
@@ -388,13 +371,9 @@ export class CartComponent implements OnInit {
                 }
             }, error => {
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -436,8 +415,6 @@ export class CartComponent implements OnInit {
                 nativeGridMain.layer.shadowRadius = 5.0
                 nativeGridMain.layer.shadowRadius = 5.0
             }
-
-            // this.changeDetector.detectChanges();
         }, 400)
 
     }

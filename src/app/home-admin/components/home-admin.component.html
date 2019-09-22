@@ -12,7 +12,8 @@
         </GridLayout>
         <GridLayout row="1" width="100%" height="15%" columns="auto,auto">
             <GridLayout col="0" width="70%" height="100%">
-                <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
+                <ns-slider height="80%" width="90%"></ns-slider>
+                <!-- <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
                     android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="80%"
                     width="90%" indicatorColor="#00C012" android:indicatorAnimation="drop"
                     indicatorColorUnselected="#D4D4D4">
@@ -40,7 +41,7 @@
                                 placeholder="res://slider_background" borderRadius="10" [src]="sliderImage4"></NSImage>
                         </StackLayout>
                     </CarouselItem>
-                </Carousel>
+                </Carousel> -->
             </GridLayout>
             <GridLayout col="1" width="30%" height="100%">
                 <Button class="addButton" text="Add Slider Images" (tap)="onAddSlider()"></Button>
@@ -54,7 +55,8 @@
                 <GridLayout rows="auto">
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
-                            backgroundColor="transparent" (loadMoreItems)="onLoadMoreMainItems()" (loaded)="onProductGridViewLoaded($event)">
+                            backgroundColor="transparent" (loaded)="onProductsGridLoaded($event)"
+                            (loadMoreItems)="onLoadMoreMainItems()">
                             <ng-template let-item="item" let-odd="odd" let-i="index">
                                 <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
                                     marginRight="5%" marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">
@@ -120,8 +122,9 @@
             <StackLayout *tabItem="{title: 'Other Brands Products'}">
                 <GridLayout rows="auto">
                     <GridLayout row="0" height="100%" width="100%">
-                        <GridView [items]="productCategories" (loaded)="onSimilarProductGridViewLoaded($event)" colWidth="40%" rowHeight="45%" width="100%" height="100%"
-                            backgroundColor="transparent" (loadMoreItems)="onLoadMoreCategoryItems()">
+                        <GridView [items]="productCategories" colWidth="40%" rowHeight="45%" width="100%" height="100%"
+                            backgroundColor="transparent" (loaded)="onSimilarProductsGridLoaded($event)"
+                            (loadMoreItems)="onLoadMoreCategoryItems()">
                             <ng-template let-item="item" let-odd="odd" let-i="index">
                                 <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
                                     marginRight="5%" marginTop="10" marginBottom="10" borderRadius="10"

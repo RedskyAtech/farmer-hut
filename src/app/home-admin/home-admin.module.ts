@@ -8,6 +8,8 @@ import { GridViewModule } from 'nativescript-grid-view/angular';
 import { NgModalModule } from "../modals/ng-modal";
 import { HomeAdminRoutingModule } from "./home-admin-routing.module";
 import { HomeAdminComponent } from "./components/home-admin.component";
+import { SliderModule } from "../slider/slider.module";
+
 
 @NgModule({
     imports: [
@@ -18,7 +20,8 @@ import { HomeAdminComponent } from "./components/home-admin.component";
         NativeScriptHttpModule,
         NativeScriptFormsModule,
         NativeScriptCommonModule,
-        NativeScriptHttpClientModule
+        NativeScriptHttpClientModule,
+        SliderModule
     ],
     declarations: [
         HomeAdminComponent

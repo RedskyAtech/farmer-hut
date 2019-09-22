@@ -1,14 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { NavigationExtras, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 import * as localstorage from "nativescript-localstorage";
 import * as application from "tns-core-modules/application";
-import { Page } from "tns-core-modules/ui/page/page";
 
 @Component({
     selector: "ns-orderHistory",
@@ -28,7 +27,6 @@ export class OrderHistoryComponent implements OnInit {
     orderInit = true;
     orderPageNo = 1;
     isRendering: boolean;
-    // isLoading: boolean;
 
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
@@ -68,24 +66,14 @@ export class OrderHistoryComponent implements OnInit {
     ngOnInit(): void {
         setTimeout(() => {
             this.isRendering = true;
-            // this.isLoading = false;
         }, 50);
     }
 
     onBack() {
-        // this.routerExtensions.navigate(['/profile'], {
-        //     clearHistory: true,
-        // });
-
         this.routerExtensions.back();
     }
 
     onViewDetail(id: string) {
-        // let navigationExtras: NavigationExtras = {
-        //     queryParams: {
-        //         "orderId": id
-        //     },
-        // };
         if (this.userType == "admin") {
             this.routerExtensions.navigate(['/orderDetail'], {
                 queryParams: {
@@ -106,7 +94,6 @@ export class OrderHistoryComponent implements OnInit {
         if (localstorage.getItem("userType") != null && localstorage.getItem("userType") != undefined) {
             if (localstorage.getItem("userType") == "admin") {
                 this.userService.showLoadingState(true);
-                // this.isLoading = true;
                 this.http
                     .get(Values.BASE_URL + "orders?history=true" + `&pageNo=${this.orderPageNo}&items=10`)
                     .subscribe((res: any) => {
@@ -114,7 +101,6 @@ export class OrderHistoryComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                // this.isLoading = false;
                                 if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
                                     for (var i = 0; i < res.data.orders.length; i++) {
@@ -141,13 +127,11 @@ export class OrderHistoryComponent implements OnInit {
                             }
                         }
                     }, error => {
-                        // this.isLoading = false;
                         this.userService.showLoadingState(false);
                         console.log(error.error.error);
                     });
             }
             else {
-                // this.isLoading = true;
                 this.userService.showLoadingState(true);
                 this.http
                     .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=true")
@@ -156,7 +140,6 @@ export class OrderHistoryComponent implements OnInit {
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
-                                // this.isLoading = false;
                                 if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
                                     for (var i = 0; i < res.data.orders.length; i++) {
@@ -183,7 +166,6 @@ export class OrderHistoryComponent implements OnInit {
                             }
                         }
                     }, error => {
-                        // this.isLoading = false;
                         this.userService.showLoadingState(false);
                         console.log(error.error.error);
                     });

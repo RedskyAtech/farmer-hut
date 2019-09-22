@@ -1,17 +1,18 @@
-import { Component, OnInit, AfterViewInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { ActivatedRoute } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { Cart } from '~/app/models/cart.model';
 import { Product } from "../../models/product.model";
 import { NavigationService } from "~/app/services/navigation.service";
 
-import * as localstorage from "nativescript-localstorage";
-import * as Toast from 'nativescript-toast';
 import { Page } from "tns-core-modules/ui/page/page";
 import { BackgroundHttpService } from "~/app/services/background.http.service";
+
+import * as localstorage from "nativescript-localstorage";
+import * as Toast from 'nativescript-toast';
+
 
 
 @Component({
@@ -20,7 +21,7 @@ import { BackgroundHttpService } from "~/app/services/background.http.service";
     templateUrl: "./product-detail.component.html",
     styleUrls: ["./product-detail.component.css"]
 })
-export class ProductDetailComponent implements OnInit, AfterViewInit {
+export class ProductDetailComponent implements OnInit {
     id: string;
     image: string;
     brandName: string;
@@ -41,11 +42,9 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
     hasBeenHitOnce: boolean;
 
     genricProduct: any;
-    // isLoading: boolean;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.isRendering = false;
-        // this.isLoading = false;
         this.page.actionBarHidden = true;
         this.hasBeenHitOnce = false;
         this.updateCartCount();
@@ -111,16 +110,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
         }, 50);
     }
 
-    ngAfterViewInit(): void {
-
-    }
-
-
     onBack() {
-        // this.routerExtensions.navigate(['/homeUser'], {
-        //     clearHistory: true,
-        // });
-
         this.routerExtensions.back();
     }
 
@@ -139,7 +129,6 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                 if (product._id == storedCartProducts[i]._id) {
                     var quantity = parseInt(storedCartProducts[i].quantity) + 1;
                     this.cart.product.quantity = quantity.toString();
-                    // this.updateCart(storedCart._id);
                     alert("Product already in cart, Please increase quantity in cart");
                     resolve(true);
                     return;
@@ -208,13 +197,9 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
                 }, error => {
                     this.hasBeenHitOnce = false;
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });
@@ -260,58 +245,6 @@ export class ProductDetailComponent implements OnInit, AfterViewInit {
             this.routerExtensions.navigate(['/cart']);
             this.updateCart();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // // this.isLoading = true;
-        // this.http
-        //     .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-        //     .subscribe((res: any) => {
-        //         if (res != null && res != undefined) {
-        //             if (res.isSuccess == true) {
-        //                 // this.isLoading = false;
-        //                 this.userService.showLoadingState(false);
-        //                 if (res.data.products.length != 0) {
-        //                     for (var i = 0; i < res.data.products.length; i++) {
-        //                         if (this.id == res.data.products[i]._id) {
-        //                             var quantity = parseInt(res.data.products[i].quantity) + 1;
-        //                             this.cart.product.quantity = quantity.toString();
-        //                             this.routerExtensions.navigate(['/cart'])
-        //                             this.updateCart();
-        //                             break;
-        //                         }
-        //                         else {
-        //                             this.cart.product.quantity = "1";
-        //                             this.routerExtensions.navigate(['/cart'])
-        //                             this.updateCart();
-        //                         }
-        //                     }
-        //                 }
-        //                 else {
-        //                     this.cart.product.quantity = "1";
-        //                     this.routerExtensions.navigate(['/cart'])
-        //                     this.updateCart();
-        //                 }
-        //             }
-        //         }
-        //     }, error => {
-        //         // this.isLoading = false;
-        //         this.userService.showLoadingState(false);
-        //         console.log(error.error.error);
-        //     });
     }
 
 }

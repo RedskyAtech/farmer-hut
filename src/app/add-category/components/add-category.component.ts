@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { NavigationExtras, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { ImageSource, fromFile } from "tns-core-modules/image-source/image-source";
 import { ImageCropper } from 'nativescript-imagecropper';
 import { Category } from "~/app/models/category.model";
@@ -8,14 +8,14 @@ import { Values } from "~/app/values/values";
 import { HttpClient } from "@angular/common/http";
 import { Image } from "~/app/models/image.model";
 import { ModalComponent } from "../../../app/modals/modal.component";
-import { UserService } from "../../../app/services/user.service";
 import { session } from 'nativescript-background-http';
 import { Folder, path, File } from "tns-core-modules/file-system";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
+
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
 import * as imagepicker from "nativescript-imagepicker";
-import { Page } from "tns-core-modules/ui/page/page";
 
 declare var android: any;
 
@@ -51,7 +51,7 @@ export class AddCategoryComponent implements OnInit {
     isLoading: boolean;
     isVisibleImage: boolean;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
@@ -62,7 +62,6 @@ export class AddCategoryComponent implements OnInit {
         this.category.image = new Image();
         this.showAddButton = true;
         this.errorMessage = "";
-        // this.userService.showLoadingState(false);
         this.extension = 'jpg';
         this.shouldImageUpdate = "true";
         this.navigationService.backTo = "homeAdmin";
@@ -78,13 +77,11 @@ export class AddCategoryComponent implements OnInit {
         });
 
         if (this.categoryId != undefined) {
-            // this.userService.showLoadingState(true);
             this.http
                 .get(Values.BASE_URL + "categories/" + this.categoryId)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            // this.userService.showLoadingState(false);
                             this.categoryImage = res.data.image.resize_url;
                             this.categoryName = res.data.name;
                             this.categoryBorderColor = "#00C012";
@@ -206,7 +203,6 @@ export class AddCategoryComponent implements OnInit {
         if (this.categoryImage == null) {
             this.errorMessage = "Please select category image.";
             this.warningDialog.show();
-            // alert("Please select category image!!!");
         }
         else if (this.categoryName == "") {
             this.errorMessage = "Please enter category name.";
@@ -214,7 +210,6 @@ export class AddCategoryComponent implements OnInit {
         }
         else {
             this.isLoading = true;
-            // this.userService.showLoadingState(true);
             var that = this;
             var mimeType = "image/" + that.extension;
             var uploadSession = session('image-upload');
@@ -246,19 +241,6 @@ export class AddCategoryComponent implements OnInit {
                 });
                 task.on("error", this.errorEvent);
                 task.on("complete", this.completeEvent);
-                // setTimeout(() => {
-                //     // this.userService.showLoadingState(false);
-                //     this.isLoading = false;
-
-                //     // this.routerExtensions.navigate(['./homeAdmin'], {
-                //     //     queryParams: {
-                //     //         "index": "1"
-                //     //     },
-                //     //     clearHistory: true
-                //     // });
-
-
-                // }, 10000);
             }
             else {
                 var request = {
@@ -282,22 +264,6 @@ export class AddCategoryComponent implements OnInit {
                 });
                 task.on("error", this.errorEvent);
                 task.on("complete", this.completeEvent);
-
-                // setTimeout(() => {
-                //     // this.userService.showLoadingState(false);
-                //     this.isLoading = false;
-                //     let navigationExtras: NavigationExtras = {
-                //         queryParams: {
-                //             "index": "1"
-                //         },
-                //     };
-                //     this.routerExtensions.navigate(['./homeAdmin'], {
-                //         queryParams: {
-                //             "index": "1"
-                //         },
-                //         clearHistory: true
-                //     });
-                // }, 10000);
             }
         }
     }
@@ -306,8 +272,6 @@ export class AddCategoryComponent implements OnInit {
         console.log("RESPONSE: " + e.data);
         localStorage.setItem('fromCategory', 'true')
         this.routerExtensions.back();
-
-        // this.userService.showLoadingState(false);
         this.isLoading = false;
     }
 
@@ -317,7 +281,6 @@ export class AddCategoryComponent implements OnInit {
 
     completeEvent(e) {
         console.log("Completed :" + JSON.stringify(e));
-        // this.userService.showLoadingState(false);
         this.isLoading = false;
     }
 

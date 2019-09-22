@@ -5,10 +5,9 @@ import { Values } from "~/app/values/values";
 import { Feedback } from "~/app/models/feedback.model";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
-
-import * as Toast from 'nativescript-toast';
 import { Page } from "tns-core-modules/ui/page/page";
 
+import * as Toast from 'nativescript-toast';
 
 @Component({
     selector: "ns-giveFeedback",
@@ -59,7 +58,6 @@ export class GiveFeedbackComponent implements OnInit {
         if (this.feedbackMessage == "") {
             this.errorMessage = "Please enter message.";
             this.warningDialog.show();
-            // alert("Please enter message!!!");
         }
         else {
             if (localStorage.getItem("userId") != null && localStorage.getItem("userId") != undefined) {
@@ -84,26 +82,16 @@ export class GiveFeedbackComponent implements OnInit {
                     if (error.error.error == undefined) {
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
-                        // alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
                         this.errorMessage = error.error.error;
                         this.warningDialog.show();
-                        // alert(error.error.error);
                     }
                 });
-
-            // this.routerExtensions.navigate(['./profile'], {
-            //     clearHistory: true,
-            // })
         }
     }
 
     onBack() {
-        // this.routerExtensions.navigate(['./profile'], {
-        //     clearHistory: true,
-        // })
-
         this.routerExtensions.back();
     }
 }

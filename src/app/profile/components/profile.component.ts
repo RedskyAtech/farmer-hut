@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
@@ -6,12 +6,11 @@ import { User } from "~/app/models/user.model";
 import { UserService } from "../../services/user.service";
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
-import * as application from "tns-core-modules/application";
-import * as Toast from 'nativescript-toast';
-import * as localstorage from "nativescript-localstorage";
 import { Router } from "@angular/router";
 import { NavigationEnd } from "@angular/router";
 
+import * as Toast from 'nativescript-toast';
+import * as localstorage from "nativescript-localstorage";
 
 @Component({
     selector: "ns-profile",
@@ -19,7 +18,7 @@ import { NavigationEnd } from "@angular/router";
     templateUrl: "./profile.component.html",
     styleUrls: ["./profile.component.css"]
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent implements OnInit {
 
     city: string;
     district: string;
@@ -69,11 +68,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.getProfileDetails()
-        // this.listener = application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
-        //     this.routerExtensions.back();
-        //     args.cancel = true;
-        // });
-        // application.android.off(this.listener);
     }
 
     getProfileDetails() {
@@ -89,23 +83,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.feedbackButtonText = "Give feedback";
             this.navigationService.backTo = 'homeUser';
         }
-        // this.ngZone.run(() => {
-        //     application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: application.AndroidActivityBackPressedEventData) => {
-        //         if (localstorage.getItem("userType") == "user") {
-        //             args.cancel = true;
-        //             this.routerExtensions.navigate(['/homeUser'], {
-        //                 clearHistory: true,
-        //             });
-        //         }
-        //         else {
-        //             args.cancel = true;
-        //             this.routerExtensions.navigate(['/homeAdmin'], {
-        //                 clearHistory: true,
-        //             });
-        //         }
-        //     });
-        // });
-
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             this.userService.showLoadingState(true);
@@ -139,13 +116,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
                     }
                 }, error => {
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });
@@ -182,13 +155,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 }, error => {
                     this.userService.showLoadingState(false);
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });
@@ -196,38 +165,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     }
 
-    ngOnDestroy(): void {
-        // this.ngZone.run(() => {
-        //     application.android.off(application.AndroidApplication.activityBackPressedEvent, (args: application.AndroidActivityBackPressedEventData) => {
-        //     });
-        // });
-    }
-
     onBack() {
         this.routerExtensions.back();
-
-        // if (localstorage.getItem("userType") == "admin") {
-        //     this.routerExtensions.navigate(['./homeAdmin'], {
-        //         clearHistory: true,
-        //     });
-
-        //     this.routerExtensions.back();
-        // }
-        // else {
-        //     this.routerExtensions.navigate(['/homeUser'], {
-        //         clearHistory: true,
-        //     })
-        // }
     }
 
     onAddressButton() {
-        // let navigationExtras: NavigationExtras = {
-        //     queryParams: {
-        //         "city": this.city,
-        //         "district": this.district,
-        //         "state": this.state
-        //     },
-        // };
         this.routerExtensions.navigate(['/address'], {
             queryParams: {
                 "city": this.city,

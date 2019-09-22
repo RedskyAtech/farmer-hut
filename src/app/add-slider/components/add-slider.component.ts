@@ -1,24 +1,22 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationExtras, ActivatedRoute } from "@angular/router";
-import * as imagepicker from "nativescript-imagepicker";
 import { ModalComponent } from "../../modals/modal.component";
 import { ImageCropper } from 'nativescript-imagecropper';
-import * as camera from "nativescript-camera";
-import * as permissions from "nativescript-permissions";
 import { ImageSource, fromFile } from "tns-core-modules/image-source/image-source";
 import { Values } from "~/app/values/values";
-import { HttpClient } from "@angular/common/http";
 import { UserService } from "../../services/user.service";
 import { Product } from "../../models/product.model";
 import { Image } from "../../models/image.model";
-import * as Toast from 'nativescript-toast';
 import { NavigationService } from "~/app/services/navigation.service";
-import * as BitmapFactory from "nativescript-bitmap-factory"
 import { Page } from "tns-core-modules/ui/page/page";
 import { Folder, path, File } from "tns-core-modules/file-system";
-import { session, Request } from 'nativescript-background-http';
+import { session } from 'nativescript-background-http';
+
 import * as localstorage from "nativescript-localstorage";
+import * as BitmapFactory from "nativescript-bitmap-factory"
+import * as camera from "nativescript-camera";
+import * as permissions from "nativescript-permissions";
+import * as imagepicker from "nativescript-imagepicker";
 
 declare var android: any;
 
@@ -49,7 +47,7 @@ export class AddSliderComponent implements OnInit {
     fileId: string;
     isVisibleImage: boolean
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
+    constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
@@ -86,21 +84,6 @@ export class AddSliderComponent implements OnInit {
 
     onUploadImage() {
         this.photoUploadDialog.show();
-        // var that = this;
-        // let context = imagepicker.create({
-        //     mode: "single"
-        // });
-        // context
-        //     .authorize()
-        //     .then(() => {
-        //         return context.present();
-        //     })
-        //     .then(selection => {
-        //         selection.forEach(function (selected) {
-        //             var path = selected.android.toString();
-        //             that.sliderImage = path;
-        //         });
-        //     });
     }
 
 
@@ -218,57 +201,18 @@ export class AddSliderComponent implements OnInit {
                 console.log(params);
                 console.log(request);
                 var task = uploadSession.multipartUpload(params, request);
-                task.on("responded", this.respondedEvent);
+                task.on("responded", (e) => {
+                    localstorage.setItem('fromSlider', 'true')
+                    this.routerExtensions.back();
+                });
                 task.on("error", this.errorEvent);
                 task.on("complete", this.completeEvent);
-                setTimeout(() => {
-                    // this.userService.showLoadingState(false);
-                    this.isLoading = false;
-                    this.routerExtensions.navigate(['./homeAdmin'], {
-                        clearHistory: true,
-                    });
-                }, 10000);
-
-
-                // this.http
-                //     .get(Values.BASE_URL + "files")
-                //     .subscribe((res: any) => {
-                //         if (res != null && res != undefined) {
-                //             if (res.isSuccess == true) {
-                //                 var id = res.data[0]._id;
-                //                 this.http
-                //                     .put(Values.BASE_URL + "files/update/" + id, this.product)
-                //                     .subscribe((res: any) => {
-                //                         if (res != null && res != undefined) {
-                //                             if (res.isSuccess == true) {
-                //                                 this.userService.showLoadingState(false);
-                //                                 this.isLoading = false;
-                //                                 Toast.makeText("Image is added successfully!!!", "long").show();
-                //                                 this.routerExtensions.navigate(['./homeAdmin'], {
-                //                                     clearHistory: true,
-                //                                 });
-                //                             }
-                //                         }
-                //                     }, error => {
-                //                         this.userService.showLoadingState(false);
-                //                         this.isLoading = false;
-                //                         alert(error.error.error);
-                //                     });
-                //             }
-                //         }
-                //     }, error => {
-                //         this.userService.showLoadingState(false);
-                //         this.isLoading = false;
-                //         console.log(error.error.error);
-                //     });
             }
         }
     }
 
     respondedEvent(e) {
-        // var that = this;
         console.log("RESPONSE: " + e.data);
-        // this.userService.showLoadingState(false);
     }
 
     errorEvent(e) {

@@ -8,11 +8,10 @@ import { ModalComponent } from "~/app/modals/modal.component";
 import { Color } from "tns-core-modules/color/color";
 import { Page } from "tns-core-modules/ui/page/page";
 import { BackgroundHttpService } from "~/app/services/background.http.service";
+import { Product } from "~/app/models/product.model";
 
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
-import { Product } from "~/app/models/product.model";
-import { File, Folder } from "tns-core-modules/file-system/file-system";
 
 declare const android: any;
 declare const CGSizeMake: any;
@@ -47,24 +46,10 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
         this.user = new User();
 
-        // this.file = File.fromPath(path.join(this.folder.)'FarmersHut.jpg');
-
         this.userService.showLoadingState(false);
         if (localstorage.getItem('cartId') && localstorage.getItem('cartId') != null && localstorage.getItem('cartId') != undefined && localstorage.getItem('cartId') != "") {
             this.getCart(localstorage.getItem('cartId'));
         }
-
-        // if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
-        //     this.routerExtensions.navigate(['./homeUser'], {
-        //         clearHistory: true,
-        //     });
-        // }
-        // if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
-        //     this.routerExtensions.navigate(['./homeAdmin'], {
-        //         clearHistory: true,
-        //     });
-        // }
-
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
             this.routerExtensions.navigate(['./homeUser']);
@@ -106,12 +91,10 @@ export class LoginComponent implements OnInit {
         if (this.phone == "") {
             this.errorMessage = "Please enter phone number.";
             this.warningDialog.show();
-            // alert("Please enter phone number!!!");
         }
         else if (this.phone.length < 10) {
             this.errorMessage = "Please enter ten digit phone number.";
             this.warningDialog.show();
-            // alert("Please enter ten digit phone number!!!");
         }
         else if (this.password == "") {
             this.errorMessage = "Please enter password.";
@@ -216,7 +199,6 @@ export class LoginComponent implements OnInit {
                 if (res != "" && res != undefined) {
                     if (res.isSuccess == true) {
                         this.isLoading = false;
-                        // this.userService.showLoadingState(false);
                         this.userVerifyDialog.hide();
                         localstorage.setItem('regToken', res.data.regToken);
                         this.routerExtensions.navigate(['./confirmPhone'], {
@@ -225,8 +207,6 @@ export class LoginComponent implements OnInit {
                     }
                 }
             }, error => {
-                // this.userService.showLoadingState(false);
-                // alert(error.error.error);
                 if (error.error.error == undefined) {
                     this.errorMessage = "May be your network connection is low.";
                     this.warningDialog.show();
@@ -248,7 +228,6 @@ export class LoginComponent implements OnInit {
             clearHistory: true,
         });
     }
-
 
     protected get shadowColor(): Color {
         return new Color('#888888')
@@ -279,8 +258,6 @@ export class LoginComponent implements OnInit {
                 nativeGridMain.layer.shadowRadius = 5.0
                 nativeGridMain.layer.shadowRadius = 5.0
             }
-
-            // this.changeDetector.detectChanges();
         }, 400)
 
     }

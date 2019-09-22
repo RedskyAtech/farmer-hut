@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { ActivatedRoute } from "@angular/router";
 import { ModalComponent } from "~/app/modals/modal.component";
@@ -9,11 +9,10 @@ import { Accuracy } from "tns-core-modules/ui/enums";
 import { Order } from "../../models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
 import { openUrl } from "tns-core-modules/utils/utils";
-
+import { Page } from "tns-core-modules/ui/page/page";
 
 import * as geolocation from "nativescript-geolocation";
 import * as Toast from 'nativescript-toast';
-import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -22,7 +21,7 @@ import { Page } from "tns-core-modules/ui/page/page";
     templateUrl: "./order-detail.component.html",
     styleUrls: ["./order-detail.component.css"]
 })
-export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
+export class OrderDetailComponent implements OnInit {
 
     @ViewChild('confirmOrderDialog') confirmOrderDialog: ModalComponent;
     @ViewChild('rejectOrderDialog') rejectOrderDialog: ModalComponent;
@@ -147,7 +146,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                                 this.rejectButtonText = "Reject";
                             }
                             if (res.data.length != 0) {
-                                // for (var i = 0; i < res.data.length; i++) {
                                 for (var j = 0; j < res.data.products.length; j++) {
                                     this.orderedProducts.push({
                                         image: res.data.products[j].image.resize_url,
@@ -166,13 +164,9 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });
@@ -183,15 +177,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
-    }
-
-    ngAfterViewInit(): void {
-    }
-
-    ngOnDestroy(): void {
-        // application.android.off(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
-        //     args.cancel = true;
-        // });
     }
 
     onReason() {
@@ -207,10 +192,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onBack() {
-        // this.routerExtensions.navigate(['/viewOrders'], {
-        //     clearHistory: true,
-        // });
-
         this.routerExtensions.back();
     }
 
@@ -253,13 +234,9 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.isLoading = false;
                     this.userService.showLoadingState(false);
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });
@@ -304,13 +281,9 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isLoading = false;
                 this.userService.showLoadingState(false);
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -342,48 +315,12 @@ export class OrderDetailComponent implements OnInit, AfterViewInit, OnDestroy {
             geolocation.enableLocationRequest();
             var that = this;
 
-            // that.http
-            //     .get(Values.GOOGLE_MAP_URL + "address=" + that.address + "," + "CA&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
-            //     .subscribe((res: any) => {
-            //         that.userLatitude = res.results[0].geometry.location.lat;
-            //         that.userLongitude = res.results[0].geometry.location.lng;
-            //         // that.userService.showLoadingState(false);
-            //         // // that.address = res.results[0].address_components[0].long_name;
-            //         // that.address = res.results[0].formatted_address;
-            //     }, error => {
-            //         console.log(error);
-            //     });
             geolocation.getCurrentLocation({ desiredAccuracy: Accuracy.high, updateDistance: 100, maximumAge: 20000 }).
                 then(function (location) {
                     if (location) {
                         that.userService.showLoadingState(false);
                         that.isLoading = false;
                         openUrl("google.navigation:q=" + that.latitude.toString() + "," + that.longitude.toString());
-                        // directions.navigate({
-                        //     // from: { // optional, default 'current location'
-                        //     // },
-                        //     // to: [{ // if an Array is passed (as in this example), the last item is the destination, the addresses in between are 'waypoints'.
-                        //     //     address: "Hof der Kolommen 34, Amersfoort, Netherlands",
-                        //     // },
-                        //     // {
-                        //     //     address: "Aak 98, Wieringerwerf, Netherlands"
-                        //     // }],
-                        //     to: {
-                        //         // address: that.mapAddress,
-                        //         lat: that.latitude,
-                        //         lng: that.longitude
-                        //     },
-                        //     type: "driving", // optional, can be: driving, transit, bicycling or walking
-                        //     ios: {
-                        //         preferGoogleMaps: true, // If the Google Maps app is installed, use that one instead of Apple Maps, because it supports waypoints. Default true.
-                        //         allowGoogleMapsWeb: true // If waypoints are passed in and Google Maps is not installed, you can either open Apple Maps and the first waypoint is used as the to-address (the rest is ignored), or you can open Google Maps on web so all waypoints are shown (set this property to true). Default false.
-                        //     }
-                        // }).then(() => {
-                        //     console.log("Maps app launched.");
-                        // }, error => {
-                        //     console.log(error);
-                        // });
-
                     }
                 }, function (e) {
                     that.isLoading = false;

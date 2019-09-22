@@ -116,20 +116,15 @@ export class SimilarProductUserComponent implements OnInit {
                                 description: res.data.products[i].heading.description
                             })
                         }
-                        // this.updateCartCount();
                         this.similarInit = true;
                     }
                 }
             }, error => {
                 this.userService.showLoadingState(false);
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -149,12 +144,6 @@ export class SimilarProductUserComponent implements OnInit {
 
 
     onViewDetail(product: Product) {
-        // let navigationExtras: NavigationExtras = {
-        //     queryParams: {
-        //         "productId": product._id,
-        //         "classType": "similarProduct"
-        //     },
-        // };
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
                 "product": JSON.stringify(product),
@@ -169,12 +158,6 @@ export class SimilarProductUserComponent implements OnInit {
                 "index": "5"
             },
         };
-        // this.routerExtensions.navigate(['./homeUser'], {
-        //     queryParams: {
-        //         "index": "1"
-        //     },
-        //     clearHistory: true,
-        // });
         this.routerExtensions.back(navigationExtras);
     }
 
@@ -188,7 +171,6 @@ export class SimilarProductUserComponent implements OnInit {
                 if (product._id == storedCartProducts[i]._id) {
                     var quantity = parseInt(storedCartProducts[i].quantity) + 1;
                     this.cart.product.quantity = quantity.toString();
-                    // this.updateCart(storedCart._id);
                     alert("Product already in cart, Please increase quantity in cart");
                     resolve(true);
                     return;
@@ -219,21 +201,6 @@ export class SimilarProductUserComponent implements OnInit {
                 localstorage.setItem(JSON.stringify(storedCartProducts));
                 this.updateCart();
             })
-
-
-
-            // for (var i = 0; i < storedCart.products.length; i++) {
-            //     if (product._id == storedCart.products[i]._id) {
-            //         var quantity = parseInt(storedCart.products[i].quantity) + 1;
-            //         this.cart.product.quantity = quantity.toString();
-            //         this.updateCart(storedCart._id);
-            //         break;
-            //     }
-            //     else {
-            //         this.cart.product.quantity = "1";
-            //         this.updateCart(storedCart._id);
-            //     }
-            // }
         }
         else {
             this.cart.product.quantity = "1";
@@ -273,13 +240,9 @@ export class SimilarProductUserComponent implements OnInit {
                 }, error => {
                     this.hasBeenHitOnce = false;
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });

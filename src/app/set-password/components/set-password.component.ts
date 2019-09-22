@@ -6,10 +6,10 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
-import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -77,17 +77,14 @@ export class SetPasswordComponent implements OnInit {
         if (this.otp == "") {
             this.errorMessage = "Please enter OTP.";
             this.warningDialog.show();
-            // alert("Please enter OTP!!!");
         }
         else if (this.otp.length < 6) {
             this.errorMessage = "Please enter six digit otp.";
             this.warningDialog.show();
-            // alert("Please enter six digit otp!!!");
         }
         else if (this.password == "") {
             this.errorMessage = "Please enter password.";
             this.warningDialog.show();
-            // alert("Please enter password!!!");
         }
         else if (this.password.length < 5) {
             this.errorMessage = "Password is too short, please enter minimum five characters.";
@@ -96,7 +93,6 @@ export class SetPasswordComponent implements OnInit {
         else if (this.rePassword == "") {
             this.errorMessage = "Please enter repeat password";
             this.warningDialog.show();
-            // alert("Please enter repeat password!!!");
         }
         else if (this.password.length < 5) {
             this.errorMessage = "Repeat password is too short, please enter minimum five characters.";
@@ -105,7 +101,6 @@ export class SetPasswordComponent implements OnInit {
         else if (this.password != this.rePassword) {
             this.errorMessage = "Password and repeat password should be same";
             this.warningDialog.show();
-            // alert("Password and repeat password should be same!!!");
         }
         else {
             this.isLoading = true;
@@ -132,12 +127,10 @@ export class SetPasswordComponent implements OnInit {
                     if (error.error.error == undefined) {
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
-                        // alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
                         this.errorMessage = error.error.error;
                         this.warningDialog.show();
-                        // alert(error.error.error);
                     }
                 });
         }

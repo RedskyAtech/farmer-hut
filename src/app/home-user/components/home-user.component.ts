@@ -10,11 +10,9 @@ import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
 import { BackgroundHttpService } from "~/app/services/background.http.service";
-import { Marker, MapView } from "nativescript-google-maps-sdk";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
-import * as Location from "nativescript-geolocation"
 
 
 @Component({
@@ -45,19 +43,6 @@ export class HomeUserComponent implements OnInit {
     pageNo: number;
 
 
-
-    latitude = -33.86;
-    longitude = 151.20;
-    zoom = 8;
-    minZoom = 0;
-    maxZoom = 22;
-    bearing = 0;
-    tilt = 0;
-    padding = [40, 40, 40, 40];
-    mapView: MapView;
-
-    marker = new Marker();
-    location = new Location.Location();
     mainInit = true;
     categoryPageNo = 1;
     categoryInit = true;
@@ -67,6 +52,7 @@ export class HomeUserComponent implements OnInit {
     errorMessage: string;
     isScrolling: boolean;
     scrollingTimeout;
+
 
     constructor(private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
@@ -101,32 +87,6 @@ export class HomeUserComponent implements OnInit {
                 this.updateCartCount();
             }
         })
-
-        // this.route.queryParams.subscribe(params => {
-        //     console.log("NNNNNNNN::::", params)
-        //     if (params["index"] == "1" && params["index"] != undefined) {
-        //         this.tabSelectedIndex = 1;
-
-        //     } else {
-        //         this.tabSelectedIndex = 0;
-        //     }
-        // });
-
-        setInterval(() => {
-            setTimeout(() => {
-                if (!this.isScrolling) {
-                    this.selectedPage++;
-                }
-            }, 6000)
-            if (this.selectedPage == 3) {
-                setTimeout(() => {
-                    if (!this.isScrolling) {
-                        this.selectedPage = 0;
-                    }
-                }, 6000);
-            }
-        }, 6000);
-
         this.updateCartCount();
 
     }
@@ -137,9 +97,7 @@ export class HomeUserComponent implements OnInit {
         }, 50);
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             if (this.getProducts()) {
-                if (this.getCategory()) {
-                    this.updateSlider(1)
-                }
+                this.getCategory()
             }
         }
     }
@@ -180,7 +138,6 @@ export class HomeUserComponent implements OnInit {
         this.http
             .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
-                // console.trace('RES:::', res.data)
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true && res.data && res.data.products) {
                         for (var i = 0; i < res.data.products.length; i++) {
@@ -202,15 +159,10 @@ export class HomeUserComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                // this.pullRefreshPage.refreshing = false;
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -239,15 +191,10 @@ export class HomeUserComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                // this.pullRefreshPage.refreshing = false;
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -263,50 +210,6 @@ export class HomeUserComponent implements OnInit {
             } else if (newIndex === 1) {
                 this.tabSelectedIndex = 1;
             }
-        }
-    }
-
-    updateSlider(count: number) {
-        if (count > 0 && count < 5) {
-            this.isRenderingSlider = true;
-            this.http
-                .get(Values.BASE_URL + `files?pageNo=${0}&items=${count}`)
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            this.userService.showLoadingState(false);
-                            switch (count) {
-                                case 1:
-                                    this.sliderImage1 = res.data.resize_url;
-                                    break;
-                                case 2:
-                                    this.sliderImage2 = res.data.resize_url;
-                                    break;
-                                case 3:
-                                    this.sliderImage3 = res.data.resize_url;
-                                    break;
-                                case 4:
-                                    this.sliderImage4 = res.data.resize_url;
-                                    break;
-                            }
-                            if (count + 1 < 5) {
-                                this.updateSlider(count + 1)
-                            }
-                        }
-                    }
-                }, error => {
-                    this.userService.showLoadingState(false);
-                    if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
-                        alert("Something went wrong!!! May be your network connection is low.");
-                    }
-                    else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
-                        alert(error.error.error);
-                    }
-                });
         }
     }
 

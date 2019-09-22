@@ -34,12 +34,10 @@ export class ChangePasswordComponent implements OnInit {
     user: User;
     userId: string;
     errorMessage: string;
-    // isRendering: boolean;
     isLoading: boolean;
 
     constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
-        // this.isRendering = false;
         this.isLoading = false;
 
         this.user = new User();
@@ -60,9 +58,6 @@ export class ChangePasswordComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // setTimeout(() => {
-        //     this.isRendering = true;
-        // })
     }
 
     onOK() {
@@ -92,22 +87,18 @@ export class ChangePasswordComponent implements OnInit {
         if (this.oldPassword == "") {
             this.errorMessage = "Please enter old password.";
             this.warningDialog.show();
-            // alert("Please enter old password!!!");
         }
         else if (this.newPassword == "") {
             this.errorMessage = "Please enter new password.";
             this.warningDialog.show();
-            // alert("Please enter new password!!!");
         }
         else if (this.newRePassword == "") {
             this.errorMessage = "Please enter repeat new password.";
             this.warningDialog.show();
-            // alert("Please enter repeat new password!!!");
         }
         else if (this.newPassword != this.newRePassword) {
             this.errorMessage = "Password and repeat password should be same.";
             this.warningDialog.show();
-            // alert("Password and repeat password should be same!!!");
         }
         else {
             this.isLoading = true;
@@ -135,12 +126,10 @@ export class ChangePasswordComponent implements OnInit {
                     if (error.error.error == undefined) {
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
-                        // alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
                         this.errorMessage = error.error.error;
                         this.warningDialog.show();
-                        // alert(error.error.error);
                     }
                 });
         }

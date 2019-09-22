@@ -1,0 +1,32 @@
+<Page backgroundColor="transparent">
+    <GridLayout *ngIf="isRenderingSlider" height="100%" width="100%" backgroundColor="transparent">
+        <Carousel #myCarousel android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage"
+            [height]="height" [width]="width" indicatorColor="#00C012" android:indicatorAnimation="drop"
+            indicatorColorUnselected="#D4D4D4">
+            <CarouselItem>
+                <StackLayout width="100%" height="100%">
+                    <NSImage width="100%" height="100%" stretch="aspectFill" placeholder="res://slider_background"
+                        borderRadius="10" [src]="sliderImage1"></NSImage>
+                </StackLayout>
+            </CarouselItem>
+            <CarouselItem>
+                <StackLayout width="100%" height="100%">
+                    <NSImage width="100%" height="100%" stretch="aspectFill" placeholder="res://slider_background"
+                        borderRadius="10" [src]="sliderImage2"></NSImage>
+                </StackLayout>
+            </CarouselItem>
+            <CarouselItem>
+                <StackLayout width="100%" height="100%">
+                    <NSImage width="100%" height="100%" stretch="aspectFill" placeholder="res://slider_background"
+                        borderRadius="10" [src]="sliderImage3"></NSImage>
+                </StackLayout>
+            </CarouselItem>
+            <CarouselItem>
+                <StackLayout width="100%" height="100%">
+                    <NSImage width="100%" height="100%" stretch="aspectFill" placeholder="res://slider_background"
+                        borderRadius="10" [src]="sliderImage4"></NSImage>
+                </StackLayout>
+            </CarouselItem>
+        </Carousel>
+    </GridLayout>
+</Page>

@@ -8,7 +8,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { UserService } from "./services/user.service";
 import { NavigationService } from "./services/navigation.service";
 import { BackgroundHttpService } from "./services/background.http.service";
-import { TNSImageCacheItModule } from 'nativescript-image-cache-it/angular';
+
 
 @NgModule({
     bootstrap: [
@@ -19,10 +19,9 @@ import { TNSImageCacheItModule } from 'nativescript-image-cache-it/angular';
         AppRoutingModule,
         GridViewModule,
         HttpClientModule,
-        TNSImageCacheItModule
     ],
     declarations: [
-        AppComponent,
+        AppComponent
     ],
     providers: [UserService, NavigationService, BackgroundHttpService],
     schemas: [

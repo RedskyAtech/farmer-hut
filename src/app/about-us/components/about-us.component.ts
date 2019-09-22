@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
-import { UserService } from "~/app/services/user.service";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { Page } from "tns-core-modules/ui/page/page";
@@ -17,12 +16,11 @@ export class AboutUsComponent implements OnInit {
     aboutUs: string;
     isRendering: boolean;
     isLoading: boolean;
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
         this.isRendering = false;
         this.page.actionBarHidden = true;
         this.navigationService.backTo = "profile";
         this.getAbout();
-        // this.aboutUs = "hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg hds jhgsda jhgdsj jhgsa gjsd gjga jdasgj gdjg sjdg";
     }
 
     ngOnInit(): void {
@@ -43,22 +41,15 @@ export class AboutUsComponent implements OnInit {
             }, error => {
                 this.isLoading = false;
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
     }
 
     onBack() {
-        // this.routerExtensions.navigate(['./profile'], {
-        //     clearHistory: true,
-        // });
         this.routerExtensions.back();
 
     }

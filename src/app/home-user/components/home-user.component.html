@@ -15,49 +15,8 @@
                 <Label color="white" fontWeight="500" horizontalAlignment="center" [text]="cartCount"></Label>
             </StackLayout>
         </GridLayout>
-        <GridLayout *ngIf="isRenderingSlider" row="1" height="25%" width="100%">
-            <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
-                android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="100%"
-                width="100%" indicatorColor="#00C012" android:indicatorAnimation="drop"
-                indicatorColorUnselected="#D4D4D4">
-                <CarouselItem>
-                    <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage1">
-                        </NSImage>
-
-                        <!-- <ImageCacheIt stretch="aspectFill"
-                            src="http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/files/FarmersHut-1568716012669.jpg">
-                        </ImageCacheIt> -->
-                    </StackLayout>
-                </CarouselItem>
-                <CarouselItem>
-                    <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage2">
-                        </NSImage>
-                        <!-- <ImageCacheIt stretch="aspectFill"
-                            src="http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/files/FarmersHut-1568716012669.jpg">
-                        </ImageCacheIt> -->
-                    </StackLayout>
-                </CarouselItem>
-                <CarouselItem>
-                    <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage3">
-                        </NSImage>
-                        <!-- <ImageCacheIt stretch="aspectFill"
-                            src="http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/files/FarmersHut-1568716012669.jpg">
-                        </ImageCacheIt> -->
-                    </StackLayout>
-                </CarouselItem>
-                <CarouselItem>
-                    <StackLayout width="100%" height="100%">
-                        <NSImage height="100%" width="100%" stretch="aspectFill" placeholder="res://slider_background" [src]="sliderImage4">
-                        </NSImage>
-                        <!-- <ImageCacheIt stretch="aspectFill"
-                            src="http://ec2-13-229-228-92.ap-southeast-1.compute.amazonaws.com:3000/files/FarmersHut-1568716012669.jpg">
-                        </ImageCacheIt> -->
-                    </StackLayout>
-                </CarouselItem>
-            </Carousel>
+        <GridLayout row="1" height="25%" width="100%">
+            <ns-slider height="100%" width="100%"></ns-slider>
         </GridLayout>
         <TabView row="2" *ngIf="isRenderingTabView" [(ngModel)]="tabSelectedIndex" [selectedIndex]="tabSelectedIndex"
             width="100%" height="67%" selectedTabTextColor="white" tabTextColor="#00C012" tabTextFontSize="14"
@@ -67,8 +26,7 @@
                 <GridLayout rows="auto">
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
-                            backgroundColor="transparent" (loadMoreItems)="onLoadMoreMainItems()"
-                            (scroll)="onGridViewScroll()">
+                            backgroundColor="transparent" (loadMoreItems)="onLoadMoreMainItems()">
                             <ng-template let-item="item" let-i="index" let-odd="odd">
                                 <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
                                     marginRight="5%" marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">

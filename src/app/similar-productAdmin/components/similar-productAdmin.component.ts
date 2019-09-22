@@ -1,15 +1,16 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
-// import { RouterExtensions } from "nativescript-angular/router";
+import { Component, OnInit } from "@angular/core";
 import { Product } from "~/app/models/product.model";
-import * as localstorage from "nativescript-localstorage";
 import { UserService } from "../../services/user.service";
 import { Values } from "~/app/values/values";
 import { HttpClient } from "@angular/common/http";
-import { session, Request } from 'nativescript-background-http';
+import { session } from 'nativescript-background-http';
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
 import { ActivatedRoute } from "@angular/router";
+import { GridView } from "nativescript-grid-view";
+
+import * as localstorage from "nativescript-localstorage";
 
 @Component({
     selector: "ns-similarProducts",
@@ -34,6 +35,8 @@ export class SimilarProductAdminComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
 
+    similarGridView: GridView;
+
     constructor(private routerExtensions: RouterExtensions, private router: ActivatedRoute, private page: Page, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.page.actionBarHidden = true;
         this.product = new Product();
@@ -49,6 +52,8 @@ export class SimilarProductAdminComponent implements OnInit {
 
                 console.log('Value:::', localStorage.getItem('fromSimilarProducts'))
                 if (localStorage.getItem('fromSimilarProducts') == 'true') {
+                    this.page.requestLayout();
+                    this.similarGridView.refresh();
                     this.similarProducts = [];
                     this.categoryId = localstorage.getItem("categoryId");
                     localStorage.setItem('fromSimilarProducts', '');
@@ -74,25 +79,16 @@ export class SimilarProductAdminComponent implements OnInit {
         this.navigationService.backTo = "homeAdmin";
         this.isLoading = false;
         this.isRendering = false;
-
-        // this.http
-        //     .get(Values.BASE_URL + "categories/" + this.categoryId)
-        //     .subscribe((res: any) => {
-        //         if (res != null && res != undefined) {
-        //             if (res.isSuccess == true) {
-        //                 this.heading = res.data.name;
-        //             }
-        //         }
-        //     }, error => {
-        //         this.userService.showLoadingState(false);
-        //         alert(error.error.error);
-        //     });
     }
 
     ngOnInit(): void {
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
+    }
+
+    onSimilarGridLoaded(args: any) {
+        this.similarGridView = <GridView>args.object;
     }
 
     onLoadMoreSimilarItems() {
@@ -110,7 +106,6 @@ export class SimilarProductAdminComponent implements OnInit {
             console.log('Category:::', this.categoryId)
             this.userService.showLoadingState(true);
 
-            // this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "similarProducts?_id=" + this.categoryId + `&pageNo=${this.similarPageNo}&items=10`)
                 .subscribe((res: any) => {
@@ -118,7 +113,6 @@ export class SimilarProductAdminComponent implements OnInit {
                         if (res.isSuccess == true) {
                             console.trace("RES:::SIMILAR:::", res)
                             this.userService.showLoadingState(false);
-                            // this.isLoading = false;
                             for (var i = 0; i < res.data.products.length; i++) {
                                 this.similarProducts.push({
                                     _id: res.data.products[i]._id,
@@ -138,16 +132,11 @@ export class SimilarProductAdminComponent implements OnInit {
                         }
                     }
                 }, error => {
-                    // this.isLoading = false;
                     this.userService.showLoadingState(false);
                     if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
                         alert("Something went wrong!!! May be your network connection is low.");
                     }
                     else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
                         alert(error.error.error);
                     }
                 });

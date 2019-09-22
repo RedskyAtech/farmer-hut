@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { Product } from "~/app/models/product.model";
 import { HttpClient } from "@angular/common/http";
@@ -10,8 +9,10 @@ import { session } from 'nativescript-background-http';
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
 
-import * as localstorage from "nativescript-localstorage";
 import { Page } from "tns-core-modules/ui/page/page";
+import { GridView } from "nativescript-grid-view";
+
+import * as localstorage from "nativescript-localstorage";
 
 
 @Component({
@@ -50,7 +51,10 @@ export class HomeAdminComponent implements OnInit {
     isLoading: boolean;
     fileId: string;
 
-    constructor(private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private route: ActivatedRoute, private http: HttpClient, private page: Page) {
+    productGrid: GridView;
+    similarProductGrid: GridView;
+
+    constructor(private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
         this.addButtonText = "Add Product";
         this.product = new Product();
@@ -72,18 +76,6 @@ export class HomeAdminComponent implements OnInit {
         this.tabSelectedIndex = 0;
         this.getFileId();
 
-
-        setInterval(() => {
-            setTimeout(() => {
-                this.selectedPage++;
-            }, 6000)
-            if (this.selectedPage == 3) {
-                setTimeout(() => {
-                    this.selectedPage = 0;
-                }, 6000);
-            }
-        }, 6000);
-
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page:::", data.context);
@@ -91,16 +83,22 @@ export class HomeAdminComponent implements OnInit {
                 this.userService.activeScreen("homeAdmin");
                 if (localStorage.getItem('fromCategory') == 'true') {
                     this.page.requestLayout();
+                    this.productGrid.refresh();
                     this.productCategories = [];
                     localStorage.setItem('fromCategory', '');
                     this.getCategories();
                 }
                 if (localStorage.getItem('fromHome') == 'true') {
                     this.page.requestLayout();
+                    this.productGrid.refresh();
                     this.products = [];
                     localStorage.setItem('fromHome', '');
                     this.isRenderingProducts = true;
                     this.getProducts();
+                }
+                if (localStorage.getItem('fromSlider') == 'true') {
+                    this.page.requestLayout();
+                    localStorage.setItem('fromSlider', '');
                 }
             }
         })
@@ -114,9 +112,7 @@ export class HomeAdminComponent implements OnInit {
 
         if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined && localstorage.getItem("adminId") != null && localstorage.getItem("adminId") != undefined) {
             if (this.getProducts()) {
-                if (this.getCategories()) {
-                    this.updateSlider(1)
-                }
+                this.getCategories()
             }
         }
     }
@@ -136,53 +132,12 @@ export class HomeAdminComponent implements OnInit {
             });
     }
 
-    updateSlider(count: number) {
-        if (count > 0 && count < 5) {
-            this.isRenderingSlider = true;
-            this.http
-                .get(Values.BASE_URL + `files?pageNo=${0}&items=${count}`)
-                .subscribe((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            switch (count) {
-                                case 1:
-                                    this.sliderImage1 = res.data.resize_url;
-                                    break;
-                                case 2:
-                                    this.sliderImage2 = res.data.resize_url;
-                                    break;
-                                case 3:
-                                    this.sliderImage3 = res.data.resize_url;
-                                    break;
-                                case 4:
-                                    this.sliderImage4 = res.data.resize_url;
-                                    break;
-                            }
-                            if (count + 1 < 5) {
-                                this.updateSlider(count + 1)
-                            }
-                        }
-                    }
-                }, error => {
-                    if (error.error.error == undefined) {
-                        // this.errorMessage = "May be your network connection is low.";
-                        // this.warningDialog.show();
-                        alert("Something went wrong!!! May be your network connection is low.");
-                    }
-                    else {
-                        // this.errorMessage = error.error.error;
-                        // this.warningDialog.show();
-                        alert(error.error.error);
-                    }
-                });
-        }
+    onProductsGridLoaded(args: any) {
+        this.productGrid = <GridView>args.object
     }
 
-    onProductGridViewLoaded(args: any) {
-    }
-
-    onSimilarProductGridViewLoaded(args: any) {
-
+    onSimilarProductsGridLoaded(args: any) {
+        this.similarProductGrid = <GridView>args.object
     }
 
     onLoadMoreMainItems() {
@@ -228,15 +183,10 @@ export class HomeAdminComponent implements OnInit {
                     }
                 }
             }, error => {
-                // this.isLoading = false;
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -265,15 +215,10 @@ export class HomeAdminComponent implements OnInit {
                     }
                 }
             }, error => {
-                // this.isLoading = false;
                 if (error.error.error == undefined) {
-                    // this.errorMessage = "May be your network connection is low.";
-                    // this.warningDialog.show();
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
                 else {
-                    // this.errorMessage = error.error.error;
-                    // this.warningDialog.show();
                     alert(error.error.error);
                 }
             });
@@ -382,7 +327,6 @@ export class HomeAdminComponent implements OnInit {
     }
 
     respondedEvent(e) {
-        // var that = this;
         console.log("RESPONSE: " + e.data);
     }
 

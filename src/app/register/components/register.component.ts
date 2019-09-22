@@ -5,9 +5,9 @@ import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { UserService } from '../../services/user.service';
 import { ModalComponent } from "~/app/modals/modal.component";
+import { Page } from "tns-core-modules/ui/page/page";
 
 import * as localstorage from "nativescript-localstorage";
-import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -100,31 +100,25 @@ export class RegisterComponent implements OnInit {
     }
 
     onRegister() {
-        // this.userVerifyDialog.show();
         if (this.name == "") {
             this.errorMessage = "Please enter name.";
             this.warningDialog.show();
-            // alert("Please enter name!!!");
         }
         else if (!(this.name.match("^[a-zA-Z ]*$"))) {
             this.errorMessage = "Name contains characters only.";
             this.warningDialog.show();
-            // alert("Name contains characters only!!!");
         }
         else if (this.phone == "") {
             this.errorMessage = "Please enter phone number.";
             this.warningDialog.show();
-            // alert("Please enter phone number!!!");
         }
         else if (this.phone.length < 10) {
             this.errorMessage = "Please enter ten digit phone number.";
             this.warningDialog.show();
-            // alert("Please enter ten digit phone number!!!");
         }
         else if (this.password == "") {
             this.errorMessage = "Please enter password.";
             this.warningDialog.show();
-            // alert("Please enter password!!!");
         }
         else if (this.password.length < 6) {
             this.errorMessage = "Password is too short, please enter minimum six characters.";
@@ -133,7 +127,6 @@ export class RegisterComponent implements OnInit {
         else if (this.rePassword == "") {
             this.errorMessage = "Please enter repeat password.";
             this.warningDialog.show();
-            // alert("Please enter repeat password!!!");
         }
         else if (this.rePassword.length < 5) {
             this.errorMessage = "Repeat password is too short, please enter minimum five characters.";
@@ -142,7 +135,6 @@ export class RegisterComponent implements OnInit {
         else if (this.password != this.rePassword) {
             this.errorMessage = "Password and repeat password should be same.";
             this.warningDialog.show();
-            // alert("Password and repeat password should be same!!!");
         }
         else {
             this.isLoading = true;
