@@ -80,6 +80,8 @@ export class CartComponent implements OnInit {
 
     onRemoveItem(product: Product) {
         var storedCart = JSON.parse(localstorage.getItem('cart'));
+        console.trace('CARTTTTT:::', product)
+        // console.log('CARTTTTT:::', this.cart)
 
 
         this.cart.product._id = product._id;
@@ -88,15 +90,19 @@ export class CartComponent implements OnInit {
         var index = this.cartProducts.indexOf(product)
         this.cartProducts.splice(index, 1);
 
-        if (product.isSimilarProduct == true) {
-            this.cart.product.isSimilarProduct = product.isSimilarProduct;
-        } else {
-            this.cart.product.isSimilarProduct = false;
+        // if (product.isSimilarProduct == true) {
+        //     this.cart.product.isSimilarProduct = product.isSimilarProduct;
+        // } else {
+        //     this.cart.product.isSimilarProduct = false;
+        // }
+        if (product.isSimilarProduct) {
+            this.cart.product.isSimilarProduct = true;
         }
+
         if (this.cartProducts.length == 0) {
             this.isRenderingMessage = true;
         }
-
+        // console.log('CARTTTTT:::', this.cart)
         if (storedCart.length != 0) {
             for (var i = 0; i < storedCart.length; i++) {
                 if (product._id == storedCart[i]._id) {
@@ -107,9 +113,11 @@ export class CartComponent implements OnInit {
             }
         }
         this.totalAmount = this.getGrandTotal().toString();
-        console.log('Prices:::', this.totalAmount, typeof (this.totalAmount))
+        // console.log('Prices:::', this.totalAmount, typeof (this.totalAmount))
 
         this.notifyUpdateCartQuantity();
+        // console.log('CARTTTTT:::', this.cart)
+
     }
 
     onPlus(product: Product) {
@@ -210,7 +218,7 @@ export class CartComponent implements OnInit {
 
     notifyUpdateCartQuantity() {
         var tempCart = [];
-        console.log(this.cart);
+        console.log("SENTCART:::", this.cart);
         this.backgroundHttpService
             .put(Values.BASE_URL + "carts/update/" + localstorage.getItem("cartId"), {}, this.cart)
             .then((res: any) => {
@@ -239,14 +247,15 @@ export class CartComponent implements OnInit {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         if (res.data.products.length > 0) {
+                            console.trace('GOTPRO:::', res.data.products)
                             this.cartProducts = [];
                             for (var i = 0; i < res.data.products.length; i++) {
-                                if (res.data.products[i].isSimilarProduct) {
-                                    var productType = res.data.products[i].isSimilarProduct;
-                                }
+                                // if (res.data.products[i].isSimilarProduct) {
+                                //     var productType = res.data.products[i].isSimilarProduct;
+                                // }
                                 this.cartProducts.push({
                                     _id: res.data.products[i]._id,
-                                    isSimilarProduct: productType,
+                                    isSimilarProduct: res.data.products[i].isSimilarProduct,
                                     image: res.data.products[i].image.resize_url,
                                     fullName: res.data.products[i].name,
                                     quantity: res.data.products[i].quantity,
