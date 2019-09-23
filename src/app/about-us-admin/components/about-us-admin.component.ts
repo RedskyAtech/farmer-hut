@@ -35,6 +35,7 @@ export class AboutUsAdminComponent implements OnInit {
     isLoading: boolean;
 
     constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
+        this.userService.activeScreen('');
         this.page.actionBarHidden = true;
         this.navigationService.backTo = "profile";
         this.aboutHint = "Tell us about yourself";

@@ -4,6 +4,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 import { HttpClient } from "@angular/common/http";
 import { Values } from "~/app/values/values";
 import { Page } from "tns-core-modules/ui/page/page";
+import { UserService } from "~/app/services/user.service";
 
 @Component({
     selector: "ns-aboutUs",
@@ -16,7 +17,8 @@ export class AboutUsComponent implements OnInit {
     aboutUs: string;
     isRendering: boolean;
     isLoading: boolean;
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private page: Page, private userService: UserService) {
+        this.userService.activeScreen('')
         this.isRendering = false;
         this.page.actionBarHidden = true;
         this.navigationService.backTo = "profile";

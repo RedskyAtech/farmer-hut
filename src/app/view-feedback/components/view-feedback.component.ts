@@ -26,6 +26,7 @@ export class ViewFeedbackComponent implements OnInit {
         this.feedbacks = [];
         this.isRendering = false;
         this.isLoading = false;
+        this.userService.activeScreen('');
         this.navigationService.backTo = "profile";
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&

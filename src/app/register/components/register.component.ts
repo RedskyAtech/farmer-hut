@@ -44,6 +44,7 @@ export class RegisterComponent implements OnInit {
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.user = new User();
         this.errorMessage = "";
+        // this.userService.activeScreen('');
         this.page.actionBarHidden = true;
         this.isRendering = false;
         this.isLoading = false;

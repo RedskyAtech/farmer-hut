@@ -56,6 +56,7 @@ export class CartComponent implements OnInit {
         this.mapAddress = "";
         this.address = "";
         this.isRenderingMessage = false;
+        this.userService.activeScreen('');
         this.navigationService.backTo = "homeUser";
     }
 

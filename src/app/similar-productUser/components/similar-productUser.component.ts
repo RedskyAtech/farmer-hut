@@ -41,6 +41,7 @@ export class SimilarProductUserComponent implements OnInit {
         this.isLoading = false;
         this.isRendering = false;
         this.hasBeenHitOnce = false;
+        this.userService.activeScreen('');
 
         this.product = new Product();
         this.cart = new Cart();

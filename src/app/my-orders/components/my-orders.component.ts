@@ -30,6 +30,7 @@ export class MyOrdersComponent implements OnInit {
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isRendering = false;
+        this.userService.activeScreen('');
         this.navigationService.backTo = 'profile';
         this.orderedProducts = [];
         this.address = "Select address";

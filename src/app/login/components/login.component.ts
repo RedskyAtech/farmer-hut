@@ -45,18 +45,19 @@ export class LoginComponent implements OnInit {
         this.isRendering = false;
         this.isLoading = false;
         this.user = new User();
+        this.userService.activeScreen('');
 
         this.userService.showLoadingState(false);
         if (localstorage.getItem('cartId') && localstorage.getItem('cartId') != null && localstorage.getItem('cartId') != undefined && localstorage.getItem('cartId') != "") {
             this.getCart(localstorage.getItem('cartId'));
         }
 
-        if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
-            this.routerExtensions.navigate(['./homeUser']);
-        }
-        if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
-            this.routerExtensions.navigate(['./homeAdmin']);
-        }
+        // if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
+        //     this.routerExtensions.navigate(['./homeUser']);
+        // }
+        // if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
+        //     this.routerExtensions.navigate(['./homeAdmin']);
+        // }
         this.errorMessage = "";
     }
 

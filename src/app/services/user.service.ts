@@ -7,7 +7,7 @@ export class UserService {
     private _activescreen = new Subject<string>();
 
     showloadingState = this._showloadingState.asObservable();
-    activescreen = this._activescreen.asObservable();
+    activescreenObserve = this._activescreen.asObservable();
 
     constructor() { }
 

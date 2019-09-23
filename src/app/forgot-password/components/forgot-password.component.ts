@@ -34,6 +34,7 @@ export class ForgotPasswordComponent implements OnInit {
         this.email = "";
         this.phone = "";
         this.user = new User();
+        this.userService.activeScreen('');
         this.errorMessage = "";
         this.navigationService.backTo = "login";
         this.page.actionBarHidden = true;

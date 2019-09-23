@@ -66,6 +66,7 @@ export class OrderDetailComponent implements OnInit {
         this.address = "";
         this.mapAddress = "";
         this.totalAmount = "";
+        this.userService.activeScreen('');
         this.isConfirmButton = false;
         this.isRejectButton = false;
         this.isTrackButton = false;

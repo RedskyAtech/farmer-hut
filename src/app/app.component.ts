@@ -13,6 +13,7 @@ import { initializeOnAngular } from 'nativescript-image-cache';
 
 import * as application from "tns-core-modules/application";
 import * as Toast from 'nativescript-toast';
+import * as localstorage from "nativescript-localstorage";
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
@@ -41,6 +42,14 @@ export class AppComponent {
 
         initializeOnAngular();
 
+        if ((localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined)) {
+            this.routerExtensions.navigate(['/homeAdmin']);
+        } else if ((localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined)) {
+            this.routerExtensions.navigate(['/homeUser']);
+        } else {
+            this.routerExtensions.navigate(['/login']);
+        }
+
         HTTP.http = this.http;
         this.context = ad.getApplicationContext();
 
@@ -54,7 +63,8 @@ export class AppComponent {
         this.ngZone.run(() => {
             this.tries = 0;
             application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
-                this.userService.activescreen.subscribe((screen: string) => {
+                this.userService.activescreenObserve.subscribe((screen: string) => {
+                    console.log('Screen:::', screen)
                     if (screen == "homeUser" || screen == "homeAdmin") {
                         this.tries = 0;
                         data.cancel = (this.tries++ > 0) ? false : true;
@@ -69,8 +79,13 @@ export class AppComponent {
                         }, 1000);
                     }
                     else {
-                        data.cancel = true;
-                        this.routerExtensions.back();
+                        if (screen == "login") {
+                            data.cancel = true;
+                            exit();
+                        } else {
+                            data.cancel = true;
+                            this.routerExtensions.back();
+                        }
                     }
                 });
             });

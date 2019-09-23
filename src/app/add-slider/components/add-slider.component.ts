@@ -46,6 +46,7 @@ export class AddSliderComponent implements OnInit {
     shouldImageUpdate: string;
     fileId: string;
     isVisibleImage: boolean
+    hasBeenHit: boolean;
 
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
@@ -57,11 +58,13 @@ export class AddSliderComponent implements OnInit {
         this.isVisibleImage = true;
         this.product = new Product();
         this.product.image = new Image();
+        this.userService.activeScreen('');
         this.userService.showLoadingState(false);
         this.showAddButton = false;
         this.errorMessage = "";
         this.navigationService.backTo = "homeAdmin";
         this.fileId = "";
+        this.hasBeenHit = false;
     }
 
     ngOnInit(): void {
@@ -170,43 +173,47 @@ export class AddSliderComponent implements OnInit {
     }
 
     onAddToSlider() {
-        if (this.sliderImage == null) {
-            this.warningDialog.show();
-            this.errorMessage = "Please select slider image.";
-        }
-        else {
-            if (localstorage.getItem("fileId") != null && localstorage.getItem("fileId") != undefined) {
-                this.fileId = localstorage.getItem("fileId");
+        if (!this.hasBeenHit) {
+            this.hasBeenHit = true;
+            if (this.sliderImage == null) {
+                this.warningDialog.show();
+                this.errorMessage = "Please select slider image.";
             }
-            var that = this;
-            var mimeType = "image/" + this.extension;
-            var uploadSession = session('image-upload');
-            if (this.file != null) {
-                this.isLoading = true;
-                var request = {
-                    url: Values.BASE_URL + "files",
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/octet-stream",
-                        "File-Name": "my"
-                    },
-                    description: "{'uploading':" + "my" + "}"
+            else {
+                if (localstorage.getItem("fileId") != null && localstorage.getItem("fileId") != undefined) {
+                    this.fileId = localstorage.getItem("fileId");
                 }
-                const params = [
-                    { name: "file", filename: that.file, mimeType: mimeType },
-                    { name: "shouldImageUpdate", value: that.shouldImageUpdate },
-                    { name: "isUpdate", value: "true" },
-                    { name: "file_id", value: that.fileId },
-                ]
-                console.log(params);
-                console.log(request);
-                var task = uploadSession.multipartUpload(params, request);
-                task.on("responded", (e) => {
-                    localstorage.setItem('fromSlider', 'true')
-                    this.routerExtensions.back();
-                });
-                task.on("error", this.errorEvent);
-                task.on("complete", this.completeEvent);
+                var that = this;
+                var mimeType = "image/" + this.extension;
+                var uploadSession = session('image-upload');
+                if (this.file != null) {
+                    this.isLoading = true;
+                    var request = {
+                        url: Values.BASE_URL + "files",
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/octet-stream",
+                            "File-Name": "my"
+                        },
+                        description: "{'uploading':" + "my" + "}"
+                    }
+                    const params = [
+                        { name: "file", filename: that.file, mimeType: mimeType },
+                        { name: "shouldImageUpdate", value: that.shouldImageUpdate },
+                        { name: "isUpdate", value: "true" },
+                        { name: "file_id", value: that.fileId },
+                    ]
+                    console.log(params);
+                    console.log(request);
+                    var task = uploadSession.multipartUpload(params, request);
+                    task.on("responded", (e) => {
+                        this.hasBeenHit = false;
+                        localstorage.setItem('fromSlider', 'true')
+                        this.routerExtensions.back();
+                    });
+                    task.on("error", this.errorEvent);
+                    task.on("complete", this.completeEvent);
+                }
             }
         }
     }

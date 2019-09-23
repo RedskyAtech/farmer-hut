@@ -40,6 +40,7 @@ export class SimilarProductAdminComponent implements OnInit {
     constructor(private routerExtensions: RouterExtensions, private router: ActivatedRoute, private page: Page, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.page.actionBarHidden = true;
         this.product = new Product();
+        this.userService.activeScreen('');
         this.extension = "jpg";
         this.userService.showLoadingState(false);
         this.heading = "";

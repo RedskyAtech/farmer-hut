@@ -51,6 +51,7 @@ export class MyOrderDetailComponent implements OnInit {
         this.phoneNumber = "";
         this.address = "";
         this.totalAmount = "";
+        this.userService.activeScreen('');
         this.order = new Order();
         this.cancelButtonText = "Cancel your order";
         this.reason = "";

@@ -76,6 +76,7 @@ export class AddressComponent implements OnInit {
         this.user.address.location = new Location();
         this.user.deliveryAddress = new DeliveryAddress();
         this.user.deliveryAddress.location = new Location();
+        this.userService.activeScreen('');
         this.address = "";
         this.mapAddress = "";
         this.mapLabelClass = true;

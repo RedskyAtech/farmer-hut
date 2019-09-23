@@ -8,6 +8,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
 
 import * as Toast from 'nativescript-toast';
+import { UserService } from "~/app/services/user.service";
 
 @Component({
     selector: "ns-giveFeedback",
@@ -27,12 +28,13 @@ export class GiveFeedbackComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions,  private userService: UserService, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
         this.feedbackBorderColor = "white";
         this.feedbackHint = "Message";
+        this.userService.activeScreen('');
         this.feedbackMessage = "";
         this.feedback = new Feedback();
         this.errorMessage = "";

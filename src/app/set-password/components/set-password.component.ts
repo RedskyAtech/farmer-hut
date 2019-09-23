@@ -38,6 +38,7 @@ export class SetPasswordComponent implements OnInit {
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private http: HttpClient, private page: Page) {
         this.user = new User();
         this.errorMessage = "";
+        this.userService.activeScreen('');
         this.navigationService.backTo = "forgotPassword";
         this.page.actionBarHidden = true;
         this.isRendering = false;

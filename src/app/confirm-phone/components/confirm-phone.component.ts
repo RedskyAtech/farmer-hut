@@ -40,6 +40,7 @@ export class ConfirmPhoneComponent implements OnInit {
         this.otpHint = "Enter OTP"
         this.otp = "";
         this.user = new User();
+        this.userService.activeScreen('');
         this.errorMessage = "";
         this.minutes = 2;
         this.seconds = 59;

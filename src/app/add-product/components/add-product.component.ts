@@ -17,6 +17,7 @@ import { TextField } from "tns-core-modules/ui/text-field";
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
 import * as imagepicker from "nativescript-imagepicker";
+import { UserService } from "~/app/services/user.service";
 
 registerElement("CardView", () => CardView);
 
@@ -85,13 +86,14 @@ export class AddProductComponent implements OnInit {
     isVisibleImage: boolean;
     uploadProgressValue: number;
 
-    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private page: Page) {
+    constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private page: Page) {
 
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
+        this.userService.activeScreen('');
         this.uploadProgressValue = 10;
 
         this.similarProduct = new SimilarProduct();

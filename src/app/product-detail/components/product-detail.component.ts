@@ -47,6 +47,7 @@ export class ProductDetailComponent implements OnInit {
         this.isRendering = false;
         this.page.actionBarHidden = true;
         this.hasBeenHitOnce = false;
+        this.userService.activeScreen('');
         this.updateCartCount();
         this.route.queryParams.subscribe(params => {
             if (params["product"] != undefined) {

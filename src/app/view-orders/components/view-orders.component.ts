@@ -33,6 +33,7 @@ export class ViewOrdersComponent implements OnInit {
         this.page.actionBarHidden = true;
         this.isRendering = false;
         this.isLoading = false;
+        this.userService.activeScreen('');
         this.orderedProducts = [];
         this.order = new Order();
         this.isRenderingMessage = false;

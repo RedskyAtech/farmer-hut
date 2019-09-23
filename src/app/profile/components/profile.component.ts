@@ -47,6 +47,7 @@ export class ProfileComponent implements OnInit {
         this.address = "";
         this.mapAddress = "";
         this.isVisibleProfile = "hidden";
+        this.userService.activeScreen('');
 
         this.routerExtensions.router.events.subscribe((val) => {
             if (val instanceof NavigationEnd) {

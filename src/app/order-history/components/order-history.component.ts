@@ -31,6 +31,7 @@ export class OrderHistoryComponent implements OnInit {
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isRendering = false;
+        this.userService.activeScreen('');
         this.orderedProducts = [];
         this.address = "Select address";
         this.status = "Delivered";

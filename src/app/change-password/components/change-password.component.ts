@@ -39,7 +39,7 @@ export class ChangePasswordComponent implements OnInit {
     constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
-
+        this.userService.activeScreen('');
         this.user = new User();
         this.errorMessage = "";
         if (localstorage.getItem("userType") == "admin") {

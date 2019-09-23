@@ -16,6 +16,7 @@ import { Page } from "tns-core-modules/ui/page/page";
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
 import * as imagepicker from "nativescript-imagepicker";
+import { UserService } from "~/app/services/user.service";
 
 declare var android: any;
 
@@ -51,7 +52,7 @@ export class AddCategoryComponent implements OnInit {
     isLoading: boolean;
     isVisibleImage: boolean;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private page: Page) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private userService: UserService, private routerExtensions: RouterExtensions, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
@@ -66,6 +67,7 @@ export class AddCategoryComponent implements OnInit {
         this.shouldImageUpdate = "true";
         this.navigationService.backTo = "homeAdmin";
         this.isVisibleImage = true;
+        this.userService.activeScreen('');
 
         this.route.queryParams.subscribe(params => {
             if (params["categoryId"] != undefined) {
