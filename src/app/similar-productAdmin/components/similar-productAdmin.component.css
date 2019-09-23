@@ -62,7 +62,7 @@
     padding:0;
     z-index:1;
 }
-.activeButton{
+.activeInactiveButton{
     border-width:1;
     font-size: 14;
     text-transform: initial;
@@ -92,13 +92,33 @@
     color:#00C012;
     border-color: #00C012;
 }
+.menuButton{
+    border-color:#00C012;
+    border-width:1;
+    border-radius:10;
+    text-transform: initial;
+    height:90%;
+    width:80%;
+    padding:0;
+    background-image: url("res://menu_icon");
+    background-size:80% 80%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center;
+}
+
+.menuButton:highlighted{
+    background-color: transparent;
+    z-index:1;
+    border-color: white;
+}
 .backButton{
     border-color:#00C012;
     border-width:1;
     border-radius:15;
     text-transform: initial;
     height:50%;
-    width:70%;
+    width:90%;
     padding:0;
     background-image: url("res://back_icon");
     background-size:60% 80%;

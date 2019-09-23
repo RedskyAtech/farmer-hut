@@ -9,7 +9,7 @@ import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
 import { ActivatedRoute } from "@angular/router";
 import { GridView } from "nativescript-grid-view";
-
+import { Menu } from "nativescript-menu";
 import * as localstorage from "nativescript-localstorage";
 
 @Component({
@@ -34,6 +34,7 @@ export class SimilarProductAdminComponent implements OnInit {
     similarInit = true;
     isRendering: boolean;
     isLoading: boolean;
+    productStatus: string;
 
     similarGridView: GridView;
 
@@ -45,6 +46,7 @@ export class SimilarProductAdminComponent implements OnInit {
         this.userService.showLoadingState(false);
         this.heading = "";
         this.categoryId = "";
+        this.productStatus = "enabled";
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -72,7 +74,6 @@ export class SimilarProductAdminComponent implements OnInit {
             if (localstorage.getItem("categoryId") != null && localstorage.getItem("categoryId") != undefined) {
                 this.categoryId = localstorage.getItem("categoryId");
                 this.heading = localstorage.getItem("categoryHeading");
-
                 console.log("idddddddd::::::::", this.categoryId);
             }
             this.getSimilarProducts();
@@ -80,6 +81,28 @@ export class SimilarProductAdminComponent implements OnInit {
         this.navigationService.backTo = "homeAdmin";
         this.isLoading = false;
         this.isRendering = false;
+    }
+
+    onMenu(menuButton) {
+        Menu.popup({
+            view: menuButton,
+            actions: [{ id: "one", title: "Active" }, { id: "two", title: "Inactive" }]
+        })
+            .then(action => {
+                if (action.id == "one") {
+                    this.productStatus = "enabled";
+                    this.similarPageNo = 1;
+                    this.similarProducts = [];
+                    this.getSimilarProducts();
+                }
+                if (action.id == "two") {
+                    this.productStatus = "disabled";
+                    this.similarPageNo = 1;
+                    this.similarProducts = [];
+                    this.getSimilarProducts();
+                }
+            })
+            .catch(console.log);
     }
 
     ngOnInit(): void {
@@ -106,9 +129,8 @@ export class SimilarProductAdminComponent implements OnInit {
             localstorage.setItem("categoryHeading", this.heading);
             console.log('Category:::', this.categoryId)
             this.userService.showLoadingState(true);
-
             this.http
-                .get(Values.BASE_URL + "similarProducts?_id=" + this.categoryId + `&pageNo=${this.similarPageNo}&items=10`)
+                .get(Values.BASE_URL + "similarProducts?_id=" + this.categoryId + `&status=${this.productStatus}&pageNo=${this.similarPageNo}&items=10`)
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
@@ -166,8 +188,13 @@ export class SimilarProductAdminComponent implements OnInit {
         });
     }
 
-    onProductInactive(product: Product) {
-        this.userService.showLoadingState(true);
+    onProductActiveInactive(product: Product) {
+        var status = product.status;
+        if (status == "enabled") {
+            status = "disabled"
+        } else {
+            status = "enabled"
+        }
         var that = this;
         var productId = product._id;
         that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
@@ -186,58 +213,19 @@ export class SimilarProductAdminComponent implements OnInit {
         }
         const params = [
             { name: "file", filename: that.file, mimeType: mimeType },
-            { name: "status", value: "disabled" },
+            { name: "status", value: status },
             { name: "shouldImageUpdate", value: "false" },
             { name: "isUpdate", value: "true" },
             { name: "product_id", value: productId }
         ]
         var task = uploadSession.multipartUpload(params, request);
-        task.on("responded", this.respondedEvent);
+        task.on("responded", (e) => {
+            this.similarPageNo = 1;
+            this.similarProducts = [];
+            this.getSimilarProducts();
+        });
         task.on("error", this.errorEvent);
         task.on("complete", this.completeEvent);
-
-        setTimeout(() => {
-            that.userService.showLoadingState(false);
-            that.similarProducts = [];
-            that.getSimilarProducts();
-        }, 5000);
-    }
-
-    onProductActive(product: Product) {
-        this.userService.showLoadingState(true);
-        var that = this;
-        var productId = product._id;
-        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
-        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
-        var mimeType = "image/" + that.extension;
-        var uploadSession = session('image-upload');
-        var request = {
-            url: Values.BASE_URL + "similarProducts",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/octet-stream",
-                "File-Name": that.name
-            },
-            description: "{'uploading':" + that.name + "}"
-        }
-        const params = [
-            { name: "file", filename: that.file, mimeType: mimeType },
-            { name: "status", value: "enabled" },
-            { name: "shouldImageUpdate", value: "false" },
-            { name: "isUpdate", value: "true" },
-            { name: "product_id", value: productId }
-        ]
-        var task = uploadSession.multipartUpload(params, request);
-        task.on("responded", this.respondedEvent);
-        task.on("error", this.errorEvent);
-        task.on("complete", this.completeEvent);
-
-        setTimeout(() => {
-            that.userService.showLoadingState(false);
-            that.similarProducts = [];
-            that.getSimilarProducts();
-        }, 5000);
     }
 
     respondedEvent(e) {

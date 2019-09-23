@@ -110,7 +110,7 @@
                                                         [color]="item.status=='enabled'?'white':'#00C012'"
                                                         [borderColor]="item.status=='enabled'?'white':'#00C012'"
                                                         (tap)="onProductActive(item)"></Button> -->
-                                                    <Button class="activeInactiveButton"
+                                                    <Button class="activeInactiveButton" fontSize="14%"
                                                         [text]="item.status=='enabled'?'Inactive':'Active'"
                                                         (tap)="onProductActiveInactive(item)"></Button>
                                                 </StackLayout>
@@ -147,18 +147,21 @@
                                     </StackLayout>
                                     <GridLayout row="3" width="90%" height="15%" columns="auto,auto">
                                         <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
-                                            <Button class="inactiveButton" fontSize="10%" text="Inactive"
+                                            <!-- <Button class="inactiveButton" fontSize="10%" text="Inactive"
                                                 [backgroundColor]="item.status=='inactive'?'#00C012':'white'"
                                                 [color]="item.status=='inactive'?'white':'#00C012'"
                                                 [borderColor]="item.status=='inactive'?'white':'#00C012'"
-                                                (tap)="onCategoryInactive(item)"></Button>
+                                                (tap)="onCategoryInactive(item)"></Button> -->
                                         </StackLayout>
                                         <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
-                                            <Button class="activeButton" fontSize="10%" text="Active"
+                                            <!-- <Button class="activeButton" fontSize="10%" text="Active"
                                                 [backgroundColor]="item.status=='active'?'white':'#00C012'"
                                                 [color]="item.status=='active'?'white':'#00C012'"
                                                 [borderColor]="item.status=='active'?'white':'#00C012'"
-                                                (tap)="onCategoryActive(item)"></Button>
+                                                (tap)="onCategoryActive(item)"></Button> -->
+                                            <Button class="activeInactiveButton" fontSize="10%"
+                                                [text]="item.status=='active'?'Inactive':'Active'"
+                                                (tap)="onCategoryActiveInactive(item)"></Button>
                                         </StackLayout>
                                     </GridLayout>
                                 </GridLayout>

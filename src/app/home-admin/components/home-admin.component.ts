@@ -51,6 +51,7 @@ export class HomeAdminComponent implements OnInit {
     isLoading: boolean;
     fileId: string;
     productStatus: string;
+    categoryStatus: string;
 
     productGrid: GridView;
     similarProductGrid: GridView;
@@ -77,6 +78,7 @@ export class HomeAdminComponent implements OnInit {
         this.tabSelectedIndex = 0;
         this.getFileId();
         this.productStatus = "enabled";
+        this.categoryStatus = "active";
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -130,17 +132,23 @@ export class HomeAdminComponent implements OnInit {
             .then(action => {
                 if (action.id == "one") {
                     this.productStatus = "enabled";
+                    this.categoryStatus = "active";
                     this.pageNo = 1;
+                    this.categoryPageNo = 1;
                     this.products = [];
                     this.productCategories = [];
                     this.getProducts();
+                    this.getCategories();
                 }
                 if (action.id == "two") {
                     this.productStatus = "disabled";
+                    this.categoryStatus = "inactive";
                     this.pageNo = 1;
+                    this.categoryPageNo = 1;
                     this.products = [];
                     this.productCategories = [];
                     this.getProducts();
+                    this.getCategories();
                 }
             })
             .catch(console.log);
@@ -227,7 +235,7 @@ export class HomeAdminComponent implements OnInit {
     getCategories() {
         console.log('HOME:::CAT')
         this.http
-            .get(Values.BASE_URL + `categories?pageNo=${this.categoryPageNo}&items=8`)
+            .get(Values.BASE_URL + `categories?status=${this.categoryStatus}&pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
@@ -370,45 +378,13 @@ export class HomeAdminComponent implements OnInit {
         console.log("Completed :" + JSON.stringify(e));
     }
 
-    // onProductActive(productId) {
-    //     var that = this;
-    //     var productId = productId;
-    //     that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-    //     that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
-    //     that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
-    //     var mimeType = "image/" + that.extension;
-    //     var uploadSession = session('image-upload');
-    //     var request = {
-    //         url: Values.BASE_URL + "products",
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/octet-stream",
-    //             "File-Name": that.name
-    //         },
-    //         description: "{'uploading':" + that.name + "}"
-    //     }
-    //     const params = [
-    //         { name: "file", filename: that.file, mimeType: mimeType },
-    //         { name: "status", value: "enabled" },
-    //         { name: "shouldImageUpdate", value: "false" },
-    //         { name: "isUpdate", value: "true" },
-    //         { name: "product_id", value: productId }
-    //     ]
-    //     console.log(params);
-    //     var task = uploadSession.multipartUpload(params, request);
-    //     task.on("responded", this.respondedEvent);
-    //     task.on("error", this.errorEvent);
-    //     task.on("complete", this.completeEvent);
-
-    //     setTimeout(() => {
-    //         that.pageNo = 0;
-    //         that.products = [];
-    //         that.productCategories = [];
-    //         that.getProducts();
-    //     }, 5000);
-    // }
-
-    onCategoryInactive(category: Category) {
+    onCategoryActiveInactive(category: Category) {
+        var status = category.status;
+        if (status == "active") {
+            status = "inactive"
+        } else {
+            status = "active"
+        }
         var that = this;
         var categoryId = category._id;
         that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
@@ -427,7 +403,7 @@ export class HomeAdminComponent implements OnInit {
         }
         const params = [
             { name: "file", filename: that.file, mimeType: mimeType },
-            { name: "status", value: "inactive" },
+            { name: "status", value: status },
             { name: "shouldImageUpdate", value: "false" },
             { name: "isUpdate", value: "true" },
             { name: "category_id", value: categoryId }
@@ -442,53 +418,5 @@ export class HomeAdminComponent implements OnInit {
         });
         task.on("error", this.errorEvent);
         task.on("complete", this.completeEvent);
-
-        // setTimeout(() => {
-        //     that.categoryPageNo = 1;
-        //     that.productCategories = [];
-        //     that.getCategories();
-        // }, 5000);
     }
-
-    onCategoryActive(category: Category) {
-        var that = this;
-        var categoryId = category._id;
-        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
-        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
-        var mimeType = "image/" + that.extension;
-        var uploadSession = session('image-upload');
-        var request = {
-            url: Values.BASE_URL + "categories",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/octet-stream",
-                "File-Name": that.name
-            },
-            description: "{'uploading':" + that.name + "}"
-        }
-        const params = [
-            { name: "file", filename: that.file, mimeType: mimeType },
-            { name: "status", value: "active" },
-            { name: "shouldImageUpdate", value: "false" },
-            { name: "isUpdate", value: "true" },
-            { name: "category_id", value: categoryId }
-        ]
-        console.log(params);
-        var task = uploadSession.multipartUpload(params, request);
-        task.on("responded", (e) => {
-            this.categoryPageNo = 1;
-            this.productCategories = [];
-            this.getCategories();
-        });
-        task.on("error", this.errorEvent);
-        task.on("complete", this.completeEvent);
-
-        // setTimeout(() => {
-        //     that.categoryPageNo = 1;
-        //     that.productCategories = [];
-        //     that.getCategories();
-        // }, 5000);
-    }
-
 }
