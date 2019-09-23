@@ -39,6 +39,7 @@
     "nativescript-imagepicker": "^6.2.0",
     "nativescript-iqkeyboardmanager": "^1.5.1",
     "nativescript-localstorage": "^2.0.0",
+    "nativescript-menu": "^1.1.3",
     "nativescript-pager": "^9.5.0",
     "nativescript-photo-editor": "^1.1.0",
     "nativescript-pulltorefresh": "^2.3.0",

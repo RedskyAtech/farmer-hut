@@ -33,8 +33,10 @@ export class AddProductComponent implements OnInit {
 
     @ViewChild('selectDimensionDialog') selectDimensionDialog: ModalComponent;
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
+    @ViewChild('uploadProgressDialog') uploadProgressDialog: ModalComponent;
     @ViewChild('warningDialog') warningDialog: ModalComponent;
     @ViewChild("brandTextField") brandTextField: ElementRef;
+
 
     productImage: string | ImageSource;
     brandBorderColor: string;
@@ -81,6 +83,7 @@ export class AddProductComponent implements OnInit {
     descriptionClass: boolean;
     private imageCropper: ImageCropper;
     isVisibleImage: boolean;
+    uploadProgressValue: number;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private page: Page) {
 
@@ -89,6 +92,7 @@ export class AddProductComponent implements OnInit {
         this.isRendering = false;
         this.imageCropper = new ImageCropper();
         this.imageUrl = null;
+        this.uploadProgressValue = 10;
 
         this.similarProduct = new SimilarProduct();
         this.similarProduct.products = [];
@@ -473,7 +477,6 @@ export class AddProductComponent implements OnInit {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
                         localStorage.setItem('fromHome', 'true');
-
                         this.routerExtensions.back();
                     });
                     task.on("error", this.errorEvent);
@@ -509,9 +512,7 @@ export class AddProductComponent implements OnInit {
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
-
                         localStorage.setItem('fromSimilarProducts', 'true');
-
                         this.routerExtensions.back();
                     });
                     task.on("error", this.errorEvent);
@@ -539,6 +540,9 @@ export class AddProductComponent implements OnInit {
                         { name: "dimensions[unit]", value: that.weightDimension }
                     ]
                     var task = uploadSession.multipartUpload(params, request);
+                    task.on("progress", (e) => {
+                        this.uploadProgressDialog.show();
+                    });
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;

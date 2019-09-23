@@ -238,6 +238,7 @@ export class AddCategoryComponent implements OnInit {
                 task.on("responded", (e) => {
                     this.routerExtensions.back();
                     this.isLoading = false;
+                    localStorage.setItem('fromCategory', 'true');
                 });
                 task.on("error", this.errorEvent);
                 task.on("complete", this.completeEvent);

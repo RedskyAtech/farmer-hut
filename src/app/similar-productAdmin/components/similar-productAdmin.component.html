@@ -4,7 +4,7 @@
             <StackLayout col="0" height="80%" verticalAlignment="middle" width="20%">
                 <Button class="backButton" (tap)="onBack()"></Button>
             </StackLayout>
-            <StackLayout col="1" height="50%" width="70%">
+            <StackLayout col="1" height="100%" width="70%" verticalAlignment="middle">
                 <Label class="pageHeading" [text]="heading"></Label>
             </StackLayout>
         </GridLayout>
@@ -57,6 +57,10 @@
                                             [color]="item.status=='enabled'?'white':'#00C012'"
                                             [borderColor]="item.status=='enabled'?'white':'#00C012'"
                                             (tap)="onProductActive(item)"></Button>
+                                        <!-- <Button class="activeInactiveButton"
+                                            [text]="item.status=='enabled'?'Inactive':'Active'"
+                                            backgroundColor="#00C012" color="white" borderColor="white"
+                                            (tap)="item.status=='enabled'?'onProductInActive(item)':'onProductActive(item)'"></Button> -->
                                     </StackLayout>
                                 </GridLayout>
                             </GridLayout>

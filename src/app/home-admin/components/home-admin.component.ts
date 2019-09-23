@@ -8,7 +8,7 @@ import { Category } from "../../models/category.model";
 import { session } from 'nativescript-background-http';
 import { RouterExtensions } from "nativescript-angular/router";
 import { NavigationService } from "~/app/services/navigation.service";
-
+import { Menu } from "nativescript-menu";
 import { Page } from "tns-core-modules/ui/page/page";
 import { GridView } from "nativescript-grid-view";
 
@@ -50,6 +50,7 @@ export class HomeAdminComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
     fileId: string;
+    productStatus: string;
 
     productGrid: GridView;
     similarProductGrid: GridView;
@@ -75,12 +76,15 @@ export class HomeAdminComponent implements OnInit {
         this.navigationService.backTo = undefined;
         this.tabSelectedIndex = 0;
         this.getFileId();
+        this.productStatus = "enabled";
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
                 this.pageNo = 0;
+                this.categoryPageNo = 1;
+                this.productStatus = "enabled";
                 this.userService.activeScreen("homeAdmin");
                 if (localStorage.getItem('fromCategory') == 'true') {
                     this.page.requestLayout();
@@ -116,6 +120,30 @@ export class HomeAdminComponent implements OnInit {
                 this.getCategories()
             }
         }
+    }
+
+    onMenu(menuButton) {
+        Menu.popup({
+            view: menuButton,
+            actions: [{ id: "one", title: "Active" }, { id: "two", title: "Inactive" }]
+        })
+            .then(action => {
+                if (action.id == "one") {
+                    this.productStatus = "enabled";
+                    this.pageNo = 0;
+                    this.products = [];
+                    this.productCategories = [];
+                    this.getProducts();
+                }
+                if (action.id == "two") {
+                    this.productStatus = "disabled";
+                    this.pageNo = 0;
+                    this.products = [];
+                    this.productCategories = [];
+                    this.getProducts();
+                }
+            })
+            .catch(console.log);
     }
 
     getFileId() {
@@ -159,8 +187,9 @@ export class HomeAdminComponent implements OnInit {
 
     getProducts() {
         console.log('HOME:::PRO')
+        console.log("productStatus:::::", this.productStatus);
         this.http
-            .get(Values.BASE_URL + `products?pageNo=${this.pageNo}&items=5`)
+            .get(Values.BASE_URL + `products?status=${this.productStatus}&pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
@@ -288,8 +317,13 @@ export class HomeAdminComponent implements OnInit {
         this.routerExtensions.navigate(['./addSlider']);
     }
 
-    onProductInactive(product: Product) {
-
+    onProductActiveInactive(product: Product) {
+        var status = product.status;
+        if (status == "enabled") {
+            status = "disabled"
+        } else {
+            status = "enabled"
+        }
         var that = this;
         var productId = product._id;
         that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
@@ -308,7 +342,7 @@ export class HomeAdminComponent implements OnInit {
         }
         const params = [
             { name: "file", filename: that.file, mimeType: mimeType },
-            { name: "status", value: "disabled" },
+            { name: "status", value: status },
             { name: "shouldImageUpdate", value: "false" },
             { name: "isUpdate", value: "true" },
             { name: "product_id", value: productId }
@@ -316,16 +350,13 @@ export class HomeAdminComponent implements OnInit {
         console.log(params);
         console.log(request);
         var task = uploadSession.multipartUpload(params, request);
-        task.on("responded", this.respondedEvent);
+        task.on("responded", (e) => {
+            this.pageNo = 0;
+            this.products = [];
+            this.getProducts();
+        });
         task.on("error", this.errorEvent);
         task.on("complete", this.completeEvent);
-
-        setTimeout(() => {
-            that.pageNo = 0;
-            that.products = [];
-            that.productCategories = [];
-            that.getProducts();
-        }, 5000);
     }
 
     respondedEvent(e) {
@@ -340,43 +371,43 @@ export class HomeAdminComponent implements OnInit {
         console.log("Completed :" + JSON.stringify(e));
     }
 
-    onProductActive(product: Product) {
-        var that = this;
-        var productId = product._id;
-        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-        that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
-        that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
-        var mimeType = "image/" + that.extension;
-        var uploadSession = session('image-upload');
-        var request = {
-            url: Values.BASE_URL + "products",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/octet-stream",
-                "File-Name": that.name
-            },
-            description: "{'uploading':" + that.name + "}"
-        }
-        const params = [
-            { name: "file", filename: that.file, mimeType: mimeType },
-            { name: "status", value: "enabled" },
-            { name: "shouldImageUpdate", value: "false" },
-            { name: "isUpdate", value: "true" },
-            { name: "product_id", value: productId }
-        ]
-        console.log(params);
-        var task = uploadSession.multipartUpload(params, request);
-        task.on("responded", this.respondedEvent);
-        task.on("error", this.errorEvent);
-        task.on("complete", this.completeEvent);
+    // onProductActive(productId) {
+    //     var that = this;
+    //     var productId = productId;
+    //     that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+    //     that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
+    //     that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
+    //     var mimeType = "image/" + that.extension;
+    //     var uploadSession = session('image-upload');
+    //     var request = {
+    //         url: Values.BASE_URL + "products",
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/octet-stream",
+    //             "File-Name": that.name
+    //         },
+    //         description: "{'uploading':" + that.name + "}"
+    //     }
+    //     const params = [
+    //         { name: "file", filename: that.file, mimeType: mimeType },
+    //         { name: "status", value: "enabled" },
+    //         { name: "shouldImageUpdate", value: "false" },
+    //         { name: "isUpdate", value: "true" },
+    //         { name: "product_id", value: productId }
+    //     ]
+    //     console.log(params);
+    //     var task = uploadSession.multipartUpload(params, request);
+    //     task.on("responded", this.respondedEvent);
+    //     task.on("error", this.errorEvent);
+    //     task.on("complete", this.completeEvent);
 
-        setTimeout(() => {
-            that.pageNo = 0;
-            that.products = [];
-            that.productCategories = [];
-            that.getProducts();
-        }, 5000);
-    }
+    //     setTimeout(() => {
+    //         that.pageNo = 0;
+    //         that.products = [];
+    //         that.productCategories = [];
+    //         that.getProducts();
+    //     }, 5000);
+    // }
 
     onCategoryInactive(category: Category) {
         var that = this;

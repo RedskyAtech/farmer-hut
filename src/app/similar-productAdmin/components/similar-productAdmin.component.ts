@@ -49,8 +49,8 @@ export class SimilarProductAdminComponent implements OnInit {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
-
-                console.log('Value:::', localStorage.getItem('fromSimilarProducts'))
+                this.similarPageNo = 1;
+                this.heading = localstorage.getItem("categoryHeading");
                 if (localStorage.getItem('fromSimilarProducts') == 'true') {
                     this.page.requestLayout();
                     this.similarGridView.refresh();

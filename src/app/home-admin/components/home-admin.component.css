@@ -32,6 +32,26 @@
     z-index:1;
     border-color: white;
 }
+.menuButton{
+    border-color:#00C012;
+    border-width:1;
+    border-radius:10;
+    text-transform: initial;
+    height:90%;
+    width:80%;
+    padding:0;
+    background-image: url("res://menu_icon");
+    background-size:80% 80%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center;
+}
+
+.menuButton:highlighted{
+    background-color: transparent;
+    z-index:1;
+    border-color: white;
+}
 .brand-name{
     font-size:16;
     color:#00C012;
@@ -90,6 +110,25 @@
     height:80%;
     width:95%;
     padding:0;
+}
+.activeInactiveButton{
+    border-width:1;
+    text-transform: initial;
+    text-align: center;
+    height:80%;
+    width:95%;
+    padding:0;
+    background-color:#00C012;
+    color:white;
+    border-color:white;
+}
+.activeInactiveButton:highlighted{
+    height:80%;
+    width:95%;
+    padding:0;
+    background-color: white;
+    border-color: #00C012;
+    color: #00C012;
 }
 /* .viewDetailButton:highlighted{
     background-color: transparent;
