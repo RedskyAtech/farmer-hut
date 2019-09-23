@@ -80,6 +80,7 @@ export class HomeAdminComponent implements OnInit {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
+                this.pageNo = 0;
                 this.userService.activeScreen("homeAdmin");
                 if (localStorage.getItem('fromCategory') == 'true') {
                     this.page.requestLayout();
@@ -242,8 +243,7 @@ export class HomeAdminComponent implements OnInit {
         if (category._id != undefined && category._id != null) {
             localstorage.removeItem("categoryId");
             localstorage.setItem('categoryId', category._id);
-
-
+            localstorage.setItem("categoryHeading", category.name);
             this.routerExtensions.navigate(['/similarProductAdmin'], {
                 queryParams: {
                     "categoryId": category._id,
@@ -314,12 +314,14 @@ export class HomeAdminComponent implements OnInit {
             { name: "product_id", value: productId }
         ]
         console.log(params);
+        console.log(request);
         var task = uploadSession.multipartUpload(params, request);
         task.on("responded", this.respondedEvent);
         task.on("error", this.errorEvent);
         task.on("complete", this.completeEvent);
 
         setTimeout(() => {
+            that.pageNo = 0;
             that.products = [];
             that.productCategories = [];
             that.getProducts();
@@ -369,6 +371,7 @@ export class HomeAdminComponent implements OnInit {
         task.on("complete", this.completeEvent);
 
         setTimeout(() => {
+            that.pageNo = 0;
             that.products = [];
             that.productCategories = [];
             that.getProducts();
@@ -400,12 +403,14 @@ export class HomeAdminComponent implements OnInit {
             { name: "category_id", value: categoryId }
         ]
         console.log(params);
+        console.log(request);
         var task = uploadSession.multipartUpload(params, request);
         task.on("responded", this.respondedEvent);
         task.on("error", this.errorEvent);
         task.on("complete", this.completeEvent);
 
         setTimeout(() => {
+            that.pageNo = 0;
             that.productCategories = [];
             that.getCategories();
         }, 5000);
@@ -442,6 +447,7 @@ export class HomeAdminComponent implements OnInit {
         task.on("complete", this.completeEvent);
 
         setTimeout(() => {
+            that.pageNo = 0;
             that.productCategories = [];
             that.getCategories();
         }, 5000);

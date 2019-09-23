@@ -52,20 +52,21 @@ export class AppComponent {
         });
 
         this.ngZone.run(() => {
+            this.tries = 0;
             application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
                 this.userService.activescreen.subscribe((screen: string) => {
                     if (screen == "homeUser" || screen == "homeAdmin") {
                         this.tries = 0;
-                        data.cancel = (this.tries++ > 0) ? false : true;
-                        if (data.cancel) {
+                        data.cancel = (this.tries++ > 1) ? false : true;
+                        if (this.tries == 2) {
                             Toast.makeText("Press again to exit", "short").show();
+                        }
+                        if (this.tries == 3) {
+                            exit();
                         }
                         setTimeout(() => {
                             this.tries = 0;
                         }, 1000);
-                        if (this.tries == 2) {
-                            exit();
-                        }
                     }
                     else {
                         data.cancel = true;

@@ -105,12 +105,12 @@
             </StackLayout>
         </TabView>
     </GridLayout>
-    <GridLayout *ngIf="!isRendering" width="100%" height="100%">
+    <GridLayout *ngIf="!isRendering" width="100%" height="100%" backgroundColor="transparent">
         <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="!isRendering" rowSpan="1"
             colSpan="1">
         </ActivityIndicator>
     </GridLayout>
-    <GridLayout *ngIf="isLoading" width="100%" height="100%">
+    <GridLayout *ngIf="isLoading" width="100%" height="100%" backgroundColor="transparent">
         <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="isLoading" rowSpan="1"
             colSpan="1">
         </ActivityIndicator>

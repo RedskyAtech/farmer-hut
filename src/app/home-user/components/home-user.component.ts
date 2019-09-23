@@ -77,6 +77,7 @@ export class HomeUserComponent implements OnInit {
         this.isScrolling = false;
 
         this.userService.showLoadingState(false);
+        this.userService.activeScreen("homeUser");
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
