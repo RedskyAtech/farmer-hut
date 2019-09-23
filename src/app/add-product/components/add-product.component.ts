@@ -253,6 +253,10 @@ export class AddProductComponent implements OnInit {
         }, 50);
     }
 
+    onHide() {
+        this.uploadProgressDialog.hide();
+    }
+
     onBack() {
         this.routerExtensions.back();
     }
@@ -543,6 +547,9 @@ export class AddProductComponent implements OnInit {
                     ]
                     var task = uploadSession.multipartUpload(params, request);
                     task.on("progress", (e) => {
+                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                        console.log((e.currentBytes / e.totalBytes) * 100);
+                        console.log(e.currentBytes);
                         this.uploadProgressDialog.show();
                     });
                     task.on("responded", (e) => {

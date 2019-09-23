@@ -229,7 +229,6 @@ export class HomeAdminComponent implements OnInit {
         this.http
             .get(Values.BASE_URL + `categories?pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
-
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         for (var i = 0; i < res.data.categories.length; i++) {
