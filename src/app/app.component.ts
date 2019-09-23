@@ -79,13 +79,8 @@ export class AppComponent {
                         }, 1000);
                     }
                     else {
-                        if (screen == "login") {
-                            data.cancel = false;
-                            // exit();
-                        } else {
-                            data.cancel = true;
-                            this.routerExtensions.back();
-                        }
+                        data.cancel = true;
+                        this.routerExtensions.back();
                     }
                 });
             });
