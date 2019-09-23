@@ -57,8 +57,8 @@ export class AppComponent {
                 this.userService.activescreen.subscribe((screen: string) => {
                     if (screen == "homeUser" || screen == "homeAdmin") {
                         this.tries = 0;
-                        data.cancel = (this.tries++ > 1) ? false : true;
-                        if (this.tries == 2) {
+                        data.cancel = (this.tries++ > 0) ? false : true;
+                        if (data.cancel) {
                             Toast.makeText("Press again to exit", "short").show();
                         }
                         if (this.tries == 3) {

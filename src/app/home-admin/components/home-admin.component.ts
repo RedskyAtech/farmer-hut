@@ -410,7 +410,7 @@ export class HomeAdminComponent implements OnInit {
         task.on("complete", this.completeEvent);
 
         setTimeout(() => {
-            that.pageNo = 0;
+            that.categoryPageNo = 0;
             that.productCategories = [];
             that.getCategories();
         }, 5000);
@@ -447,7 +447,7 @@ export class HomeAdminComponent implements OnInit {
         task.on("complete", this.completeEvent);
 
         setTimeout(() => {
-            that.pageNo = 0;
+            that.categoryPageNo = 0;
             that.productCategories = [];
             that.getCategories();
         }, 5000);
