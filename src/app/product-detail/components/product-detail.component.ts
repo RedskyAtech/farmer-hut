@@ -59,6 +59,11 @@ export class ProductDetailComponent implements OnInit {
             }
         });
 
+        this.page.on('navigatedTo', (data) => {
+            if (data.isBackNavigation) {
+                this.updateCartCount();
+            }
+        })
         this.userService.showLoadingState(true);
         this.cart = new Cart();
         this.cart.product = new Product();

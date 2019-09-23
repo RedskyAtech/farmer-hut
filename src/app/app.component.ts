@@ -80,8 +80,8 @@ export class AppComponent {
                     }
                     else {
                         if (screen == "login") {
-                            data.cancel = true;
-                            exit();
+                            data.cancel = false;
+                            // exit();
                         } else {
                             data.cancel = true;
                             this.routerExtensions.back();

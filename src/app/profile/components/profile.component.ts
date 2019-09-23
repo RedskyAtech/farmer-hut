@@ -201,7 +201,7 @@ export class ProfileComponent implements OnInit {
         Toast.makeText("Logout successfully!!!", "long").show();
 
         setTimeout(() => {
-            this.routerExtensions.navigate(['./login']);
+            this.routerExtensions.navigate(['./login'], { clearHistory: true });
         }, 5)
 
         localstorage.removeItem('userToken');

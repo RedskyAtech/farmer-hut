@@ -232,6 +232,7 @@ export class CartComponent implements OnInit {
     }
 
     refreshCartPage() {
+        var tempCart = [];
         this.http
             .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
             .subscribe((res: any) => {
@@ -253,7 +254,9 @@ export class CartComponent implements OnInit {
                                     weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
                                     price: res.data.products[i].price.value
                                 })
+                                tempCart.push(new Product(res.data.products[i]));
                             }
+                            localstorage.setItem('cart', JSON.stringify(tempCart));
                             this.totalAmount = res.data.grandTotal;
                             this.http
                                 .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
