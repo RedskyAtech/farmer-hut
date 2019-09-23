@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
         this.isRendering = false;
         this.isLoading = false;
         this.user = new User();
-        this.userService.activeScreen('');
+        this.userService.activeScreen('login');
 
         this.userService.showLoadingState(false);
         if (localstorage.getItem('cartId') && localstorage.getItem('cartId') != null && localstorage.getItem('cartId') != undefined && localstorage.getItem('cartId') != "") {

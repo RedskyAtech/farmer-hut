@@ -7,7 +7,9 @@ export class UserService {
     private _activescreen = new Subject<string>();
 
     showloadingState = this._showloadingState.asObservable();
-    activescreenObserve = this._activescreen.asObservable();
+    activescreen = this._activescreen.asObservable();
+
+    currentPage: string;
 
     constructor() { }
 
@@ -17,6 +19,7 @@ export class UserService {
 
     activeScreen(screen: string) {
         this._activescreen.next(screen);
+        this.currentPage = screen
     }
 
 }

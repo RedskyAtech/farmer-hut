@@ -63,26 +63,25 @@ export class AppComponent {
         this.ngZone.run(() => {
             this.tries = 0;
             application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
-                this.userService.activescreenObserve.subscribe((screen: string) => {
-                    console.log('Screen:::', screen)
-                    if (screen == "homeUser" || screen == "homeAdmin") {
+                var screen = this.userService.currentPage
+                if (screen == "homeUser" || screen == "homeAdmin") {
+                    data.cancel = (this.tries++ > 1) ? false : true;
+                    if (this.tries == 1) {
+                        Toast.makeText("Press again to exit", "short").show();
+                    }
+                    if (this.tries == 2) {
+                        exit();
+                    }
+                    setTimeout(() => {
                         this.tries = 0;
-                        data.cancel = (this.tries++ > 0) ? false : true;
-                        if (data.cancel) {
-                            Toast.makeText("Press again to exit", "short").show();
-                        }
-                        if (this.tries == 3) {
-                            exit();
-                        }
-                        setTimeout(() => {
-                            this.tries = 0;
-                        }, 1000);
-                    }
-                    else {
-                        data.cancel = true;
-                        this.routerExtensions.back();
-                    }
-                });
+                    }, 1000);
+                } else if (screen == 'login') {
+                    exit();
+                }
+                else {
+                    data.cancel = true;
+                    this.routerExtensions.back();
+                }
             });
         });
 
