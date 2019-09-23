@@ -12,6 +12,7 @@ import { BackgroundHttpService } from "~/app/services/background.http.service";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
+import { HttpClient } from "@angular/common/http";
 
 
 
@@ -43,7 +44,7 @@ export class ProductDetailComponent implements OnInit {
 
     genricProduct: any;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService, private http: HttpClient) {
         this.isRendering = false;
         this.page.actionBarHidden = true;
         this.hasBeenHitOnce = false;
@@ -59,9 +60,14 @@ export class ProductDetailComponent implements OnInit {
             }
         });
 
+
+        localstorage.setItem('genricProduct', JSON.stringify(this.genricProduct))
+        console.log('GENPRO:::', localstorage.getItem('genricProduct'))
+
         this.page.on('navigatedTo', (data) => {
             if (data.isBackNavigation) {
-                this.updateCartCount();
+                this.refreshCartPage();
+                this.genricProduct = JSON.parse(localstorage.getItem('genricProduct'))
             }
         })
         this.userService.showLoadingState(true);
@@ -116,6 +122,27 @@ export class ProductDetailComponent implements OnInit {
         }, 50);
     }
 
+    refreshCartPage() {
+        var tempCart = [];
+        this.http
+            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+            .subscribe((res: any) => {
+                if (res != null && res != undefined) {
+                    if (res.isSuccess == true) {
+                        this.updateCartCount();
+                        if (res.data.products.length > 0) {
+                            for (var i = 0; i < res.data.products.length; i++) {
+                                tempCart.push(new Product(res.data.products[i]));
+                            }
+                            localstorage.setItem('cart', JSON.stringify(tempCart));
+                        }
+
+                    }
+
+                }
+            });
+    }
+
     onBack() {
         this.routerExtensions.back();
     }
@@ -157,6 +184,7 @@ export class ProductDetailComponent implements OnInit {
 
             }, error => {
                 this.cart.product.quantity = "1";
+                this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
                 storedCartProducts.push(new Product(this.genricProduct));
                 localstorage.setItem(JSON.stringify(storedCartProducts));
                 this.updateCart();
@@ -165,6 +193,7 @@ export class ProductDetailComponent implements OnInit {
         }
         else {
             this.cart.product.quantity = "1";
+            this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
             storedCartProducts.push(new Product(this.genricProduct));
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart();
@@ -184,7 +213,7 @@ export class ProductDetailComponent implements OnInit {
             if (!this.hasBeenHitOnce) {
 
                 this.hasBeenHitOnce = true;
-
+                console.log("CURCART:::,", this.cart)
                 this.backgroundHttpService
                     .put(Values.BASE_URL + `carts/update/${localstorage.getItem('cartId')}`, {}, this.cart)
                     .then((res: any) => {
@@ -245,6 +274,7 @@ export class ProductDetailComponent implements OnInit {
                 }
             }
             this.cart.product.quantity = "1";
+            this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
             storedCartProducts.push(new Product(this.genricProduct));
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart().then((res: boolean) => {
@@ -257,6 +287,7 @@ export class ProductDetailComponent implements OnInit {
         }
         else {
             this.cart.product.quantity = "1";
+            this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
             storedCartProducts.push(new Product(this.genricProduct));
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart().then((res: boolean) => {

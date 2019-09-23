@@ -39,6 +39,15 @@ export class ViewOrdersComponent implements OnInit {
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
         this.navigationService.backTo = "profile";
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page:::", data.context);
+            if (data.isBackNavigation) {
+                this.orderPageNo = 1;
+                this.userService.activeScreen("");
+                this.getOrders();
+            }
+        })
         this.getOrders();
     }
 

@@ -258,9 +258,10 @@ export class OrderDetailComponent implements OnInit {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         this.confirmOrderDialog.hide();
-                        this.routerExtensions.navigate(['./viewOrders'], {
-                            clearHistory: true,
-                        });
+                        // this.routerExtensions.navigate(['./viewOrders'], {
+                        //     clearHistory: true,
+                        // });
+                        this.routerExtensions.back();
                         this.userService.showLoadingState(false);
                         this.isLoading = false;
                         if (this.order.status == "confirmed") {

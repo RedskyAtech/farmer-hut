@@ -114,7 +114,8 @@ export class SimilarProductUserComponent implements OnInit {
                                 heading: res.data.products[i].heading.title,
                                 weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
                                 price: res.data.products[i].price.value,
-                                description: res.data.products[i].heading.description
+                                description: res.data.products[i].heading.description,
+                                isSimilarProduct: res.data.products[i].isSimilarProduct
                             })
                         }
                         this.similarInit = true;

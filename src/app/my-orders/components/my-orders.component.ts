@@ -37,6 +37,16 @@ export class MyOrdersComponent implements OnInit {
         this.status = "Delivered";
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
+
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page:::", data.context);
+            if (data.isBackNavigation) {
+                this.orderPageNo = 1;
+                this.userService.activeScreen("");
+                this.getOrders();
+            }
+        })
         this.getOrders();
     }
 

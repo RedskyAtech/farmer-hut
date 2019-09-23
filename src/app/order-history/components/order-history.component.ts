@@ -39,13 +39,6 @@ export class OrderHistoryComponent implements OnInit {
         this.isRenderingMessage = false;
         this.navigationService.backTo = "profile";
 
-        application.android.on(application.AndroidApplication.activityBackPressedEvent, (data: application.AndroidActivityBackPressedEventData) => {
-            this.routerExtensions.navigate(['/profile'], {
-                clearHistory: true,
-            });
-            return;
-        });
-
         if (localstorage.getItem("userType") != null) {
             this.userType = localstorage.getItem("userType");
         }
@@ -62,6 +55,16 @@ export class OrderHistoryComponent implements OnInit {
             localstorage.getItem("adminId") != undefined) {
             this.viewOrderHistory();
         }
+
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page:::", data.context);
+            if (data.isBackNavigation) {
+                this.orderPageNo = 1;
+                this.userService.activeScreen("");
+                this.viewOrderHistory();
+            }
+        })
     }
 
     ngOnInit(): void {
