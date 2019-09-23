@@ -82,11 +82,10 @@ export class HomeAdminComponent implements OnInit {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
-                this.pageNo = 0;
-                this.categoryPageNo = 1;
                 this.productStatus = "enabled";
                 this.userService.activeScreen("homeAdmin");
                 if (localStorage.getItem('fromCategory') == 'true') {
+                    this.categoryPageNo = 1;
                     this.page.requestLayout();
                     this.productGrid.refresh();
                     this.productCategories = [];
@@ -94,6 +93,7 @@ export class HomeAdminComponent implements OnInit {
                     this.getCategories();
                 }
                 if (localStorage.getItem('fromHome') == 'true') {
+                    this.pageNo = 1;
                     this.page.requestLayout();
                     this.productGrid.refresh();
                     this.products = [];
@@ -130,14 +130,14 @@ export class HomeAdminComponent implements OnInit {
             .then(action => {
                 if (action.id == "one") {
                     this.productStatus = "enabled";
-                    this.pageNo = 0;
+                    this.pageNo = 1;
                     this.products = [];
                     this.productCategories = [];
                     this.getProducts();
                 }
                 if (action.id == "two") {
                     this.productStatus = "disabled";
-                    this.pageNo = 0;
+                    this.pageNo = 1;
                     this.products = [];
                     this.productCategories = [];
                     this.getProducts();
@@ -350,7 +350,7 @@ export class HomeAdminComponent implements OnInit {
         console.log(request);
         var task = uploadSession.multipartUpload(params, request);
         task.on("responded", (e) => {
-            this.pageNo = 0;
+            this.pageNo = 1;
             this.products = [];
             this.getProducts();
         });
@@ -435,15 +435,19 @@ export class HomeAdminComponent implements OnInit {
         console.log(params);
         console.log(request);
         var task = uploadSession.multipartUpload(params, request);
-        task.on("responded", this.respondedEvent);
+        task.on("responded", (e) => {
+            this.categoryPageNo = 1;
+            this.productCategories = [];
+            this.getCategories();
+        });
         task.on("error", this.errorEvent);
         task.on("complete", this.completeEvent);
 
-        setTimeout(() => {
-            that.categoryPageNo = 0;
-            that.productCategories = [];
-            that.getCategories();
-        }, 5000);
+        // setTimeout(() => {
+        //     that.categoryPageNo = 1;
+        //     that.productCategories = [];
+        //     that.getCategories();
+        // }, 5000);
     }
 
     onCategoryActive(category: Category) {
@@ -472,15 +476,19 @@ export class HomeAdminComponent implements OnInit {
         ]
         console.log(params);
         var task = uploadSession.multipartUpload(params, request);
-        task.on("responded", this.respondedEvent);
+        task.on("responded", (e) => {
+            this.categoryPageNo = 1;
+            this.productCategories = [];
+            this.getCategories();
+        });
         task.on("error", this.errorEvent);
         task.on("complete", this.completeEvent);
 
-        setTimeout(() => {
-            that.categoryPageNo = 0;
-            that.productCategories = [];
-            that.getCategories();
-        }, 5000);
+        // setTimeout(() => {
+        //     that.categoryPageNo = 1;
+        //     that.productCategories = [];
+        //     that.getCategories();
+        // }, 5000);
     }
 
 }

@@ -169,42 +169,48 @@ export class ProductDetailComponent implements OnInit {
     }
 
 
-    updateCart() {
+    updateCart(): Promise<boolean> {
 
-        var tempCart = [];
+        return new Promise((resolve, reject) => {
 
-        if (!this.hasBeenHitOnce) {
 
-            this.hasBeenHitOnce = true;
+            var tempCart = [];
 
-            this.backgroundHttpService
-                .put(Values.BASE_URL + `carts/update/${localstorage.getItem('cartId')}`, {}, this.cart)
-                .then((res: any) => {
-                    if (res != null && res != undefined) {
-                        if (res.isSuccess == true) {
-                            if (res.data && res.data.products) {
-                                for (var i = 0; i < res.data.products.length; i++) {
-                                    tempCart.push(new Product(res.data.products[i]));
+            if (!this.hasBeenHitOnce) {
+
+                this.hasBeenHitOnce = true;
+
+                this.backgroundHttpService
+                    .put(Values.BASE_URL + `carts/update/${localstorage.getItem('cartId')}`, {}, this.cart)
+                    .then((res: any) => {
+                        if (res != null && res != undefined) {
+                            if (res.isSuccess == true) {
+                                if (res.data && res.data.products) {
+                                    for (var i = 0; i < res.data.products.length; i++) {
+                                        tempCart.push(new Product(res.data.products[i]));
+                                    }
                                 }
+                                localstorage.setItem('cart', JSON.stringify(tempCart));
+                                Toast.makeText("Product is added to cart!!!", "long").show();
+                                this.updateCartCount();
+                                this.cart = new Cart();
+                                this.cart.product = new Product();
                             }
-                            localstorage.setItem('cart', JSON.stringify(tempCart));
-                            Toast.makeText("Product is added to cart!!!", "long").show();
-                            this.updateCartCount();
-                            this.cart = new Cart();
-                            this.cart.product = new Product();
                         }
-                    }
-                    this.hasBeenHitOnce = false;
-                }, error => {
-                    this.hasBeenHitOnce = false;
-                    if (error.error.error == undefined) {
-                        alert("Something went wrong!!! May be your network connection is low.");
-                    }
-                    else {
-                        alert(error.error.error);
-                    }
-                });
-        }
+                        resolve(true)
+                        this.hasBeenHitOnce = false;
+                    }, error => {
+                        reject(false);
+                        this.hasBeenHitOnce = false;
+                        if (error.error.error == undefined) {
+                            alert("Something went wrong!!! May be your network connection is low.");
+                        }
+                        else {
+                            alert(error.error.error);
+                        }
+                    });
+            }
+        })
     }
 
 
@@ -236,15 +242,25 @@ export class ProductDetailComponent implements OnInit {
             this.cart.product.quantity = "1";
             storedCartProducts.push(new Product(this.genricProduct));
             localstorage.setItem(JSON.stringify(storedCartProducts));
-            this.routerExtensions.navigate(['/cart']);
-            this.updateCart();
+            this.updateCart().then((res: boolean) => {
+                if (res) {
+                    this.routerExtensions.navigate(['/cart']);
+                }
+            }, error => {
+                Toast.makeText('Some error occured, Please try again');
+            });
         }
         else {
             this.cart.product.quantity = "1";
             storedCartProducts.push(new Product(this.genricProduct));
             localstorage.setItem(JSON.stringify(storedCartProducts));
-            this.routerExtensions.navigate(['/cart']);
-            this.updateCart();
+            this.updateCart().then((res: boolean) => {
+                if (res) {
+                    this.routerExtensions.navigate(['/cart']);
+                }
+            }, error => {
+                Toast.makeText('Some error occured, Please try again');
+            });
         }
     }
 
