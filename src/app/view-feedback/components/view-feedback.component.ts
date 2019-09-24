@@ -74,18 +74,14 @@ export class ViewFeedbackComponent implements OnInit {
                     if (res.isSuccess == true) {
                         this.isLoading = false;
                         this.userService.showLoadingState(false);
-                        if (res.data.feedbacks.length > 0) {
-                            for (var i = 0; i < res.data.feedbacks.length; i++) {
-                                this.feedbacks.push({
-                                    _id: res.data.feedbacks[i]._id,
-                                    name: res.data.feedbacks[i].name,
-                                    message: res.data.feedbacks[i].message
-                                })
-                            }
+                        for (var i = 0; i < res.data.feedbacks.length; i++) {
+                            this.feedbacks.push({
+                                _id: res.data.feedbacks[i]._id,
+                                name: res.data.feedbacks[i].name,
+                                message: res.data.feedbacks[i].message
+                            })
                         }
-                        else {
-                            this.isRenderingMessage = true;
-                        }
+
                         setTimeout(() => {
                             this.isLoadingFeedbacks = false;
                         }, 5)

@@ -40,6 +40,7 @@ export class SimilarProductAdminComponent implements OnInit {
 
     isLoadingSimilarProducts: boolean;
     shouldLoadSimilarProducts: boolean;
+    isRenderingMessage: boolean;
 
     constructor(private routerExtensions: RouterExtensions, private router: ActivatedRoute, private page: Page, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.page.actionBarHidden = true;
@@ -52,6 +53,7 @@ export class SimilarProductAdminComponent implements OnInit {
         this.shouldLoadSimilarProducts = false;
         this.isLoadingSimilarProducts = false;
         this.productStatus = "enabled";
+        this.isRenderingMessage = false;
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -145,21 +147,28 @@ export class SimilarProductAdminComponent implements OnInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             console.trace("RES:::SIMILAR:::", res)
-                            this.userService.showLoadingState(false);
-                            for (var i = 0; i < res.data.products.length; i++) {
-                                this.similarProducts.push({
-                                    _id: res.data.products[i]._id,
-                                    status: res.data.products[i].status,
-                                    image: res.data.products[i].image.resize_url,
-                                    brandName: res.data.products[i].brand,
-                                    name: res.data.products[i].name,
-                                    weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                    weightUnit: res.data.products[i].dimensions[0].unit,
-                                    weightValue: res.data.products[i].dimensions[0].value,
-                                    price: res.data.products[i].price.value,
-                                    heading: res.data.products[i].heading.title,
-                                    description: res.data.products[i].heading.description
-                                })
+                            if (res.data.products.length > 0) {
+                                this.userService.showLoadingState(false);
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                    this.similarProducts.push({
+                                        _id: res.data.products[i]._id,
+                                        status: res.data.products[i].status,
+                                        image: res.data.products[i].image.resize_url,
+                                        brandName: res.data.products[i].brand,
+                                        name: res.data.products[i].name,
+                                        weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
+                                        weightUnit: res.data.products[i].dimensions[0].unit,
+                                        weightValue: res.data.products[i].dimensions[0].value,
+                                        price: res.data.products[i].price.value,
+                                        heading: res.data.products[i].heading.title,
+                                        description: res.data.products[i].heading.description
+                                    })
+                                }
+                            }
+                            else {
+                                setTimeout(() => {
+                                    this.isRenderingMessage = true;
+                                }, 5)
                             }
                             this.similarInit = true;
                             setTimeout(() => {

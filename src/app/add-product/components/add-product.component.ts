@@ -12,11 +12,12 @@ import { ModalComponent } from "~/app/modals/modal.component";
 import { session } from 'nativescript-background-http';
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
+import { UserService } from "~/app/services/user.service";
+import { TextField } from "tns-core-modules/ui/text-field/text-field";
 
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
 import * as imagepicker from "nativescript-imagepicker";
-import { UserService } from "~/app/services/user.service";
 
 registerElement("CardView", () => CardView);
 
@@ -251,6 +252,11 @@ export class AddProductComponent implements OnInit {
         setTimeout(() => {
             this.isRendering = true;
         }, 50);
+    }
+
+    onBrandNameLoaded(args: any) {
+        var brandNameTextField = <TextField>args.object;
+        brandNameTextField.focus();
     }
 
     onBack() {

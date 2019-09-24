@@ -11,8 +11,7 @@
             </StackLayout>
         </CardView>
         <CardView #uploadProgressDialog modal size="lg" duration="100" backgroundColor="transparent">
-            <GridLayout height="10%" width="90%" rows="auto,auto" backgroundColor="white"
-                borderRadius="10">
+            <GridLayout height="10%" width="90%" rows="auto,auto" backgroundColor="white" borderRadius="10">
                 <StackLayout row="0" height="50%" width="90%" verticalAlignment="middle">
                     <Progress class="progress" color="#00C012" [value]="uploadProgressValue" maxValue="100">
                     </Progress>
@@ -76,9 +75,10 @@
                     </Image>
                 </StackLayout>
                 <StackLayout row="1" width="80%" height="10%" marginTop="5%">
-                    <TextField [hint]="brandHint" [text]="brandName" (textChange)="onBrandTextChanged($event)"
-                        secure="false" padding="0" [borderColor]="brandBorderColor" returnKeyType="done"
-                        autocorrect="false" [class]="brandNameClass?'focussed':'input input-border input-field'">
+                    <TextField (loaded)="onBrandNameLoaded($event)" [hint]="brandHint" [text]="brandName"
+                        (textChange)="onBrandTextChanged($event)" secure="false" padding="0"
+                        [borderColor]="brandBorderColor" returnKeyType="done" autocorrect="false"
+                        [class]="brandNameClass?'focussed':'input input-border input-field'">
                     </TextField>
                 </StackLayout>
                 <StackLayout row="2" width="80%" height="10%">
