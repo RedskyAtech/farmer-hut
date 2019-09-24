@@ -27,6 +27,9 @@ export class MyOrdersComponent implements OnInit {
     orderPageNo = 1;
     isRendering: boolean;
 
+    isLoadingOrders: boolean;
+    shouldLoadOrders: boolean;
+
     constructor(private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private navigationService: NavigationService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isRendering = false;
@@ -37,6 +40,9 @@ export class MyOrdersComponent implements OnInit {
         this.status = "Delivered";
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
+
+        this.shouldLoadOrders = false;
+        this.isLoadingOrders = false;
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -56,11 +62,24 @@ export class MyOrdersComponent implements OnInit {
         }, 50);
     }
 
+    onOrderItemLoading(args: any) {
+        console.log('ProductItemLoaded:::', args.index)
+        var criteria = (this.orderPageNo * 10) - 5;
+        if (this.shouldLoadOrders) {
+            if (args.index == criteria) {
+                this.orderPageNo = this.orderPageNo + 1;
+                this.getOrders();
+            }
+        }
+        this.shouldLoadOrders = true;
+    }
+
     getOrders() {
         if (localstorage.getItem("userToken") != null &&
             localstorage.getItem("userToken") != undefined &&
             localstorage.getItem("userId") != null &&
             localstorage.getItem("userId") != undefined) {
+            this.isLoadingOrders = true;
             this.userService.showLoadingState(true);
             this.http
                 .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=false" + `&pageNo=${this.orderPageNo}&items=10`)
@@ -97,9 +116,16 @@ export class MyOrdersComponent implements OnInit {
                                 this.isRenderingMessage = true;
                             }
                             this.orderInit = true;
+                            setTimeout(() => {
+                                this.isLoadingOrders = false;
+                            }, 5)
+                            this.shouldLoadOrders = false;
                         }
                     }
                 }, error => {
+                    setTimeout(() => {
+                        this.isLoadingOrders = false;
+                    }, 5)
                     this.userService.showLoadingState(false);
                     if (error.error.error == undefined) {
                         alert("Something went wrong!!! May be your network connection is low.");
@@ -111,13 +137,13 @@ export class MyOrdersComponent implements OnInit {
         }
     }
 
-    onLoadMoreOrderItems() {
-        if (!this.orderInit) {
-            this.orderPageNo = this.orderPageNo + 1;
-            this.getOrders();
-        }
-        this.orderInit = false;
-    }
+    // onLoadMoreOrderItems() {
+    //     if (!this.orderInit) {
+    //         this.orderPageNo = this.orderPageNo + 1;
+    //         this.getOrders();
+    //     }
+    //     this.orderInit = false;
+    // }
 
     onBack() {
         this.routerExtensions.back();

@@ -12,7 +12,6 @@ import { ModalComponent } from "~/app/modals/modal.component";
 import { session } from 'nativescript-background-http';
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
-import { TextField } from "tns-core-modules/ui/text-field";
 
 import * as camera from "nativescript-camera";
 import * as permissions from "nativescript-permissions";
@@ -501,7 +500,7 @@ export class AddProductComponent implements OnInit {
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
-                        this.uploadProgressDialog.hide();
+                        this.imageCropper = new ImageCropper();
                         localStorage.setItem('fromHome', 'true');
                         this.routerExtensions.back();
                     });
@@ -547,7 +546,7 @@ export class AddProductComponent implements OnInit {
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
-                        this.uploadProgressDialog.hide();
+                        this.imageCropper = new ImageCropper();
                         localStorage.setItem('fromSimilarProducts', 'true');
                         this.routerExtensions.back();
                     });

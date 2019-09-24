@@ -14,7 +14,7 @@
         <GridLayout row="1" height="82%" width="100%">
             <GridView [items]="similarProducts" colWidth="90%" rowHeight="30%" width="100%" height="100%"
                 backgroundColor="transparent" (loaded)="onSimilarGridLoaded($event)"
-                (loadMoreItems)="onLoadMoreSimilarItems()">
+                (itemLoading)="onSimilarItemLoading($event)">
                 <ng-template let-item="item" let-odd="odd" let-i="index">
                     <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%" marginRight="5%"
                         marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">
@@ -71,6 +71,9 @@
                     </GridLayout>
                 </ng-template>
             </GridView>
+            <ActivityIndicator row="1" verticalAlignment="bottom" horizontalAlignment="center"
+                *ngIf="isLoadingSimilarProducts" height="8%" width="8%" backgroundColor="transparent"
+                [busy]="isLoadingSimilarProducts"></ActivityIndicator>
         </GridLayout>
         <GridLayout row="2" height="10%" width="100%">
             <Button class="addProductButton" text="Add Product" (tap)="onAddButton()"></Button>

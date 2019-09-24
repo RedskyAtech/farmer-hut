@@ -57,7 +57,7 @@
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
                             backgroundColor="transparent" (loaded)="onProductsGridLoaded($event)"
-                            (loadMoreItems)="onLoadMoreMainItems()">
+                            (itemLoading)="onProductItemLoading($event)">
                             <ng-template let-item="item" let-odd="odd" let-i="index">
                                 <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
                                     marginRight="5%" marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">
@@ -120,6 +120,9 @@
                                 </GridLayout>
                             </ng-template>
                         </GridView>
+                        <ActivityIndicator row="0" verticalAlignment="bottom" horizontalAlignment="center"
+                            *ngIf="isLoadingProducts" height="8%" width="8%" backgroundColor="transparent"
+                            [busy]="isLoadingProducts"></ActivityIndicator>
                     </GridLayout>
                 </GridLayout>
             </StackLayout>
@@ -128,7 +131,7 @@
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="productCategories" colWidth="40%" rowHeight="45%" width="100%" height="100%"
                             backgroundColor="transparent" (loaded)="onSimilarProductsGridLoaded($event)"
-                            (loadMoreItems)="onLoadMoreCategoryItems()">
+                            (itemLoading)="onCategoryItemLoading($event)">
                             <ng-template let-item="item" let-odd="odd" let-i="index">
                                 <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
                                     marginRight="5%" marginTop="10" marginBottom="10" borderRadius="10"
@@ -167,6 +170,9 @@
                                 </GridLayout>
                             </ng-template>
                         </GridView>
+                        <ActivityIndicator row="0" verticalAlignment="bottom" horizontalAlignment="center"
+                            *ngIf="isLoadingCategories" height="8%" width="8%" backgroundColor="transparent"
+                            [busy]="isLoadingCategories"></ActivityIndicator>
                     </GridLayout>
                 </GridLayout>
             </StackLayout>

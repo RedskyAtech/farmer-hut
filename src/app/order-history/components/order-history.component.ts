@@ -28,6 +28,9 @@ export class OrderHistoryComponent implements OnInit {
     orderPageNo = 1;
     isRendering: boolean;
 
+    isLoadingOrders: boolean;
+    shouldLoadOrders: boolean;
+
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isRendering = false;
@@ -37,6 +40,10 @@ export class OrderHistoryComponent implements OnInit {
         this.status = "Delivered";
         this.isRenderingHistory = false;
         this.isRenderingMessage = false;
+
+        this.shouldLoadOrders = false;
+        this.isLoadingOrders = false;
+
         this.navigationService.backTo = "profile";
 
         if (localstorage.getItem("userType") != null) {
@@ -94,9 +101,22 @@ export class OrderHistoryComponent implements OnInit {
         }
     }
 
+    onOrderItemLoading(args: any) {
+        console.log('ProductItemLoaded:::', args.index)
+        var criteria = (this.orderPageNo * 10) - 5;
+        if (this.shouldLoadOrders) {
+            if (args.index == criteria) {
+                this.orderPageNo = this.orderPageNo + 1;
+                this.viewOrderHistory();
+            }
+        }
+        this.shouldLoadOrders = true;
+    }
+
     viewOrderHistory() {
         if (localstorage.getItem("userType") != null && localstorage.getItem("userType") != undefined) {
             if (localstorage.getItem("userType") == "admin") {
+                this.isLoadingOrders = true;
                 this.userService.showLoadingState(true);
                 this.http
                     .get(Values.BASE_URL + "orders?history=true" + `&pageNo=${this.orderPageNo}&items=10`)
@@ -127,15 +147,24 @@ export class OrderHistoryComponent implements OnInit {
                                 else {
                                     this.isRenderingMessage = true;
                                 }
+                                setTimeout(() => {
+                                    this.isLoadingOrders = false;
+                                }, 5)
+                                this.shouldLoadOrders = false;
                                 this.orderInit = true;
                             }
                         }
                     }, error => {
+                        setTimeout(() => {
+                            this.isLoadingOrders = false;
+                        }, 5)
+                        this.shouldLoadOrders = false;
                         this.userService.showLoadingState(false);
                         console.log(error.error.error);
                     });
             }
             else {
+                this.isLoadingOrders = true;
                 this.userService.showLoadingState(true);
                 this.http
                     .get(Values.BASE_URL + "orders?_id=" + localstorage.getItem("cartId") + "&history=true")
@@ -166,10 +195,18 @@ export class OrderHistoryComponent implements OnInit {
                                 else {
                                     this.isRenderingMessage = true;
                                 }
+                                setTimeout(() => {
+                                    this.isLoadingOrders = false;
+                                }, 5)
+                                this.shouldLoadOrders = false;
                                 this.orderInit = true;
                             }
                         }
                     }, error => {
+                        setTimeout(() => {
+                            this.isLoadingOrders = false;
+                        }, 5)
+                        this.shouldLoadOrders = false;
                         this.userService.showLoadingState(false);
                         console.log(error.error.error);
                     });
@@ -177,11 +214,11 @@ export class OrderHistoryComponent implements OnInit {
         }
     }
 
-    onLoadMoreOrderItems() {
-        if (!this.orderInit) {
-            this.orderPageNo = this.orderPageNo + 1;
-            this.viewOrderHistory();
-        }
-        this.orderInit = false;
-    }
+    // onLoadMoreOrderItems() {
+    //     if (!this.orderInit) {
+    //         this.orderPageNo = this.orderPageNo + 1;
+    //         this.viewOrderHistory();
+    //     }
+    //     this.orderInit = false;
+    // }
 }

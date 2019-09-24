@@ -13,7 +13,8 @@
         </StackLayout>
         <GridLayout *ngIf="isRenderingHistory" row="1" width="100%" height="92%">
             <GridView [items]="orderedProducts" colWidth="90%" rowHeight="15%" width="100%" height="100%"
-                backgroundColor="transparent" (loadMoreItems)="onLoadMoreOrderItems()">
+                backgroundColor="transparent" (itemLoading)="onOrderItemLoading($event)"
+                (loadMoreItems)="onLoadMoreOrderItems()">
                 <ng-template let-item="item" let-odd="odd">
                     <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
                         marginTop="10%" marginBottom="10%" rows="auto,auto">
@@ -33,6 +34,8 @@
                     </GridLayout>
                 </ng-template>
             </GridView>
+            <ActivityIndicator row="1" verticalAlignment="bottom" horizontalAlignment="center" *ngIf="isLoadingOrders"
+                height="8%" width="8%" backgroundColor="transparent" [busy]="isLoadingOrders"></ActivityIndicator>
         </GridLayout>
     </GridLayout>
     <GridLayout *ngIf="!isRendering" width="100%" height="100%">

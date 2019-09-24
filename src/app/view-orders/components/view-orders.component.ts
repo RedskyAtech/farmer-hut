@@ -29,6 +29,9 @@ export class ViewOrdersComponent implements OnInit {
     orderInit = true;
     orderPageNo = 1;
 
+    isLoadingOrders: boolean;
+    shouldLoadOrders: boolean;
+
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private http: HttpClient, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isRendering = false;
@@ -38,6 +41,10 @@ export class ViewOrdersComponent implements OnInit {
         this.order = new Order();
         this.isRenderingMessage = false;
         this.isRenderingOrders = false;
+
+        this.shouldLoadOrders = false;
+        this.isLoadingOrders = false;
+
         this.navigationService.backTo = "profile";
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -57,12 +64,27 @@ export class ViewOrdersComponent implements OnInit {
         }, 50);
     }
 
+
+    onOrderItemLoading(args: any) {
+        console.log('ProductItemLoaded:::', args.index)
+        var criteria = (this.orderPageNo * 10) - 5;
+        if (this.shouldLoadOrders) {
+            if (args.index == criteria) {
+                this.orderPageNo = this.orderPageNo + 1;
+                this.getOrders();
+            }
+        }
+        this.shouldLoadOrders = true;
+    }
+
+
     getOrders() {
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
             localstorage.getItem("adminId") != null &&
             localstorage.getItem("adminId") != undefined) {
             this.userService.showLoadingState(true);
+            this.isLoadingOrders = true;
             this.isLoading = true;
             this.http
                 .get(Values.BASE_URL + "orders?history=false" + `&pageNo=${this.orderPageNo}&items=10`)
@@ -91,10 +113,18 @@ export class ViewOrdersComponent implements OnInit {
                                 this.isRenderingMessage = true;
                             }
                             this.orderInit = true;
+                            setTimeout(() => {
+                                this.isLoadingOrders = false;
+                            }, 5)
+                            this.shouldLoadOrders = false;
                         }
                     }
                 }, error => {
                     this.isLoading = false;
+                    setTimeout(() => {
+                        this.isLoadingOrders = false;
+                    }, 5)
+                    this.shouldLoadOrders = false;
                     this.userService.showLoadingState(false);
                     if (error.error.error == undefined) {
                         alert("Something went wrong!!! May be your network connection is low.");
@@ -106,13 +136,13 @@ export class ViewOrdersComponent implements OnInit {
         }
     }
 
-    onLoadMoreOrderItems() {
-        if (!this.orderInit) {
-            this.orderPageNo = this.orderPageNo + 1;
-            this.getOrders();
-        }
-        this.orderInit = false;
-    }
+    // onLoadMoreOrderItems() {
+    //     if (!this.orderInit) {
+    //         this.orderPageNo = this.orderPageNo + 1;
+    //         this.getOrders();
+    //     }
+    //     this.orderInit = false;
+    // }
 
     onBack() {
         this.routerExtensions.back();

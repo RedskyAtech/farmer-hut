@@ -36,11 +36,17 @@ export class SimilarProductUserComponent implements OnInit {
     isLoading: boolean;
     hasBeenHitOnce: boolean;
 
+    isLoadingSimilarProducts: boolean;
+    shouldLoadSimilarProducts: boolean;
+
     constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService, private page: Page) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
         this.hasBeenHitOnce = false;
+
+        this.shouldLoadSimilarProducts = false;
+        this.isLoadingSimilarProducts = false;
         this.userService.activeScreen('');
 
         this.product = new Product();
@@ -88,15 +94,21 @@ export class SimilarProductUserComponent implements OnInit {
         }, 50);
     }
 
-    onLoadMoreSimilarItems() {
-        if (!this.similarInit) {
-            this.similarPageNo = this.similarPageNo + 1;
-            this.getSimilarProducts();
+    onSimilarItemLoading(args: any) {
+        console.log('ProductItemLoaded:::', args.index)
+        var criteria = (this.similarPageNo * 10) - 5;
+        if (this.shouldLoadSimilarProducts) {
+            if (args.index == criteria) {
+                this.similarPageNo = this.similarPageNo + 1;
+                this.getSimilarProducts();
+            }
         }
-        this.similarInit = false;
+        this.shouldLoadSimilarProducts = true;
     }
 
     getSimilarProducts() {
+        this.isLoadingSimilarProducts = true;
+
         this.userService.showLoadingState(true);
         this.http
             .get(Values.BASE_URL + `similarProducts?_id=${this.categoryId}&status=enabled&pageNo=${this.similarPageNo}&items=10`)
@@ -119,9 +131,16 @@ export class SimilarProductUserComponent implements OnInit {
                             })
                         }
                         this.similarInit = true;
+                        setTimeout(() => {
+                            this.isLoadingSimilarProducts = false;
+                        }, 5)
+                        this.shouldLoadSimilarProducts = false;
                     }
                 }
             }, error => {
+                setTimeout(() => {
+                    this.isLoadingSimilarProducts = false;
+                }, 5)
                 this.userService.showLoadingState(false);
                 if (error.error.error == undefined) {
                     alert("Something went wrong!!! May be your network connection is low.");

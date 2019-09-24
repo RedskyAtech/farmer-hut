@@ -10,7 +10,7 @@
         </GridLayout>
         <GridLayout *ngIf="isRendering" row="1" width="100%" height="92%">
             <GridView [items]="feedbacks" colWidth="90%" rowHeight="20%" width="100%" height="100%"
-                backgroundColor="transparent">
+                backgroundColor="transparent" (itemLoading)="onFeedbackItemLoading($event)">
                 <ng-template let-item="item" let-odd="odd">
                     <GridLayout width="100%" height="90%" backgroundColor="white" marginLeft="8%" marginRight="8%"
                         marginTop="10%" marginBottom="10%" rows="auto,auto">
@@ -23,6 +23,9 @@
                     </GridLayout>
                 </ng-template>
             </GridView>
+            <ActivityIndicator row="1" verticalAlignment="bottom" horizontalAlignment="center"
+                *ngIf="isLoadingFeedbacks" height="8%" width="8%" backgroundColor="transparent"
+                [busy]="isLoadingFeedbacks"></ActivityIndicator>
         </GridLayout>
         <GridLayout *ngIf="!isRendering" width="100%" height="100%">
             <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="!isRendering" rowSpan="1"

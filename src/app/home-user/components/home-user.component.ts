@@ -53,6 +53,11 @@ export class HomeUserComponent implements OnInit {
     isScrolling: boolean;
     scrollingTimeout;
 
+    isLoadingProducts: boolean;
+    shouldLoadProducts: boolean;
+
+    isLoadingCategories: boolean;
+    shouldLoadCategories: boolean;
 
     constructor(private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
@@ -75,6 +80,11 @@ export class HomeUserComponent implements OnInit {
         this.hasBeenHitOnce = false;
         this.errorMessage = "";
         this.isScrolling = false;
+        this.shouldLoadProducts = false;
+        this.isLoadingProducts = false;
+
+        this.shouldLoadCategories = false;
+        this.isLoadingCategories = false;
 
         this.userService.showLoadingState(false);
         this.userService.activeScreen("homeUser");
@@ -103,41 +113,66 @@ export class HomeUserComponent implements OnInit {
         }
     }
 
-    onLoadMoreMainItems() {
-        console.log("111")
-        if (!this.mainInit) {
-            this.pageNo = this.pageNo + 1;
-            this.getProducts();
+    onProductItemLoading(args: any) {
+        console.log('ProductItemLoaded:::', args.index)
+        var criteria = (this.pageNo * 10) - 5;
+        if (this.shouldLoadProducts) {
+            if (args.index == criteria) {
+                this.pageNo = this.pageNo + 1;
+                this.getProducts();
+            }
         }
-        this.mainInit = false;
+        this.shouldLoadProducts = true;
     }
 
-    onLoadMoreCategoryItems() {
-        console.log("111")
-        if (!this.categoryInit) {
-            this.categoryPageNo = this.categoryPageNo + 1;
-            this.getCategory();
+    onCategoryItemLoading(args: any) {
+        console.log('CategoryItemLoaded:::', args.index)
+        var criteria = (this.categoryPageNo * 10) - 5;
+        if (this.shouldLoadCategories) {
+            if (args.index == criteria) {
+                this.categoryPageNo = this.categoryPageNo + 1;
+                this.getCategory();
+            }
         }
-        this.categoryInit = false;
+        this.shouldLoadCategories = true;
     }
 
-    onGridViewScroll() {
-        if (this.isScrolling) {
-            clearTimeout(this.scrollingTimeout)
-            this.scrollingTimeout = setTimeout(() => {
-                this.isScrolling = false;
-            }, 1)
-        } else {
-            this.isScrolling = true;
-            this.scrollingTimeout = setTimeout(() => {
-                this.isScrolling = false;
-            }, 1)
-        }
-    }
+    // onLoadMoreMainItems() {
+    //     console.log("111")
+    //     if (!this.mainInit) {
+    //         this.pageNo = this.pageNo + 1;
+    //         this.getProducts();
+    //     }
+    //     this.mainInit = false;
+    // }
+
+    // onLoadMoreCategoryItems() {
+    //     console.log("111")
+    //     if (!this.categoryInit) {
+    //         this.categoryPageNo = this.categoryPageNo + 1;
+    //         this.getCategory();
+    //     }
+    //     this.categoryInit = false;
+    // }
+
+    // onGridViewScroll() {
+    //     if (this.isScrolling) {
+    //         clearTimeout(this.scrollingTimeout)
+    //         this.scrollingTimeout = setTimeout(() => {
+    //             this.isScrolling = false;
+    //         }, 1)
+    //     } else {
+    //         this.isScrolling = true;
+    //         this.scrollingTimeout = setTimeout(() => {
+    //             this.isScrolling = false;
+    //         }, 1)
+    //     }
+    // }
 
     getProducts() {
+        this.isLoadingProducts = true;
         this.http
-            .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&items=5`)
+            .get(Values.BASE_URL + `products?status=enabled&pageNo=${this.pageNo}&items=10`)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true && res.data && res.data.products) {
@@ -154,12 +189,19 @@ export class HomeUserComponent implements OnInit {
                                 description: res.data.products[i].heading.description
                             })
                         }
+                        setTimeout(() => {
+                            this.isLoadingProducts = false;
+                        }, 5)
+                        this.shouldLoadProducts = false;
                         this.isRenderingSlider = true;     //remove it
                         this.mainInit = true;
                     }
                 }
             }, error => {
                 this.userService.showLoadingState(false);
+                setTimeout(() => {
+                    this.isLoadingProducts = false;
+                }, 5)
                 if (error.error.error == undefined) {
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
@@ -171,6 +213,7 @@ export class HomeUserComponent implements OnInit {
     }
 
     getCategory() {
+        this.isLoadingCategories = true;
         this.http
             .get(Values.BASE_URL + `categories?status=active&pageNo=${this.categoryPageNo}&items=8`)
             .subscribe((res: any) => {
@@ -187,11 +230,18 @@ export class HomeUserComponent implements OnInit {
                             }
                             this.isRenderingTabView = true;
                             this.categoryInit = true;
+                            setTimeout(() => {
+                                this.isLoadingCategories = false;
+                            }, 5)
+                            this.shouldLoadCategories = false;
                         }
                     }
                 }
             }, error => {
                 this.userService.showLoadingState(false);
+                setTimeout(() => {
+                    this.isLoadingCategories = false;
+                }, 5)
                 if (error.error.error == undefined) {
                     alert("Something went wrong!!! May be your network connection is low.");
                 }

@@ -56,6 +56,12 @@ export class HomeAdminComponent implements OnInit {
     productGrid: GridView;
     similarProductGrid: GridView;
 
+    isLoadingProducts: boolean;
+    shouldLoadProducts: boolean;
+
+    isLoadingCategories: boolean;
+    shouldLoadCategories: boolean;
+
     constructor(private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
         this.addButtonText = "Add Product";
@@ -79,6 +85,12 @@ export class HomeAdminComponent implements OnInit {
         this.getFileId();
         this.productStatus = "enabled";
         this.categoryStatus = "active";
+
+        this.shouldLoadProducts = false;
+        this.isLoadingProducts = false;
+
+        this.shouldLoadCategories = false;
+        this.isLoadingCategories = false;
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -178,28 +190,53 @@ export class HomeAdminComponent implements OnInit {
         this.similarProductGrid = <GridView>args.object
     }
 
-    onLoadMoreMainItems() {
-        if (!this.mainInit) {
-            this.pageNo = this.pageNo + 1;
-            this.getProducts();
+    // onLoadMoreMainItems() {
+    //     if (!this.mainInit) {
+    //         this.pageNo = this.pageNo + 1;
+    //         this.getProducts();
+    //     }
+    //     this.mainInit = false;
+    // }
+
+    // onLoadMoreCategoryItems() {
+    //     if (!this.categoryInit) {
+    //         this.categoryPageNo = this.categoryPageNo + 1;
+    //         this.getCategories();
+    //     }
+    //     this.categoryInit = false;
+    // }
+
+    onProductItemLoading(args: any) {
+        console.log('ProductItemLoaded:::', args.index)
+        var criteria = (this.pageNo * 10) - 5;
+        if (this.shouldLoadProducts) {
+            if (args.index == criteria) {
+                this.pageNo = this.pageNo + 1;
+                this.getProducts();
+            }
         }
-        this.mainInit = false;
+        this.shouldLoadProducts = true;
     }
 
-    onLoadMoreCategoryItems() {
-        if (!this.categoryInit) {
-            this.categoryPageNo = this.categoryPageNo + 1;
-            this.getCategories();
+    onCategoryItemLoading(args: any) {
+        console.log('CategoryItemLoaded:::', args.index)
+        var criteria = (this.categoryPageNo * 10) - 5;
+        if (this.shouldLoadCategories) {
+            if (args.index == criteria) {
+                this.categoryPageNo = this.categoryPageNo + 1;
+                this.getCategories();
+            }
         }
-        this.categoryInit = false;
+        this.shouldLoadCategories = true;
     }
 
     getProducts() {
         console.log('HOME:::PRO')
         console.log("productStatus:::::", this.productStatus);
+        this.isLoadingProducts = true;
         console.log(this.pageNo);
         this.http
-            .get(Values.BASE_URL + `products?status=${this.productStatus}&pageNo=${this.pageNo}&items=5`)
+            .get(Values.BASE_URL + `products?status=${this.productStatus}&pageNo=${this.pageNo}&items=10`)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
@@ -218,11 +255,18 @@ export class HomeAdminComponent implements OnInit {
                                 description: res.data.products[i].heading.description
                             })
                         }
+                        setTimeout(() => {
+                            this.isLoadingProducts = false;
+                        }, 5)
+                        this.shouldLoadProducts = false;
                         this.mainInit = true;
                         this.isRenderingProducts = true;
                     }
                 }
             }, error => {
+                setTimeout(() => {
+                    this.isLoadingProducts = false;
+                }, 5)
                 if (error.error.error == undefined) {
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
@@ -236,8 +280,9 @@ export class HomeAdminComponent implements OnInit {
 
     getCategories() {
         console.log('HOME:::CAT')
+        this.isLoadingCategories = true;
         this.http
-            .get(Values.BASE_URL + `categories?status=${this.categoryStatus}&pageNo=${this.categoryPageNo}&items=8`)
+            .get(Values.BASE_URL + `categories?status=${this.categoryStatus}&pageNo=${this.categoryPageNo}&items=10`)
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
@@ -251,9 +296,16 @@ export class HomeAdminComponent implements OnInit {
                         }
                         this.isRenderingProducts = true;
                         this.categoryInit = true;
+                        setTimeout(() => {
+                            this.isLoadingCategories = false;
+                        }, 5)
+                        this.shouldLoadCategories = false;
                     }
                 }
             }, error => {
+                setTimeout(() => {
+                    this.isLoadingCategories = false;
+                }, 5)
                 if (error.error.error == undefined) {
                     alert("Something went wrong!!! May be your network connection is low.");
                 }
