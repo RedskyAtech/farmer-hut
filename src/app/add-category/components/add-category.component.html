@@ -7,11 +7,22 @@
                 <Button class="photoUploadButton" width="100%" text="Camera" (tap)="onCamera()"></Button>
             </StackLayout>
         </CardView>
+        <CardView #uploadProgressDialog modal size="lg" duration="100" backgroundColor="transparent">
+            <GridLayout height="10%" width="90%" rows="auto,auto" backgroundColor="white" borderRadius="10">
+                <StackLayout row="0" height="50%" width="90%" verticalAlignment="middle">
+                    <Progress class="progress" color="#00C012" [value]="uploadProgressValue" maxValue="100">
+                    </Progress>
+                </StackLayout>
+                <StackLayout row="1" height="50%" width="50%" horizontalAlignment="center" verticalAlignment="middle">
+                    <Label text="Uploading ..." fontSize="20%" color="#00C012" textAlignment="center"></Label>
+                </StackLayout>
+            </GridLayout>
+        </CardView>
         <CardView #warningDialog modal size="lg" duration="100" backgroundColor="transparent">
             <GridLayout rows="auto,auto,auto,auto" width="80%" height="30%" borderRadius="20" backgroundColor="white">
                 <StackLayout row="0" height="40%">
-                    <NSImage height="80vh" width="80vh" src="res://warning" placeholder="res://slider_background">
-                    </NSImage>
+                    <Image height="80vh" width="80vh" src="res://warning">
+                    </Image>
                 </StackLayout>
                 <StackLayout row="1" height="20%" verticalAlignment="middle">
                     <Label color="black" textWrap="true" textAlignment="center" fontSize="18" fontWeight="900"

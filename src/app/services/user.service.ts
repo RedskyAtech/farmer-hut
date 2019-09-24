@@ -5,9 +5,11 @@ import { Subject } from "rxjs";
 export class UserService {
     private _showloadingState = new Subject<boolean>();
     private _activescreen = new Subject<string>();
+    private _sliderservice = new Subject<string>();
 
     showloadingState = this._showloadingState.asObservable();
     activescreen = this._activescreen.asObservable();
+    sliderservice = this._sliderservice.asObservable();
 
     currentPage: string;
 
@@ -20,6 +22,10 @@ export class UserService {
     activeScreen(screen: string) {
         this._activescreen.next(screen);
         this.currentPage = screen
+    }
+
+    sliderScreen(slider: string) {
+        this._sliderservice.next(slider);
     }
 
 }

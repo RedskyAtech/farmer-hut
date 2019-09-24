@@ -85,9 +85,10 @@ export class AddProductComponent implements OnInit {
     private imageCropper: ImageCropper;
     isVisibleImage: boolean;
     uploadProgressValue: number;
+    networkError: boolean;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private page: Page) {
-
+        this.networkError = false;
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
@@ -117,7 +118,7 @@ export class AddProductComponent implements OnInit {
 
         this.route.queryParams.subscribe(params => {
             if (params["product"] != undefined) {
-                console.log('sdsadasd:::', params["product"])
+                console.log('sdsadasd:::', params["product"]);
                 this.product = JSON.parse(params["product"]);
                 console.log('pppppp:::', this.product)
             }
@@ -253,10 +254,6 @@ export class AddProductComponent implements OnInit {
         }, 50);
     }
 
-    onHide() {
-        this.uploadProgressDialog.hide();
-    }
-
     onBack() {
         this.routerExtensions.back();
     }
@@ -377,7 +374,13 @@ export class AddProductComponent implements OnInit {
     }
 
     onOK() {
-        this.warningDialog.hide();
+        if (this.networkError == true) {
+            this.warningDialog.hide();
+            this.routerExtensions.back();
+        }
+        else {
+            this.warningDialog.hide();
+        }
     }
 
     onOutsideClick() {
@@ -442,13 +445,25 @@ export class AddProductComponent implements OnInit {
                         { name: "product_id", value: that.similarProductId }
                     ]
                     var task = uploadSession.multipartUpload(params, request);
+                    task.on("progress", (e) => {
+                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                        this.uploadProgressDialog.show();
+                    });
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
+                        this.uploadProgressDialog.hide();
                         localStorage.setItem('fromSimilarProducts', 'true');
                         this.routerExtensions.back();
                     });
-                    task.on("error", this.errorEvent);
+                    task.on("error", (e) => {
+                        this.networkError = true;
+                        this.errorMessage = "May be your network connection is low.";
+                        setTimeout(() => {
+                            this.warningDialog.show();
+                        }, 10);
+                        this.isLoading = false;
+                    });
                     task.on("complete", this.completeEvent);
                 }
                 else {
@@ -479,13 +494,23 @@ export class AddProductComponent implements OnInit {
                     console.log(params);
                     console.log(request);
                     var task = uploadSession.multipartUpload(params, request);
+                    task.on("progress", (e) => {
+                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                        this.uploadProgressDialog.show();
+                    });
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
+                        this.uploadProgressDialog.hide();
                         localStorage.setItem('fromHome', 'true');
                         this.routerExtensions.back();
                     });
-                    task.on("error", this.errorEvent);
+                    task.on("error", (e) => {
+                        this.networkError = true;
+                        this.isLoading = false;
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                    });
                     task.on("complete", this.completeEvent);
                 }
             } else {
@@ -515,13 +540,23 @@ export class AddProductComponent implements OnInit {
                         { name: "dimensions[unit]", value: that.weightDimension }
                     ]
                     var task = uploadSession.multipartUpload(params, request);
+                    task.on("progress", (e) => {
+                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                        this.uploadProgressDialog.show();
+                    });
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
+                        this.uploadProgressDialog.hide();
                         localStorage.setItem('fromSimilarProducts', 'true');
                         this.routerExtensions.back();
                     });
-                    task.on("error", this.errorEvent);
+                    task.on("error", (e) => {
+                        this.networkError = true;
+                        this.isLoading = false;
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                    });
                     task.on("complete", this.completeEvent);
                 }
                 else {
@@ -548,17 +583,21 @@ export class AddProductComponent implements OnInit {
                     var task = uploadSession.multipartUpload(params, request);
                     task.on("progress", (e) => {
                         this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
-                        console.log((e.currentBytes / e.totalBytes) * 100);
-                        console.log(e.currentBytes);
                         this.uploadProgressDialog.show();
                     });
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
+                        this.uploadProgressDialog.hide();
                         localStorage.setItem('fromHome', 'true');
                         this.routerExtensions.back();
                     });
-                    task.on("error", this.errorEvent);
+                    task.on("error", (e) => {
+                        this.networkError = true;
+                        this.isLoading = false;
+                        this.errorMessage = "May be your network connection is low.";
+                        this.warningDialog.show();
+                    });
                     task.on("complete", this.completeEvent);
                 }
             }

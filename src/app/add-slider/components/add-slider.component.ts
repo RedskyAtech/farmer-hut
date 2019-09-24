@@ -31,6 +31,7 @@ export class AddSliderComponent implements OnInit {
 
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
     @ViewChild('warningDialog') warningDialog: ModalComponent;
+    @ViewChild('uploadProgressDialog') uploadProgressDialog: ModalComponent;
 
     sliderImage: string | ImageSource;
     private imageCropper: ImageCropper;
@@ -47,6 +48,8 @@ export class AddSliderComponent implements OnInit {
     fileId: string;
     isVisibleImage: boolean
     hasBeenHit: boolean;
+    uploadProgressValue: number;
+    networkError: boolean;
 
     constructor(private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page) {
         this.page.actionBarHidden = true;
@@ -65,6 +68,8 @@ export class AddSliderComponent implements OnInit {
         this.navigationService.backTo = "homeAdmin";
         this.fileId = "";
         this.hasBeenHit = false;
+        this.uploadProgressValue = 10;
+        this.networkError = false;
     }
 
     ngOnInit(): void {
@@ -74,11 +79,18 @@ export class AddSliderComponent implements OnInit {
     }
 
     onOK() {
-        this.warningDialog.hide();
+        if (this.networkError == true) {
+            this.warningDialog.hide();
+            this.routerExtensions.back();
+        }
+        else {
+            this.warningDialog.hide();
+        }
     }
 
     onBack() {
         this.routerExtensions.back();
+        localstorage
     }
 
     onOutsideClick() {
@@ -88,6 +100,10 @@ export class AddSliderComponent implements OnInit {
     onUploadImage() {
         this.photoUploadDialog.show();
     }
+
+    // onHide() {
+    //     this.uploadProgressDialog.hide();
+    // }
 
 
     onGallery() {
@@ -203,15 +219,25 @@ export class AddSliderComponent implements OnInit {
                         { name: "isUpdate", value: "true" },
                         { name: "file_id", value: that.fileId },
                     ]
-                    console.log(params);
-                    console.log(request);
                     var task = uploadSession.multipartUpload(params, request);
+                    task.on("progress", (e) => {
+                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                        this.uploadProgressDialog.show();
+                    });
                     task.on("responded", (e) => {
                         this.hasBeenHit = false;
+                        this.uploadProgressDialog.hide();
                         localstorage.setItem('fromSlider', 'true')
                         this.routerExtensions.back();
                     });
-                    task.on("error", this.errorEvent);
+                    task.on("error", (e) => {
+                        this.networkError = true;
+                        this.errorMessage = "May be your network connection is low.";
+                        setTimeout(() => {
+                            this.warningDialog.show();
+                        }, 10);
+                        this.isLoading = false;
+                    });
                     task.on("complete", this.completeEvent);
                 }
             }

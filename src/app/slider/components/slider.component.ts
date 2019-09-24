@@ -4,6 +4,7 @@ import { Values } from "~/app/values/values";
 import { Page } from "tns-core-modules/ui/page/page";
 
 import * as localstorage from "nativescript-localstorage";
+import { UserService } from "~/app/services/user.service";
 
 
 @Component({
@@ -27,7 +28,7 @@ export class SliderComponent implements OnInit {
 
 
 
-    constructor(private http: HttpClient, private page: Page) {
+    constructor(private http: HttpClient, private page: Page, private userService: UserService) {
         this.page.actionBarHidden = true;
 
         this.sliderImage1 = "res://slider_background";
@@ -35,6 +36,12 @@ export class SliderComponent implements OnInit {
         this.sliderImage3 = "res://slider_background";
         this.sliderImage4 = "res://slider_background";
         this.isRenderingSlider = false;
+
+        this.userService.sliderservice.subscribe((state: string) => {
+            if (state == "refresh") {
+                this.updateSlider(1)
+            }
+        });
 
         setInterval(() => {
             setTimeout(() => {

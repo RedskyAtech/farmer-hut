@@ -31,6 +31,7 @@ export class AddCategoryComponent implements OnInit {
 
     @ViewChild('photoUploadDialog') photoUploadDialog: ModalComponent;
     @ViewChild('warningDialog') warningDialog: ModalComponent;
+    @ViewChild('uploadProgressDialog') uploadProgressDialog: ModalComponent;
 
     categoryImage: string | ImageSource = "res://add_image_icon";
     categoryBorderColor: string;
@@ -51,6 +52,8 @@ export class AddCategoryComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
     isVisibleImage: boolean;
+    uploadProgressValue: number;
+    networkError: boolean;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private userService: UserService, private routerExtensions: RouterExtensions, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
@@ -68,6 +71,8 @@ export class AddCategoryComponent implements OnInit {
         this.navigationService.backTo = "homeAdmin";
         this.isVisibleImage = true;
         this.userService.activeScreen('');
+        this.uploadProgressValue = 10;
+        this.networkError = false;
 
         this.route.queryParams.subscribe(params => {
             if (params["categoryId"] != undefined) {
@@ -91,7 +96,9 @@ export class AddCategoryComponent implements OnInit {
                         }
                     }
                 }, error => {
-                    alert(error.error.error);
+                    this.isVisibleImage = false;
+                    this.errorMessage = "May be your network connection is low.";
+                    this.warningDialog.show();
                 });
         }
     }
@@ -103,12 +110,19 @@ export class AddCategoryComponent implements OnInit {
     }
 
     onOK() {
-        this.warningDialog.hide();
+        if (this.networkError == true) {
+            this.warningDialog.hide();
+            this.routerExtensions.back();
+        }
+        else {
+            this.warningDialog.hide();
+        }
     }
 
     onBack() {
         this.routerExtensions.back();
     }
+
 
     onCategoryTextChanged(args) {
         this.categoryBorderColor = "#00C012";
@@ -237,12 +251,24 @@ export class AddCategoryComponent implements OnInit {
                     { name: "shouldImageUpdate", value: that.shouldImageUpdate }
                 ]
                 var task = uploadSession.multipartUpload(params, request);
+                task.on("progress", (e) => {
+                    this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                    this.uploadProgressDialog.show();
+                });
                 task.on("responded", (e) => {
                     this.routerExtensions.back();
                     this.isLoading = false;
+                    this.uploadProgressDialog.hide();
                     localStorage.setItem('fromCategory', 'true');
                 });
-                task.on("error", this.errorEvent);
+                task.on("error", (e) => {
+                    this.networkError = true;
+                    this.errorMessage = "May be your network connection is low.";
+                    setTimeout(() => {
+                        this.warningDialog.show();
+                    }, 10);
+                    this.isLoading = false;
+                });
                 task.on("complete", this.completeEvent);
             }
             else {
@@ -260,12 +286,24 @@ export class AddCategoryComponent implements OnInit {
                     { name: "name", value: that.categoryName },
                 ]
                 var task = uploadSession.multipartUpload(params, request);
+                task.on("progress", (e) => {
+                    this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                    this.uploadProgressDialog.show();
+                });
                 task.on("responded", (e) => {
                     localStorage.setItem('fromCategory', 'true')
                     this.routerExtensions.back();
+                    this.uploadProgressDialog.hide();
                     this.isLoading = false;
                 });
-                task.on("error", this.errorEvent);
+                task.on("error", (e) => {
+                    this.networkError = true;
+                    this.errorMessage = "May be your network connection is low.";
+                    setTimeout(() => {
+                        this.warningDialog.show();
+                    }, 10);
+                    this.isLoading = false;
+                });
                 task.on("complete", this.completeEvent);
             }
         }

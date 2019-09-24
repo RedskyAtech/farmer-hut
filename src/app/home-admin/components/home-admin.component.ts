@@ -104,6 +104,7 @@ export class HomeAdminComponent implements OnInit {
                     this.getProducts();
                 }
                 if (localStorage.getItem('fromSlider') == 'true') {
+                    this.userService.sliderScreen("refresh");
                     this.page.requestLayout();
                     localStorage.setItem('fromSlider', '');
                 }
@@ -196,6 +197,7 @@ export class HomeAdminComponent implements OnInit {
     getProducts() {
         console.log('HOME:::PRO')
         console.log("productStatus:::::", this.productStatus);
+        console.log(this.pageNo);
         this.http
             .get(Values.BASE_URL + `products?status=${this.productStatus}&pageNo=${this.pageNo}&items=5`)
             .subscribe((res: any) => {
