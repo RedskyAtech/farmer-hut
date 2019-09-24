@@ -451,12 +451,14 @@ export class AddProductComponent implements OnInit {
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
                         this.isLoading = false;
+                        this.imageCropper = new ImageCropper();
                         this.uploadProgressDialog.hide();
                         localStorage.setItem('fromSimilarProducts', 'true');
                         this.routerExtensions.back();
                     });
                     task.on("error", (e) => {
                         this.networkError = true;
+                        this.imageCropper = new ImageCropper();
                         this.errorMessage = "May be your network connection is low.";
                         setTimeout(() => {
                             this.warningDialog.show();
@@ -505,6 +507,7 @@ export class AddProductComponent implements OnInit {
                         this.routerExtensions.back();
                     });
                     task.on("error", (e) => {
+                        this.imageCropper = new ImageCropper();
                         this.networkError = true;
                         this.isLoading = false;
                         this.errorMessage = "May be your network connection is low.";
@@ -551,6 +554,7 @@ export class AddProductComponent implements OnInit {
                         this.routerExtensions.back();
                     });
                     task.on("error", (e) => {
+                        this.imageCropper = new ImageCropper();
                         this.networkError = true;
                         this.isLoading = false;
                         this.errorMessage = "May be your network connection is low.";
@@ -586,12 +590,14 @@ export class AddProductComponent implements OnInit {
                     });
                     task.on("responded", (e) => {
                         console.log("RESPONSE: " + e.data);
+                        this.imageCropper = new ImageCropper();
                         this.isLoading = false;
                         this.uploadProgressDialog.hide();
                         localStorage.setItem('fromHome', 'true');
                         this.routerExtensions.back();
                     });
                     task.on("error", (e) => {
+                        this.imageCropper = new ImageCropper();
                         this.networkError = true;
                         this.isLoading = false;
                         this.errorMessage = "May be your network connection is low.";
