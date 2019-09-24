@@ -122,11 +122,7 @@ export class AddressComponent implements OnInit {
         this.addressBorderColor = "#00C012";
         this.address = args.object.text;
     }
-    // onMapAddressTextChanged(args) {
-    //     this.mapAddress = args.object.text;
-    // }
-
-    //Map events
+  
     onMapReady(event) {
         console.log('Map Ready');
 
@@ -268,15 +264,7 @@ export class AddressComponent implements OnInit {
         else {
             this.isVisibleMapIcon = false;
         }
-        // if (localstorage.getItem("mapCount") == 2) {
-        //     this.mapCount = 0;
-        //     this.isVisibleMapIcon = true;
-        // }
-        // else {
-        //     this.isVisibleMapIcon = false;
-        //     this.mapCount++;
-        // }
-        // localstorage.setItem("mapCount", this.mapCount);
+      
         this.mapView.removeAllMarkers();
 
         this.pinLocation = false;

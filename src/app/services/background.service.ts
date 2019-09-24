@@ -17,11 +17,6 @@ export class BackgroundService extends android.app.Service {
 
     public onCommand(intent: android.content.Intent, flags: number, startId: number, http: HttpClient, req: string, url: string, options?: any, body?: any): Promise<any> {
         super.onStartCommand(intent, flags, startId)
-        // this.http.get(url).subscribe((res: any) => {
-        //     console.log('RES:::', res)
-        // }, error => {
-        //     console.log('EEERES:::', error);
-        // })
 
         var promise;
 

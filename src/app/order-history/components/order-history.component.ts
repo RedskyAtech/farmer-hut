@@ -7,7 +7,6 @@ import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
 
 import * as localstorage from "nativescript-localstorage";
-import * as application from "tns-core-modules/application";
 
 @Component({
     selector: "ns-orderHistory",
@@ -213,12 +212,4 @@ export class OrderHistoryComponent implements OnInit {
             }
         }
     }
-
-    // onLoadMoreOrderItems() {
-    //     if (!this.orderInit) {
-    //         this.orderPageNo = this.orderPageNo + 1;
-    //         this.viewOrderHistory();
-    //     }
-    //     this.orderInit = false;
-    // }
 }

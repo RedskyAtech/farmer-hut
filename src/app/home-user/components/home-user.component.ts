@@ -136,39 +136,7 @@ export class HomeUserComponent implements OnInit {
         }
         this.shouldLoadCategories = true;
     }
-
-    // onLoadMoreMainItems() {
-    //     console.log("111")
-    //     if (!this.mainInit) {
-    //         this.pageNo = this.pageNo + 1;
-    //         this.getProducts();
-    //     }
-    //     this.mainInit = false;
-    // }
-
-    // onLoadMoreCategoryItems() {
-    //     console.log("111")
-    //     if (!this.categoryInit) {
-    //         this.categoryPageNo = this.categoryPageNo + 1;
-    //         this.getCategory();
-    //     }
-    //     this.categoryInit = false;
-    // }
-
-    // onGridViewScroll() {
-    //     if (this.isScrolling) {
-    //         clearTimeout(this.scrollingTimeout)
-    //         this.scrollingTimeout = setTimeout(() => {
-    //             this.isScrolling = false;
-    //         }, 1)
-    //     } else {
-    //         this.isScrolling = true;
-    //         this.scrollingTimeout = setTimeout(() => {
-    //             this.isScrolling = false;
-    //         }, 1)
-    //     }
-    // }
-
+    
     getProducts() {
         this.isLoadingProducts = true;
         this.http

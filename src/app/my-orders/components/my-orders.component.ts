@@ -137,14 +137,6 @@ export class MyOrdersComponent implements OnInit {
         }
     }
 
-    // onLoadMoreOrderItems() {
-    //     if (!this.orderInit) {
-    //         this.orderPageNo = this.orderPageNo + 1;
-    //         this.getOrders();
-    //     }
-    //     this.orderInit = false;
-    // }
-
     onBack() {
         this.routerExtensions.back();
     }

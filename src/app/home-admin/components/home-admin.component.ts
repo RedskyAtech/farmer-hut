@@ -190,22 +190,6 @@ export class HomeAdminComponent implements OnInit {
         this.similarProductGrid = <GridView>args.object
     }
 
-    // onLoadMoreMainItems() {
-    //     if (!this.mainInit) {
-    //         this.pageNo = this.pageNo + 1;
-    //         this.getProducts();
-    //     }
-    //     this.mainInit = false;
-    // }
-
-    // onLoadMoreCategoryItems() {
-    //     if (!this.categoryInit) {
-    //         this.categoryPageNo = this.categoryPageNo + 1;
-    //         this.getCategories();
-    //     }
-    //     this.categoryInit = false;
-    // }
-
     onProductItemLoading(args: any) {
         console.log('ProductItemLoaded:::', args.index)
         var criteria = (this.pageNo * 10) - 5;

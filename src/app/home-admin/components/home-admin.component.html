@@ -14,35 +14,6 @@
         <GridLayout row="1" width="100%" height="15%" columns="auto,auto">
             <GridLayout col="0" width="70%" height="100%">
                 <ns-slider height="80%" width="90%"></ns-slider>
-                <!-- <Carousel #myCarousel ios:indicatorOffset="0,-10" ios:finite="true" ios:bounce="false"
-                    android:indicatorAlignment="bottom" showIndicator="true" [selectedPage]="selectedPage" height="80%"
-                    width="90%" indicatorColor="#00C012" android:indicatorAnimation="drop"
-                    indicatorColorUnselected="#D4D4D4">
-                    <CarouselItem>
-                        <StackLayout width="100%" height="100%">
-                            <NSImage width="100%" height="100%" stretch="aspectFill"
-                                placeholder="res://slider_background" borderRadius="10" [src]="sliderImage1"></NSImage>
-                        </StackLayout>
-                    </CarouselItem>
-                    <CarouselItem>
-                        <StackLayout width="100%" height="100%">
-                            <NSImage width="100%" height="100%" stretch="aspectFill"
-                                placeholder="res://slider_background" borderRadius="10" [src]="sliderImage2"></NSImage>
-                        </StackLayout>
-                    </CarouselItem>
-                    <CarouselItem>
-                        <StackLayout width="100%" height="100%">
-                            <NSImage width="100%" height="100%" stretch="aspectFill"
-                                placeholder="res://slider_background" borderRadius="10" [src]="sliderImage3"></NSImage>
-                        </StackLayout>
-                    </CarouselItem>
-                    <CarouselItem>
-                        <StackLayout width="100%" height="100%">
-                            <NSImage width="100%" height="100%" stretch="aspectFill"
-                                placeholder="res://slider_background" borderRadius="10" [src]="sliderImage4"></NSImage>
-                        </StackLayout>
-                    </CarouselItem>
-                </Carousel> -->
             </GridLayout>
             <GridLayout col="1" width="30%" height="100%">
                 <Button class="addButton" text="Add Slider Images" (tap)="onAddSlider()"></Button>
@@ -97,19 +68,9 @@
                                             <GridLayout row="3" columns="auto,auto" width="100%" height="35%">
                                                 <StackLayout col="0" height="100%" width="50%"
                                                     verticalAlignment="middle">
-                                                    <!-- <Button class="inactiveButton" fontSize="14%" text="Inactive"
-                                                        [backgroundColor]="item.status=='disabled'?'#00C012':'white'"
-                                                        [color]="item.status=='disabled'?'white':'#00C012'"
-                                                        [borderColor]="item.status=='disabled'?'white':'#00C012'"
-                                                        (tap)="onProductInactive(item)"></Button> -->
                                                 </StackLayout>
                                                 <StackLayout col="1" height="100%" width="50%"
                                                     verticalAlignment="middle">
-                                                    <!-- <Button class="activeButton" fontSize="14%" text="Active"
-                                                        [backgroundColor]="item.status=='enabled'?'#00C012':'white'"
-                                                        [color]="item.status=='enabled'?'white':'#00C012'"
-                                                        [borderColor]="item.status=='enabled'?'white':'#00C012'"
-                                                        (tap)="onProductActive(item)"></Button> -->
                                                     <Button class="activeInactiveButton" fontSize="14%"
                                                         [text]="item.status=='enabled'?'Inactive':'Active'"
                                                         (tap)="onProductActiveInactive(item)"></Button>
@@ -150,18 +111,8 @@
                                     </StackLayout>
                                     <GridLayout row="3" width="90%" height="15%" columns="auto,auto">
                                         <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
-                                            <!-- <Button class="inactiveButton" fontSize="10%" text="Inactive"
-                                                [backgroundColor]="item.status=='inactive'?'#00C012':'white'"
-                                                [color]="item.status=='inactive'?'white':'#00C012'"
-                                                [borderColor]="item.status=='inactive'?'white':'#00C012'"
-                                                (tap)="onCategoryInactive(item)"></Button> -->
                                         </StackLayout>
                                         <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
-                                            <!-- <Button class="activeButton" fontSize="10%" text="Active"
-                                                [backgroundColor]="item.status=='active'?'white':'#00C012'"
-                                                [color]="item.status=='active'?'white':'#00C012'"
-                                                [borderColor]="item.status=='active'?'white':'#00C012'"
-                                                (tap)="onCategoryActive(item)"></Button> -->
                                             <Button class="activeInactiveButton" fontSize="10%"
                                                 [text]="item.status=='active'?'Inactive':'Active'"
                                                 (tap)="onCategoryActiveInactive(item)"></Button>

@@ -24,11 +24,6 @@ export class BackgroundHttpService {
     constructor(private http: HttpClient) {
         this.context = ad.getApplicationContext();
 
-        // this.mainIntent = new android.content.Intent(this.context, com.tns.NativeScriptActivity.class);
-
-        // var intent = new android.content.Intent(this.context, com.tns.BackgroundService.class)
-        // this.context.startService(intent);
-
         this.backgroundService = new BackgroundService();
     }
 

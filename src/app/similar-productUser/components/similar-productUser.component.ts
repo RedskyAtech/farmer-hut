@@ -224,8 +224,6 @@ export class SimilarProductUserComponent implements OnInit {
             this.productExistance(product).then((res) => {
 
             }, error => {
-                console.log("IN PPPPP::")
-                console.log('After For')
                 this.cart.product.quantity = "1";
                 storedCartProducts.push(new Product(product));
                 localstorage.setItem(JSON.stringify(storedCartProducts));

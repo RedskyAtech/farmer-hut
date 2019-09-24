@@ -52,12 +52,6 @@ export class LoginComponent implements OnInit {
             this.getCart(localstorage.getItem('cartId'));
         }
 
-        // if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined) {
-        //     this.routerExtensions.navigate(['./homeUser']);
-        // }
-        // if (localstorage.getItem("adminToken") != null && localstorage.getItem("adminToken") != undefined) {
-        //     this.routerExtensions.navigate(['./homeAdmin']);
-        // }
         this.errorMessage = "";
     }
 

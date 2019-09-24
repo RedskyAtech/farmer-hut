@@ -48,18 +48,8 @@
                                 </GridLayout>
                                 <GridLayout row="2" columns="auto,auto" width="100%" height="35%">
                                     <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
-                                        <!-- <Button class="inactiveButton" text="Inactive"
-                                            [backgroundColor]="item.status=='disabled'?'#00C012':'transparent'"
-                                            [color]="item.status=='disabled'?'white':'#00C012'"
-                                            [borderColor]="item.status=='disabled'?'white':'#00C012'"
-                                            (tap)="onProductInactive(item)"></Button> -->
                                     </StackLayout>
                                     <StackLayout col="1" height="100%" width="50%" verticalAlignment="middle">
-                                        <!-- <Button class="activeButton" text="Active"
-                                            [backgroundColor]="item.status=='enabled'?'#00C012':'transparent'"
-                                            [color]="item.status=='enabled'?'white':'#00C012'"
-                                            [borderColor]="item.status=='enabled'?'white':'#00C012'"
-                                            (tap)="onProductActive(item)"></Button> -->
                                         <Button class="activeInactiveButton"
                                             [text]="item.status=='enabled'?'Inactive':'Active'"
                                             backgroundColor="#00C012" color="white" borderColor="white"

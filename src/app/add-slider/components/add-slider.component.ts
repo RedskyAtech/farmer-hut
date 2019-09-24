@@ -101,11 +101,6 @@ export class AddSliderComponent implements OnInit {
         this.photoUploadDialog.show();
     }
 
-    // onHide() {
-    //     this.uploadProgressDialog.hide();
-    // }
-
-
     onGallery() {
         this.photoUploadDialog.hide();
         var that = this;
