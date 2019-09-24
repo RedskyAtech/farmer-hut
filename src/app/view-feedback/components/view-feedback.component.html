@@ -8,7 +8,10 @@
                 <Label class="pageHeading" text="Feedbacks"></Label>
             </StackLayout>
         </GridLayout>
-        <GridLayout *ngIf="isRendering" row="1" width="100%" height="92%">
+        <StackLayout *ngIf="isRenderingMessage" row="1" width="100%" height="92%" verticalAlignment="middle">
+            <Label text="Cart is empty..." textAlignment="center" fontSize="18" color="white"></Label>
+        </StackLayout>
+        <GridLayout *ngIf="!isRenderingMessage" row="1" width="100%" height="92%">
             <GridView [items]="feedbacks" colWidth="90%" rowHeight="20%" width="100%" height="100%"
                 backgroundColor="transparent" (itemLoading)="onFeedbackItemLoading($event)">
                 <ng-template let-item="item" let-odd="odd">
@@ -27,11 +30,11 @@
                 *ngIf="isLoadingFeedbacks" height="8%" width="8%" backgroundColor="transparent"
                 [busy]="isLoadingFeedbacks"></ActivityIndicator>
         </GridLayout>
-        <GridLayout *ngIf="!isRendering" width="100%" height="100%">
+        <!-- <GridLayout *ngIf="!isRendering" width="100%" height="100%">
             <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="!isRendering" rowSpan="1"
                 colSpan="1">
             </ActivityIndicator>
-        </GridLayout>
+        </GridLayout> -->
         <GridLayout *ngIf="isLoading" width="100%" height="100%">
             <ActivityIndicator horizontalAlignment="center" verticalAlignment="middle" [busy]="isLoading" rowSpan="1"
                 colSpan="1">

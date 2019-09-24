@@ -35,6 +35,7 @@ export class AddressComponent implements OnInit {
     mapAddressHint = "Map Address";
     address: string;
     mapAddress: string;
+    mapAddressColor: string;
     city = "";
     district = "";
     latitude: any;
@@ -78,7 +79,8 @@ export class AddressComponent implements OnInit {
         this.user.deliveryAddress.location = new Location();
         this.userService.activeScreen('');
         this.address = "";
-        this.mapAddress = "";
+        this.mapAddress = "Select address from map";
+        this.mapAddressColor = "#FFFFFF";
         this.mapLabelClass = true;
         this.mapCount = 1;
         this.isVisibleMapIcon = false;
@@ -120,9 +122,9 @@ export class AddressComponent implements OnInit {
         this.addressBorderColor = "#00C012";
         this.address = args.object.text;
     }
-    onMapAddressTextChanged(args) {
-        this.mapAddress = args.object.text;
-    }
+    // onMapAddressTextChanged(args) {
+    //     this.mapAddress = args.object.text;
+    // }
 
     //Map events
     onMapReady(event) {
@@ -284,8 +286,8 @@ export class AddressComponent implements OnInit {
             .get(Values.GOOGLE_MAP_URL + "latlng=" + this.finalLatitude + "," + this.finalLongitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
             .subscribe((res: any) => {
                 this.mapLabelClass = false;
-
                 this.mapAddress = res.results[0].formatted_address;
+                this.mapAddressColor = "#00C012";
                 this.isLoading = false;
 
             }, error => {

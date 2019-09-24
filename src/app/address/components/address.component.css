@@ -56,19 +56,20 @@
     border-color:#00C012;
     border-width:1;
     border-radius:10;
-    color:#00C012;
-    font-size: 12;
     text-transform: initial;
-    text-align: center;
-    height:40;
+    height:60%;
+    width:80%;
     padding:0;
-    background-color: transparent;
-    z-index:1;
+    background-image: url("res://map_icon");
+    background-size:60% 80%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center;
 }
 .mapButton:highlighted{
-    background-color: #00C012;    
+    background-color: transparent;
+    z-index:1;
     border-color: white;
-    color:white;
 }
 .input-field{
     placeholder-color:white;

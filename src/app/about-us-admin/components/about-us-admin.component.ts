@@ -34,6 +34,7 @@ export class AboutUsAdminComponent implements OnInit {
     aboutId: string;
     isRendering: boolean;
     isLoading: boolean;
+    isRenderingMessage: boolean;
 
     constructor(private http: HttpClient, private routerExtensions: RouterExtensions, private navigationService: NavigationService, private userService: UserService, private page: Page) {
         this.userService.activeScreen('');
@@ -49,6 +50,7 @@ export class AboutUsAdminComponent implements OnInit {
         this.isLoading = false;
         this.isRendering = false;
         this.getAbout();
+        
     }
 
     ngOnInit(): void {

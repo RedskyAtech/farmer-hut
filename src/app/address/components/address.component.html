@@ -36,27 +36,34 @@
                     autocorrect="false" class="input input-border input-field">
                 </TextField>
             </StackLayout>
-            <StackLayout row="3" width="80%" height="10%">
-                <TextField [hint]="mapAddressHint" [text]="mapAddress" edimapAddressClasstable="false"
-                    (textChange)="onMapAddressTextChanged($event)" secure="false" padding="0" returnKeyType="done"
-                    [class]="mapLabelClass?'input-field input input-border':'map-focus'" autocorrect="false">
-                </TextField>
-            </StackLayout>
-            <StackLayout row="4" width="80%" height="10%">
-                <TextField [text]="city" secure="false" [borderColor]="cityBorderColor" returnKeyType="done" padding="0"
-                    autocorrect="false" class="input input-border input-field">
-                </TextField>
-            </StackLayout>
-            <StackLayout row="5" width="80%" height="10%">
-                <TextField [text]="district" secure="false" returnKeyType="done" padding="0"
-                    [borderColor]="districtBorderColor" autocorrect="false" class="input input-border input-field">
-                </TextField>
-            </StackLayout>
-            <StackLayout row="6" width="80%" height="10%">
+            <GridLayout row="3" width="80%" height="10%" columns="auto,auto">
+                <StackLayout col="0" width="40%" height="100%" verticalAlignment="middle">
+                    <Label text="City : " color="#FFFFFF" fontSize="16%" textWrap="true"></Label>
+                </StackLayout>
+                <StackLayout col="1" width="60%" height="100%" verticalAlignment="middle">
+                    <Label text="Abohar" color="#00C012" fontSize="16%" textWrap="true"></Label>
+                </StackLayout>
+            </GridLayout>
+            <GridLayout row="4" width="80%" height="10%" columns="auto,auto">
+                <StackLayout col="0" width="40%" height="100%" verticalAlignment="middle">
+                    <Label text="District : " color="#FFFFFF" fontSize="16%" textWrap="true"></Label>
+                </StackLayout>
+                <StackLayout col="1" width="60%" height="100%" verticalAlignment="middle">
+                    <Label text="Fazilka" color="#00C012" fontSize="16%" textWrap="true"></Label>
+                </StackLayout>
+            </GridLayout>
+            <GridLayout row="5" width="80%" height="10%" columns="auto,auto">
+                <StackLayout col="0" width="80%" height="100%" verticalAlignment="middle">
+                    <ScrollView>
+                        <Label [text]="mapAddress" [color]="mapAddressColor" fontSize="16%" textWrap="true"></Label>
+                    </ScrollView>
+                </StackLayout>
+                <StackLayout col="1" width="20%" height="100%" verticalAlignment="middle">
+                    <Button class="mapButton" (tap)="onMap()"></Button>
+                </StackLayout>
+            </GridLayout>
+            <StackLayout row="6" width="80%" height="10%" verticalAlignment="middle">
                 <Button class="button" text="Add Address" (tap)="onAddAddress()"></Button>
-            </StackLayout>
-            <StackLayout row="7" width="80%" height="10%">
-                <Button class="mapButton" text="Choose your current location from map" (tap)="onMap()"></Button>
             </StackLayout>
         </GridLayout>
     </GridLayout>

@@ -21,6 +21,7 @@ export class ViewFeedbackComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
     feebackPageNo = 1;
+    isRenderingMessage: boolean;
 
     isLoadingFeedbacks: boolean;
     shouldLoadFeedbacks: boolean;
@@ -33,6 +34,7 @@ export class ViewFeedbackComponent implements OnInit {
 
         this.shouldLoadFeedbacks = false;
         this.isLoadingFeedbacks = false;
+        this.isRenderingMessage = false;
 
         this.userService.activeScreen('');
         this.navigationService.backTo = "profile";
@@ -72,12 +74,17 @@ export class ViewFeedbackComponent implements OnInit {
                     if (res.isSuccess == true) {
                         this.isLoading = false;
                         this.userService.showLoadingState(false);
-                        for (var i = 0; i < res.data.feedbacks.length; i++) {
-                            this.feedbacks.push({
-                                _id: res.data.feedbacks[i]._id,
-                                name: res.data.feedbacks[i].name,
-                                message: res.data.feedbacks[i].message
-                            })
+                        if (res.data.feedbacks.length > 0) {
+                            for (var i = 0; i < res.data.feedbacks.length; i++) {
+                                this.feedbacks.push({
+                                    _id: res.data.feedbacks[i]._id,
+                                    name: res.data.feedbacks[i].name,
+                                    message: res.data.feedbacks[i].message
+                                })
+                            }
+                        }
+                        else {
+                            this.isRenderingMessage = true;
                         }
                         setTimeout(() => {
                             this.isLoadingFeedbacks = false;
