@@ -119,26 +119,22 @@ export class SimilarProductUserComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        if (res.data.products.length > 0) {
-                            this.userService.showLoadingState(false);
-                            for (var i = 0; i < res.data.products.length; i++) {
-                                this.similarProducts.push({
-                                    _id: res.data.products[i]._id,
-                                    status: res.data.products[i].status,
-                                    image: res.data.products[i].image.resize_url,
-                                    brandName: res.data.products[i].brand,
-                                    name: res.data.products[i].name,
-                                    heading: res.data.products[i].heading.title,
-                                    weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                    price: res.data.products[i].price.value,
-                                    description: res.data.products[i].heading.description,
-                                    isSimilarProduct: res.data.products[i].isSimilarProduct
-                                })
-                            }
+                        this.userService.showLoadingState(false);
+                        for (var i = 0; i < res.data.products.length; i++) {
+                            this.similarProducts.push({
+                                _id: res.data.products[i]._id,
+                                status: res.data.products[i].status,
+                                image: res.data.products[i].image.resize_url,
+                                brandName: res.data.products[i].brand,
+                                name: res.data.products[i].name,
+                                heading: res.data.products[i].heading.title,
+                                weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
+                                price: res.data.products[i].price.value,
+                                description: res.data.products[i].heading.description,
+                                isSimilarProduct: res.data.products[i].isSimilarProduct
+                            })
                         }
-                        else {
-                            this.isRenderingMessage = true;
-                        }
+
                         this.similarInit = true;
                         setTimeout(() => {
                             this.isLoadingSimilarProducts = false;
@@ -172,6 +168,15 @@ export class SimilarProductUserComponent implements OnInit {
         }
     }
 
+
+    onListItemTap(args: any) {
+        this.routerExtensions.navigate(['/productDetail'], {
+            queryParams: {
+                "product": JSON.stringify(this.similarProducts[args.index]),
+                "classType": "similarProduct"
+            },
+        });
+    }
 
     onViewDetail(product: Product) {
         this.routerExtensions.navigate(['/productDetail'], {

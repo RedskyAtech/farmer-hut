@@ -244,6 +244,15 @@ export class HomeUserComponent implements OnInit {
         }
     }
 
+    onProductListItemTap(args: any) {
+        this.routerExtensions.navigate(['/productDetail'], {
+            queryParams: {
+                "product": JSON.stringify(this.products[args.index]),
+                "classType": "product"
+            }
+        });
+    }
+
     onViewDetail(product: Product) {
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
