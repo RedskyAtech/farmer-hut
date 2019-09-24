@@ -28,6 +28,7 @@ export class AboutUsAdminComponent implements OnInit {
     aboutBorderColor: string;
     aboutHint: string;
     aboutText: string;
+    about: string;
     errorMessage: string;
     aboutUs: AboutUs;
     aboutId: string;
@@ -151,7 +152,7 @@ export class AboutUsAdminComponent implements OnInit {
                         this.isLoading = false;
                         this.userService.showLoadingState(false);
                         this.aboutDescription = res.data[0].description;
-                        this.aboutText = res.data[0].description;
+                        this.about = res.data[0].description;
                     }
                 }
             }, error => {

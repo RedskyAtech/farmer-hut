@@ -112,7 +112,11 @@ export class OrderDetailComponent implements OnInit {
                                 var hours = hours - 12;
                                 var ampm = "pm";
                             }
-                            this.date = dateTime.getDate().toString() + "/" + (dateTime.getMonth() + 1).toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
+                            var minutes = dateTime.getMinutes().toString();
+                            if (minutes.length < 2) {
+                                minutes = "0" + minutes;
+                            }
+                            this.date = dateTime.getDate().toString() + "/" + (dateTime.getMonth() + 1).toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + minutes + " " + ampm + ")";
                             this.isRenderingUserDetail = true;
                             if (this.orderStatus == "pending") {
                                 this.confirmButtonText = "Confirm";
