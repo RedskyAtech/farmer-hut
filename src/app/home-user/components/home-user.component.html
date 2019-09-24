@@ -26,7 +26,8 @@
                 <GridLayout rows="auto">
                     <GridLayout row="0" height="100%" width="100%">
                         <GridView [items]="products" colWidth="90%" rowHeight="35%" width="100%" height="100%"
-                            backgroundColor="transparent" (itemLoading)="onProductItemLoading($event)">
+                            backgroundColor="transparent" (itemLoading)="onProductItemLoading($event)"
+                            (itemTap)="onProductListItemTap($event)">
                             <ng-template let-item="item" let-i="index" let-odd="odd">
                                 <GridLayout orientation="vertical" backgroundColor="white" marginLeft="5%"
                                     marginRight="5%" marginTop="5" marginBottom="5" borderRadius="10" rows="auto,auto">

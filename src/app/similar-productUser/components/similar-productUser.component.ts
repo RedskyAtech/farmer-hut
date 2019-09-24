@@ -173,6 +173,15 @@ export class SimilarProductUserComponent implements OnInit {
     }
 
 
+    onListItemTap(args: any) {
+        this.routerExtensions.navigate(['/productDetail'], {
+            queryParams: {
+                "product": JSON.stringify(this.similarProducts[args.index]),
+                "classType": "similarProduct"
+            },
+        });
+    }
+
     onViewDetail(product: Product) {
         this.routerExtensions.navigate(['/productDetail'], {
             queryParams: {
