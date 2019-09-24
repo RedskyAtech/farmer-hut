@@ -79,7 +79,9 @@ export class SimilarProductUserComponent implements OnInit {
                 }
             }, error => {
                 this.userService.showLoadingState(false);
-                alert(error.error.error);
+                if (error.error.error == undefined) {
+                    alert("Something went wrong!!! May be your network connection is low.");
+                }
             });
 
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
