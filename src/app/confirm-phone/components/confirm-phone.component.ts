@@ -163,8 +163,6 @@ export class ConfirmPhoneComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./register'], {
-            clearHistory: true,
-        })
+        this.routerExtensions.back();
     }
 }

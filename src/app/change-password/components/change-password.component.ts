@@ -6,11 +6,11 @@ import { User } from "~/app/models/user.model";
 import { UserService } from "../../services/user.service";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
+import { Page } from "tns-core-modules/ui/page/page";
 
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
-import { Page } from "tns-core-modules/ui/page/page";
 
 
 @Component({
@@ -136,8 +136,6 @@ export class ChangePasswordComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./profile'], {
-            clearHistory: true,
-        })
+        this.routerExtensions.back();
     }
 }

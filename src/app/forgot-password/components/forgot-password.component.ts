@@ -101,8 +101,6 @@ export class ForgotPasswordComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./login'], {
-            clearHistory: true,
-        })
+        this.routerExtensions.back();
     }
 }

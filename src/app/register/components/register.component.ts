@@ -46,6 +46,7 @@ export class RegisterComponent implements OnInit {
         this.errorMessage = "";
         // this.userService.activeScreen('');
         this.page.actionBarHidden = true;
+        this.userService.activeScreen('');
         this.isRendering = false;
         this.isLoading = false;
     }
@@ -213,8 +214,6 @@ export class RegisterComponent implements OnInit {
     }
 
     onLogin() {
-        this.routerExtensions.navigate(['./login'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.back();
     }
 }
