@@ -136,7 +136,7 @@ export class HomeUserComponent implements OnInit {
         }
         this.shouldLoadCategories = true;
     }
-    
+
     getProducts() {
         this.isLoadingProducts = true;
         this.http
@@ -183,7 +183,7 @@ export class HomeUserComponent implements OnInit {
     getCategory() {
         this.isLoadingCategories = true;
         this.http
-            .get(Values.BASE_URL + `categories?status=active&pageNo=${this.categoryPageNo}&items=8`)
+            .get(Values.BASE_URL + `categories?status=active&pageNo=${this.categoryPageNo}&items=10`)
             .subscribe((res: any) => {
                 console.log('RES:::CATEGORY:::', res)
                 if (res != null && res != undefined) {
