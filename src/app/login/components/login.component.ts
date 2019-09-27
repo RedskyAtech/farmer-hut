@@ -52,6 +52,14 @@ export class LoginComponent implements OnInit {
             this.getCart(localstorage.getItem('cartId'));
         }
 
+        this.page.on('navigatedTo', (data) => {
+            console.log("ddata:::", data.isBackNavigation);
+            console.log("navigating to this page:::", data.context);
+            if (data.isBackNavigation) {
+                this.userService.activeScreen("login");
+            }
+        })
+
         this.errorMessage = "";
     }
 
@@ -73,9 +81,7 @@ export class LoginComponent implements OnInit {
     }
 
     onForgotPassword() {
-        this.routerExtensions.navigate(['./forgotPassword'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.navigate(['./forgotPassword']);
     }
 
     onOK() {
@@ -195,9 +201,7 @@ export class LoginComponent implements OnInit {
                         this.isLoading = false;
                         this.userVerifyDialog.hide();
                         localstorage.setItem('regToken', res.data.regToken);
-                        this.routerExtensions.navigate(['./confirmPhone'], {
-                            clearHistory: true,
-                        });
+                        this.routerExtensions.navigate(['./confirmPhone']);
                     }
                 }
             }, error => {
@@ -218,9 +222,7 @@ export class LoginComponent implements OnInit {
     }
 
     onRegister() {
-        this.routerExtensions.navigate(['./register'], {
-            clearHistory: true,
-        });
+        this.routerExtensions.navigate(['./register']);
     }
 
     protected get shadowColor(): Color {

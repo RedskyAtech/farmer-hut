@@ -20,10 +20,10 @@
     border-width:1;
     border-radius:10;
     color:white;
-    font-size: 20;
+    font-size: 20%;
     text-transform: initial;
     text-align: center;
-    height:40;
+    height:70%;
     padding:0;
     background-color: #00C012;
 }
@@ -38,14 +38,6 @@
     border-bottom-width: 1;
     height:40;
     color:#00C012;
-}
-.footer-label{
-    color:white;
-    text-align: center;
-}
-.forgot-label{
-    color:white;
-    text-align: right;
 }
 .userDialogLabel{
     font-size: 16;
@@ -105,5 +97,46 @@
 .ok-button:highlighted{
     background-color: white;
     border-color:#00C012;
+    color:#00C012;
+}
+
+.footer-button{
+    border-color:#00C012;
+    border-width:1;
+    border-radius:5;
+    color:#00C012;
+    font-size: 12%;
+    text-transform: initial;
+    text-align: center;
+    height:50%;
+    padding:0;
+    background-color: transparent;
+    /* z-index:1; */
+}
+.footer-button:highlighted{
+    background-color: #00C012;
+    z-index: 1;    
+    border-color: white;
+    color:white;
+}
+
+.forgot-button{
+    border-color:white;
+    border-width:1;
+    border-radius:5;
+    color:white;
+    font-size: 12%;
+    text-transform: initial;
+    text-align: center;
+    height:70%;
+    width:50%;
+    padding:0;
+    background-color: transparent;
+    /* z-index:1; */
+}
+.forgot-button:highlighted{
+    background-color: white;
+    z-index: 1;    
+    border-color: #00C012;
     color:#00C012;
 }

@@ -95,6 +95,7 @@ export class ViewOrdersComponent implements OnInit {
                             this.userService.showLoadingState(false);
                             if (res.data.orders.length != 0) {
                                 this.isRenderingOrders = true;
+                                this.orderedProducts = [];
                                 for (var i = 0; i < res.data.orders.length; i++) {
                                     if (res.data.orders[i].status == "pending") {
                                         var status = "Pending...";
@@ -104,6 +105,7 @@ export class ViewOrdersComponent implements OnInit {
                                     }
                                     this.orderedProducts.push({
                                         _id: res.data.orders[i]._id,
+                                        orderId: res.data.orders[i].orderId,
                                         name: res.data.orders[i].name,
                                         status: status
                                     })

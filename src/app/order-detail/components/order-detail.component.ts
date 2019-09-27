@@ -29,6 +29,7 @@ export class OrderDetailComponent implements OnInit {
 
     utilsModule
     orderedProducts = [];
+    orderid: string;
     userName: string;
     phoneNumber: string;
     address: string;
@@ -61,6 +62,7 @@ export class OrderDetailComponent implements OnInit {
         this.page.actionBarHidden = true;
         this.isRendering = false;
         this.isLoading = false;
+        this.orderid = "";
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
@@ -95,6 +97,7 @@ export class OrderDetailComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             this.isLoading = false;
+                            this.orderid = res.data.orderId;
                             this.userName = res.data.name;
                             this.phoneNumber = res.data.phone;
                             this.totalAmount = res.data.grandTotal;

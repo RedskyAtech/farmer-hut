@@ -120,12 +120,12 @@ export class OrderHistoryComponent implements OnInit {
                 this.http
                     .get(Values.BASE_URL + "orders?history=true" + `&pageNo=${this.orderPageNo}&items=10`)
                     .subscribe((res: any) => {
-                        console.log("RES:::ORDERHISTORY:::ADMIN", res);
                         if (res != null && res != undefined) {
                             if (res.isSuccess == true) {
                                 this.userService.showLoadingState(false);
                                 if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
+                                    this.orderedProducts = [];
                                     for (var i = 0; i < res.data.orders.length; i++) {
                                         if (res.data.orders[i].status == "delivered") {
                                             var status = "Delivered";
@@ -138,6 +138,7 @@ export class OrderHistoryComponent implements OnInit {
                                         }
                                         this.orderedProducts.push({
                                             _id: res.data.orders[i]._id,
+                                            orderId: res.data.orders[i].orderId,
                                             name: res.data.orders[i].name,
                                             status: status
                                         })
@@ -174,6 +175,7 @@ export class OrderHistoryComponent implements OnInit {
                                 this.userService.showLoadingState(false);
                                 if (res.data.orders.length != 0) {
                                     this.isRenderingHistory = true;
+                                    this.orderedProducts = [];
                                     for (var i = 0; i < res.data.orders.length; i++) {
                                         if (res.data.orders[i].status == "delivered") {
                                             var status = "Delivered";
@@ -186,6 +188,7 @@ export class OrderHistoryComponent implements OnInit {
                                         }
                                         this.orderedProducts.push({
                                             _id: res.data.orders[i]._id,
+                                            orderId: res.data.orders[i].orderId,
                                             name: res.data.orders[i].name,
                                             status: status
                                         })

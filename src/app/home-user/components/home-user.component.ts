@@ -99,7 +99,6 @@ export class HomeUserComponent implements OnInit {
             }
         })
         this.updateCartCount();
-
     }
 
     ngOnInit(): void {

@@ -116,8 +116,16 @@
             </GridLayout>
 
             <GridLayout *ngIf="isRenderingUserDetail" row="2" height="45%" width="100%"
-                rows="auto,auto,auto,auto,auto,auto,auto">
+                rows="auto,auto,auto,auto,auto,auto,auto,auto">
                 <GridLayout row="0" height="10%" width="90%" columns="auto,auto" marginTop="2%">
+                    <StackLayout col="0" width="40%" height="100%">
+                        <Label class="labelHeading" text="Order id : "></Label>
+                    </StackLayout>
+                    <StackLayout col="1" width="60%" height="100%">
+                        <Label class="labelDetail" [text]="orderid"></Label>
+                    </StackLayout>
+                </GridLayout>
+                <GridLayout row="1" height="10%" width="90%" columns="auto,auto" marginTop="2%">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Name : "></Label>
                     </StackLayout>
@@ -125,7 +133,7 @@
                         <Label class="labelDetail" [text]="userName"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="1" width="90%" height="10%" columns="auto,auto">
+                <GridLayout row="2" width="90%" height="10%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Phone number : "></Label>
                     </StackLayout>
@@ -133,7 +141,7 @@
                         <Label class="labelDetail" [text]="phoneNumber"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="2" width="90%" height="30%" columns="auto,auto">
+                <GridLayout row="3" width="90%" height="20%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Address : "></Label>
                     </StackLayout>
@@ -141,7 +149,7 @@
                         <Label class="labelDetail" textWrap="true" [text]="address"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="3" width="90%" height="10%" columns="auto,auto">
+                <GridLayout row="4" width="90%" height="10%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Date (Time): "></Label>
                     </StackLayout>
@@ -149,7 +157,7 @@
                         <Label class="labelDetail" [text]="date"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="4" width="90%" height="10%" columns="auto,auto">
+                <GridLayout row="5" width="90%" height="10%" columns="auto,auto">
                     <StackLayout col="0" width="40%" height="100%">
                         <Label class="labelHeading" text="Total amount : "></Label>
                     </StackLayout>
@@ -157,7 +165,7 @@
                         <Label class="labelDetail" [text]="'Rs '+totalAmount"></Label>
                     </StackLayout>
                 </GridLayout>
-                <GridLayout row="5" width="100%" height="15%" columns="auto,auto">
+                <GridLayout row="6" width="100%" height="15%" columns="auto,auto">
                     <StackLayout col="0" width="50%" height="100%" verticalAlignment="middle"
                         horizontalAlignment="center">
                         <Button *ngIf="isRejectButton" class="rejectOrderButton" [text]="rejectButtonText"
@@ -169,7 +177,7 @@
                             (tap)="onConfirmOrder()"></Button>
                     </StackLayout>
                 </GridLayout>
-                <StackLayout row="6" height="13%" width="90%" verticalAlignment="middle">
+                <StackLayout row="7" height="13%" width="90%" verticalAlignment="middle">
                     <Button *ngIf="isTrackButton" class="trackOrderButton" text="Track here" (tap)="onTrack()"></Button>
                     <Button *ngIf="isReasonButton" class="trackOrderButton" text="View Reason"
                         (tap)="onReason()"></Button>

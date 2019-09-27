@@ -62,12 +62,16 @@ export class HomeAdminComponent implements OnInit {
     isLoadingCategories: boolean;
     shouldLoadCategories: boolean;
 
+    firstTabColor: string;
+    secondTabColor: string;
+
     constructor(private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
         this.addButtonText = "Add Product";
         this.product = new Product();
         this.products = [];
         this.category = new Category();
+        this.userService.activeScreen("homeAdmin");
         this.sliderImage1 = "res://slider_background";
         this.sliderImage2 = "res://slider_background";
         this.sliderImage3 = "res://slider_background";
@@ -91,6 +95,9 @@ export class HomeAdminComponent implements OnInit {
 
         this.shouldLoadCategories = false;
         this.isLoadingCategories = false;
+
+        this.firstTabColor = "#00C012";
+        this.secondTabColor = "#FFFFFF";
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
@@ -306,9 +313,13 @@ export class HomeAdminComponent implements OnInit {
             if (newIndex === 0) {
                 this.tabSelectedIndex = 0;
                 this.addButtonText = "Add Product";
+                this.firstTabColor = "#00C012";
+                this.secondTabColor = "#FFFFFF";
             } else if (newIndex === 1) {
                 this.tabSelectedIndex = 1;
                 this.addButtonText = "Add Category";
+                this.firstTabColor = "#FFFFFF";
+                this.secondTabColor = "#00C012";
             }
         }
     }

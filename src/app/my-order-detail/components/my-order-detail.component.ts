@@ -30,6 +30,7 @@ export class MyOrderDetailComponent implements OnInit {
     address: string;
     totalAmount: string;
     orderId: string;
+    orderid: string;
     userLatitude: string;
     userLongitude: string;
     orderStatus: string;
@@ -47,6 +48,7 @@ export class MyOrderDetailComponent implements OnInit {
         this.page.actionBarHidden = true;
         this.isRendering = false;
         this.isLoading = false;
+        this.orderid = "";
         this.userName = "";
         this.phoneNumber = "";
         this.address = "";
@@ -77,6 +79,7 @@ export class MyOrderDetailComponent implements OnInit {
                             this.userService.showLoadingState(false);
                             this.isLoading = false;
                             this.address = res.data.deliveryAddress.line1;
+                            this.orderid = res.data.orderId;
                             this.userName = res.data.name;
                             this.phoneNumber = res.data.phone;
                             this.totalAmount = res.data.grandTotal;
@@ -85,13 +88,18 @@ export class MyOrderDetailComponent implements OnInit {
                             this.isRenderingUserDetail = true;
                             this.date = res.data.date;
                             var dateTime = new Date(this.date);
+                            console.log(dateTime);
                             var hours = dateTime.getHours();
                             var ampm = "am";
                             if (hours > 12) {
                                 var hours = hours - 12;
                                 var ampm = "pm";
                             }
-                            this.date = dateTime.getDate().toString() + "/" + (dateTime.getMonth() + 1).toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + dateTime.getMinutes().toString() + " " + ampm + ")";
+                            var minutes = dateTime.getMinutes().toString();
+                            if (minutes.length < 2) {
+                                minutes = "0" + minutes;
+                            }
+                            this.date = dateTime.getDate().toString() + "/" + (dateTime.getMonth() + 1).toString() + "/" + dateTime.getFullYear().toString() + " (" + hours + ":" + minutes + " " + ampm + ")";
                             if (this.orderStatus == "pending") {
                                 this.cancelButtonText = "Cancel your order";
                                 this.isCancelButton = true;
@@ -99,14 +107,19 @@ export class MyOrderDetailComponent implements OnInit {
                             else if (this.orderStatus == "cancelled") {
                                 this.cancelButtonText = "Cancelled";
                                 this.isCancelButton = true;
+                                this.isReasonButton = false;
                             }
                             else if (this.orderStatus == "delivered") {
                                 this.isCancelButton = true;
                                 this.cancelButtonText = "Delivered";
                             }
-                            else {
+                            else if (this.orderStatus == "rejected") {
                                 this.isReasonButton = true;
-                                this.isCancelButton = false;
+                            }
+                            else {
+                                this.cancelButtonText = "Confirmed";
+                                this.isReasonButton = false;
+                                this.isCancelButton = true;
                             }
 
                             if (res.data.length != 0) {
