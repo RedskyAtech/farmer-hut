@@ -278,11 +278,12 @@ export class HomeAdminComponent implements OnInit {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
                         for (var i = 0; i < res.data.categories.length; i++) {
+                            var name = decodeURIComponent(res.data.categories[i].name);
                             this.productCategories.push({
                                 _id: res.data.categories[i]._id,
                                 status: res.data.categories[i].status,
                                 image: res.data.categories[i].image.resize_url,
-                                name: res.data.categories[i].name,
+                                name: name
                             })
                         }
                         this.isRenderingProducts = true;

@@ -454,17 +454,26 @@ export class AddProductComponent implements OnInit {
                         this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
                         this.uploadProgressDialog.show();
                     });
-                    task.on("responded", (e) => {
+                    task.on("responded", (e: any) => {
                         console.log("RESPONSE: " + e.data);
+                        // if (e.responseCode == "201") {
+                        //     this.errorMessage = "Product is already exist.";
+                        //     setTimeout(() => {
+                        //         this.warningDialog.show();
+                        //     }, 10);
+                        // }
+                        // else {
+                        localStorage.setItem('fromSimilarProducts', 'true');
+                        this.routerExtensions.back();
+                        // }
                         this.isLoading = false;
                         this.imageCropper = new ImageCropper();
                         this.uploadProgressDialog.hide();
-                        localStorage.setItem('fromSimilarProducts', 'true');
-                        this.routerExtensions.back();
                     });
                     task.on("error", (e) => {
                         this.networkError = true;
-                        this.imageCropper = new ImageCropper();
+                        this.imageCropper = new ImageCropper()
+                        this.uploadProgressDialog.hide();
                         this.errorMessage = "May be your network connection is low.";
                         setTimeout(() => {
                             this.warningDialog.show();
@@ -498,24 +507,32 @@ export class AddProductComponent implements OnInit {
                         { name: "isUpdate", value: "true" },
                         { name: "product_id", value: that.productId },
                     ]
-                    console.log(params);
-                    console.log(request);
                     var task = uploadSession.multipartUpload(params, request);
                     task.on("progress", (e) => {
                         this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
                         this.uploadProgressDialog.show();
                     });
-                    task.on("responded", (e) => {
+                    task.on("responded", (e: any) => {
                         console.log("RESPONSE: " + e.data);
-                        this.isLoading = false;
-                        this.imageCropper = new ImageCropper();
+                        // if (e.responseCode == "201") {
+                        //     this.errorMessage = "Product is already exist.";
+                        //     setTimeout(() => {
+                        //         this.warningDialog.show();
+                        //     }, 10);
+                        // }
+                        // else {
                         localStorage.setItem('fromHome', 'true');
                         this.routerExtensions.back();
+                        // }
+                        this.isLoading = false;
+                        this.uploadProgressDialog.hide();
+                        this.imageCropper = new ImageCropper();
                     });
                     task.on("error", (e) => {
                         this.imageCropper = new ImageCropper();
                         this.networkError = true;
                         this.isLoading = false;
+                        this.uploadProgressDialog.hide();
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
                     });
@@ -552,21 +569,31 @@ export class AddProductComponent implements OnInit {
                         this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
                         this.uploadProgressDialog.show();
                     });
-                    task.on("responded", (e) => {
-                        console.log("RESPONSE: " + e.data);
-                        this.isLoading = false;
-                        this.imageCropper = new ImageCropper();
+                    task.on("responded", (e: any) => {
+                        // if (e.responseCode == "201") {
+                        //     this.errorMessage = "Product is already exist.";
+                        //     setTimeout(() => {
+                        //         this.warningDialog.show();
+                        //     }, 10);
+                        // }
+                        // else {
                         localStorage.setItem('fromSimilarProducts', 'true');
                         this.routerExtensions.back();
+                        // }
+                        this.isLoading = false;
+                        this.uploadProgressDialog.hide();
+                        this.imageCropper = new ImageCropper();
                     });
                     task.on("error", (e) => {
+                        // console.log("ERROR:::::", e);
                         this.imageCropper = new ImageCropper();
                         this.networkError = true;
                         this.isLoading = false;
+                        this.uploadProgressDialog.hide();
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
                     });
-                    task.on("complete", this.completeEvent);
+                    // task.on("complete", this.completeEvent);
                 }
                 else {
                     var request = {
@@ -594,18 +621,27 @@ export class AddProductComponent implements OnInit {
                         this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
                         this.uploadProgressDialog.show();
                     });
-                    task.on("responded", (e) => {
-                        console.log("RESPONSE: " + e.data);
+                    task.on("responded", (e: any) => {
+                        // console.log("RESPONSEEE: " + e.data);
+                        // if (e.responseCode == "201") {
+                        //     this.errorMessage = "Product is already exist.";
+                        //     setTimeout(() => {
+                        //         this.warningDialog.show();
+                        //     }, 10);
+                        // }
+                        // else {
+                        localStorage.setItem('fromHome', 'true');
+                        this.routerExtensions.back();
+                        // }
                         this.imageCropper = new ImageCropper();
                         this.isLoading = false;
                         this.uploadProgressDialog.hide();
-                        localStorage.setItem('fromHome', 'true');
-                        this.routerExtensions.back();
                     });
                     task.on("error", (e) => {
                         this.imageCropper = new ImageCropper();
                         this.networkError = true;
                         this.isLoading = false;
+                        this.uploadProgressDialog.hide();
                         this.errorMessage = "May be your network connection is low.";
                         this.warningDialog.show();
                     });

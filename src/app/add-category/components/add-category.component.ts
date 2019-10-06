@@ -225,6 +225,7 @@ export class AddCategoryComponent implements OnInit {
             this.warningDialog.show();
         }
         else {
+            var name = encodeURIComponent(this.categoryName);
             this.isLoading = true;
             var that = this;
             var mimeType = "image/" + that.extension;
@@ -245,7 +246,7 @@ export class AddCategoryComponent implements OnInit {
                 }
                 const params = [
                     { name: "file", filename: that.file, mimeType: mimeType },
-                    { name: "name", value: that.categoryName },
+                    { name: "name", value: name },
                     { name: "isUpdate", value: "true" },
                     { name: "category_id", value: that.categoryId },
                     { name: "shouldImageUpdate", value: that.shouldImageUpdate }
@@ -255,11 +256,19 @@ export class AddCategoryComponent implements OnInit {
                     this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
                     this.uploadProgressDialog.show();
                 });
-                task.on("responded", (e) => {
-                    this.routerExtensions.back();
+                task.on("responded", (e: any) => {
+                    if (e.responseCode == "201") {
+                        this.errorMessage = "Category is already exist.";
+                        setTimeout(() => {
+                            this.warningDialog.show();
+                        }, 10);
+                    }
+                    else {
+                        localStorage.setItem('fromCategory', 'true');
+                        this.routerExtensions.back();
+                    }
                     this.isLoading = false;
                     this.uploadProgressDialog.hide();
-                    localStorage.setItem('fromCategory', 'true');
                 });
                 task.on("error", (e) => {
                     this.networkError = true;
@@ -283,16 +292,24 @@ export class AddCategoryComponent implements OnInit {
                 }
                 const params = [
                     { name: "file", filename: that.file, mimeType: mimeType },
-                    { name: "name", value: that.categoryName },
+                    { name: "name", value: name },
                 ]
                 var task = uploadSession.multipartUpload(params, request);
                 task.on("progress", (e) => {
                     this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
                     this.uploadProgressDialog.show();
                 });
-                task.on("responded", (e) => {
-                    localStorage.setItem('fromCategory', 'true')
-                    this.routerExtensions.back();
+                task.on("responded", (e: any) => {
+                    if (e.responseCode == "201") {
+                        this.errorMessage = "Category is already exist.";
+                        setTimeout(() => {
+                            this.warningDialog.show();
+                        }, 10);
+                    }
+                    else {
+                        localStorage.setItem('fromCategory', 'true')
+                        this.routerExtensions.back();
+                    }
                     this.uploadProgressDialog.hide();
                     this.isLoading = false;
                 });

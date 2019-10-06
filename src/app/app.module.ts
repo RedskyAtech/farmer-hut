@@ -8,6 +8,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { UserService } from "./services/user.service";
 import { NavigationService } from "./services/navigation.service";
 import { BackgroundHttpService } from "./services/background.http.service";
+import { CartService } from "./services/cart.service";
 
 
 @NgModule({
@@ -23,7 +24,7 @@ import { BackgroundHttpService } from "./services/background.http.service";
     declarations: [
         AppComponent
     ],
-    providers: [UserService, NavigationService, BackgroundHttpService],
+    providers: [UserService, NavigationService, BackgroundHttpService, CartService],
     schemas: [
         NO_ERRORS_SCHEMA
     ]

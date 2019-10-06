@@ -52,6 +52,7 @@ export class ViewOrdersComponent implements OnInit {
             if (data.isBackNavigation) {
                 this.orderPageNo = 1;
                 this.userService.activeScreen("");
+                this.orderedProducts = [];
                 this.getOrders();
             }
         })
@@ -71,6 +72,7 @@ export class ViewOrdersComponent implements OnInit {
         if (this.shouldLoadOrders) {
             if (args.index == criteria) {
                 this.orderPageNo = this.orderPageNo + 1;
+                this.orderedProducts = [];
                 this.getOrders();
             }
         }
@@ -95,7 +97,6 @@ export class ViewOrdersComponent implements OnInit {
                             this.userService.showLoadingState(false);
                             if (res.data.orders.length != 0) {
                                 this.isRenderingOrders = true;
-                                this.orderedProducts = [];
                                 for (var i = 0; i < res.data.orders.length; i++) {
                                     if (res.data.orders[i].status == "pending") {
                                         var status = "Pending...";

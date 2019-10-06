@@ -13,6 +13,7 @@ import { BackgroundHttpService } from "~/app/services/background.http.service";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
+import { CartService } from "~/app/services/cart.service";
 
 
 @Component({
@@ -34,14 +35,13 @@ export class HomeUserComponent implements OnInit {
     isCartCount: boolean;
     product: Product;
     cart: Cart;
-    cartCount: number;
+    cartCount: number | string;
     category: Category;
     tabSelectedIndex: number;
     isRenderingSlider: boolean;
     isRenderingTabView: boolean;
     pullRefreshPage;
     pageNo: number;
-
 
     mainInit = true;
     categoryPageNo = 1;
@@ -59,7 +59,7 @@ export class HomeUserComponent implements OnInit {
     isLoadingCategories: boolean;
     shouldLoadCategories: boolean;
 
-    constructor(private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService) {
+    constructor(private navigationService: NavigationService, private http: HttpClient, private userService: UserService, private routerExtensions: RouterExtensions, private page: Page, private backgroundHttpService: BackgroundHttpService, private cartService: CartService) {
         this.page.actionBarHidden = true;
 
         this.sliderImage1 = "res://slider_background";
@@ -82,7 +82,7 @@ export class HomeUserComponent implements OnInit {
         this.isScrolling = false;
         this.shouldLoadProducts = false;
         this.isLoadingProducts = false;
-
+        this.tabSelectedIndex = 0;
         this.shouldLoadCategories = false;
         this.isLoadingCategories = false;
 
@@ -93,11 +93,27 @@ export class HomeUserComponent implements OnInit {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
+                if (this.tabSelectedIndex == 0) {
+                    this.tabSelectedIndex = 0;
+                }
+                else {
+                    this.tabSelectedIndex = 1;
+                }
                 this.pageNo = 1;
                 this.userService.activeScreen("homeUser");
                 this.updateCartCount();
             }
-        })
+        });
+
+        this.cartService.cartCountObservable.subscribe((count: string) => {
+            if (count == "0") {
+                this.isCartCount = false;
+            }
+            else {
+                this.cartCount = count;
+                this.isCartCount = true;
+            }
+        });
         this.updateCartCount();
     }
 
@@ -189,10 +205,11 @@ export class HomeUserComponent implements OnInit {
                     if (res.isSuccess == true) {
                         if (res.data && res.data.categories) {
                             for (var i = 0; i < res.data.categories.length; i++) {
+                                var name = decodeURIComponent(res.data.categories[i].name);
                                 this.productCategories.push({
                                     _id: res.data.categories[i]._id,
                                     image: res.data.categories[i].image.resize_url,
-                                    name: res.data.categories[i].name,
+                                    name: name,
                                 })
                             }
                             this.isRenderingTabView = true;
@@ -235,6 +252,13 @@ export class HomeUserComponent implements OnInit {
         var storedCart = JSON.parse(localstorage.getItem('cart'));
         console.log(storedCart);
         if (storedCart != null && storedCart.length != null && storedCart.length != 0) {
+            // this.cartService.setCartCount(storedCart.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             this.isCartCount = true;
             this.cartCount = storedCart.length;
         }
@@ -309,6 +333,13 @@ export class HomeUserComponent implements OnInit {
             }, error => {
                 this.cart.product.quantity = "1";
                 storedCartProducts.push(new Product(product));
+                // this.cartService.setCartCount(storedCartProducts.length.toString())
+                this.cartService.getCartCount();
+                this.cartService.cartCountObservable.subscribe((count: string) => {
+                    if (count != undefined) {
+                        this.cartCount = count;
+                    }
+                });
                 localstorage.setItem(JSON.stringify(storedCartProducts));
                 this.updateCart();
             })
@@ -317,11 +348,18 @@ export class HomeUserComponent implements OnInit {
         else {
             this.cart.product.quantity = "1";
             storedCartProducts.push(new Product(product));
+            // this.cartService.setCartCount(storedCartProducts.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart();
         }
 
-        this.updateCartCount();
+        // this.updateCartCount();
     }
 
     updateCart() {
@@ -340,9 +378,16 @@ export class HomeUserComponent implements OnInit {
                                     tempCart.push(new Product(res.data.products[i]));
                                 }
                             }
+                            // this.cartService.setCartCount(res.data.products.length.toString())
+                            this.cartService.getCartCount();
+                            this.cartService.cartCountObservable.subscribe((count: string) => {
+                                if (count != undefined) {
+                                    this.cartCount = count;
+                                }
+                            });
                             localstorage.setItem('cart', JSON.stringify(tempCart));
                             Toast.makeText("Product is added to cart!!!", "long").show();
-                            this.updateCartCount();
+                            // this.updateCartCount();
                             this.cart = new Cart();
                             this.cart.product = new Product();
                         }

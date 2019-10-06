@@ -230,74 +230,74 @@ export class CartComponent implements OnInit {
             });
     }
 
-    refreshCartPage() {
-        var tempCart = [];
-        this.http
-            .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
-            .subscribe((res: any) => {
-                if (res != null && res != undefined) {
-                    if (res.isSuccess == true) {
-                        if (res.data.products.length > 0) {
-                            console.trace('GOTPRO:::', res.data.products)
-                            this.cartProducts = [];
-                            for (var i = 0; i < res.data.products.length; i++) {
-                               
-                                this.cartProducts.push({
-                                    _id: res.data.products[i]._id,
-                                    isSimilarProduct: res.data.products[i].isSimilarProduct,
-                                    image: res.data.products[i].image.resize_url,
-                                    fullName: res.data.products[i].name,
-                                    quantity: res.data.products[i].quantity,
-                                    totalPrice: res.data.products[i].total,
-                                    weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
-                                    price: res.data.products[i].price.value
-                                })
-                                tempCart.push(new Product(res.data.products[i]));
-                            }
-                            localstorage.setItem('cart', JSON.stringify(tempCart));
-                            this.totalAmount = res.data.grandTotal;
-                            this.http
-                                .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
-                                .subscribe((res: any) => {
-                                    if (res != "" && res != undefined) {
-                                        if (res.isSuccess == true) {
-                                            this.userService.showLoadingState(false);
-                                            if (res.data.deliveryAddress.line1 != null && res.data.deliveryAddress.line1 != undefined) {
-                                                this.address = res.data.deliveryAddress.line1;
-                                                this.mapAddress = res.data.deliveryAddress.line2;
-                                                this.addressButtonText = "Change";
-                                            }
-                                            else {
-                                                this.addressButtonText = "Enter";
+        refreshCartPage() {
+            var tempCart = [];
+            this.http
+                .get(Values.BASE_URL + "carts/" + localstorage.getItem("cartId"))
+                .subscribe((res: any) => {
+                    if (res != null && res != undefined) {
+                        if (res.isSuccess == true) {
+                            if (res.data.products.length > 0) {
+                                console.trace('GOTPRO:::', res.data.products)
+                                this.cartProducts = [];
+                                for (var i = 0; i < res.data.products.length; i++) {
+                                
+                                    this.cartProducts.push({
+                                        _id: res.data.products[i]._id,
+                                        isSimilarProduct: res.data.products[i].isSimilarProduct,
+                                        image: res.data.products[i].image.resize_url,
+                                        fullName: res.data.products[i].name,
+                                        quantity: res.data.products[i].quantity,
+                                        totalPrice: res.data.products[i].total,
+                                        weight: res.data.products[i].dimensions[0].value + " " + res.data.products[i].dimensions[0].unit,
+                                        price: res.data.products[i].price.value
+                                    })
+                                    tempCart.push(new Product(res.data.products[i]));
+                                }
+                                localstorage.setItem('cart', JSON.stringify(tempCart));
+                                this.totalAmount = res.data.grandTotal;
+                                this.http
+                                    .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
+                                    .subscribe((res: any) => {
+                                        if (res != "" && res != undefined) {
+                                            if (res.isSuccess == true) {
+                                                this.userService.showLoadingState(false);
+                                                if (res.data.deliveryAddress.line1 != null && res.data.deliveryAddress.line1 != undefined) {
+                                                    this.address = res.data.deliveryAddress.line1;
+                                                    this.mapAddress = res.data.deliveryAddress.line2;
+                                                    this.addressButtonText = "Change";
+                                                }
+                                                else {
+                                                    this.addressButtonText = "Enter";
+                                                }
                                             }
                                         }
-                                    }
-                                    this.isRendering = true;
-                                }, error => {
-                                    this.isRendering = true;
-                                    if (error.error.error == undefined) {
-                                        alert("Something went wrong!!! May be your network connection is low.");
-                                    }
-                                    else {
-                                        alert(error.error.error);
-                                    }
-                                });
-                        }
-                        else {
-                            this.isRenderingMessage = true;
+                                        this.isRendering = true;
+                                    }, error => {
+                                        this.isRendering = true;
+                                        if (error.error.error == undefined) {
+                                            alert("Something went wrong!!! May be your network connection is low.");
+                                        }
+                                        else {
+                                            alert(error.error.error);
+                                        }
+                                    });
+                            }
+                            else {
+                                this.isRenderingMessage = true;
+                            }
                         }
                     }
-                }
-            }, error => {
-                this.userService.showLoadingState(false);
-                if (error.error.error == undefined) {
-                    alert("Something went wrong!!! May be your network connection is low.");
-                }
-                else {
-                    alert(error.error.error);
-                }
-            });
-    }
+                }, error => {
+                    this.userService.showLoadingState(false);
+                    if (error.error.error == undefined) {
+                        alert("Something went wrong!!! May be your network connection is low.");
+                    }
+                    else {
+                        alert(error.error.error);
+                    }
+                });
+        }
 
     onViewAddress() {
         if (localstorage.getItem("address") != null && localstorage.getItem("address") != undefined && localstorage.getItem("mapAddress") != null && localstorage.getItem("mapAddress") != undefined) {

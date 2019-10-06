@@ -14,6 +14,7 @@ import { initializeOnAngular } from 'nativescript-image-cache';
 import * as application from "tns-core-modules/application";
 import * as Toast from 'nativescript-toast';
 import * as localstorage from "nativescript-localstorage";
+import { CartService } from './services/cart.service';
 
 registerElement('Carousel', () => Carousel);
 registerElement('CarouselItem', () => CarouselItem);
@@ -38,7 +39,7 @@ export class AppComponent {
     file: File;
     folder: Folder;
 
-    constructor(private userService: UserService, private routerExtensions: RouterExtensions, private ngZone: NgZone, private http: HttpClient) {
+    constructor(private userService: UserService, private routerExtensions: RouterExtensions, private ngZone: NgZone, private http: HttpClient, private cartService: CartService) {
 
         initializeOnAngular();
 

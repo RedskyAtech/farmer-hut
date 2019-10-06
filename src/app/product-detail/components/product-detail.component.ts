@@ -13,6 +13,7 @@ import { BackgroundHttpService } from "~/app/services/background.http.service";
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
 import { HttpClient } from "@angular/common/http";
+import { CartService } from "~/app/services/cart.service";
 
 
 
@@ -34,7 +35,7 @@ export class ProductDetailComponent implements OnInit {
     cartStatus: boolean;
     addToCartButton: boolean;
     addedCartButton: boolean;
-    cartCount: number;
+    cartCount: number | string;
     isCartCount: boolean;
     cart: Cart;
     classType: string;
@@ -44,12 +45,11 @@ export class ProductDetailComponent implements OnInit {
 
     genricProduct: any;
 
-    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService, private http: HttpClient) {
+    constructor(private route: ActivatedRoute, private navigationService: NavigationService, private routerExtensions: RouterExtensions, private userService: UserService, private page: Page, private backgroundHttpService: BackgroundHttpService, private http: HttpClient, private cartService: CartService) {
         this.isRendering = false;
         this.page.actionBarHidden = true;
         this.hasBeenHitOnce = false;
         this.userService.activeScreen('');
-        this.updateCartCount();
         this.route.queryParams.subscribe(params => {
             if (params["product"] != undefined) {
                 this.genricProduct = JSON.parse(params["product"]);
@@ -66,6 +66,7 @@ export class ProductDetailComponent implements OnInit {
 
         this.page.on('navigatedTo', (data) => {
             if (data.isBackNavigation) {
+                this.updateCartCount();
                 this.refreshCartPage();
                 this.genricProduct = JSON.parse(localstorage.getItem('genricProduct'))
             }
@@ -114,6 +115,17 @@ export class ProductDetailComponent implements OnInit {
             this.addToCartButton = true;
             this.addedCartButton = false;
         }
+
+        this.cartService.cartCountObservable.subscribe((count: string) => {
+            if (count == "0") {
+                this.isCartCount = false;
+            }
+            else {
+                this.cartCount = count;
+                this.isCartCount = true;
+            }
+        });
+        this.updateCartCount();
     }
 
     ngOnInit(): void {
@@ -129,16 +141,21 @@ export class ProductDetailComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.updateCartCount();
+                        // this.updateCartCount();
                         if (res.data.products.length > 0) {
                             for (var i = 0; i < res.data.products.length; i++) {
                                 tempCart.push(new Product(res.data.products[i]));
                             }
+                            // this.cartService.setCartCount(res.data.products.length.toString())
+                            this.cartService.getCartCount();
+                            this.cartService.cartCountObservable.subscribe((count: string) => {
+                                if (count != undefined) {
+                                    this.cartCount = count;
+                                }
+                            });
                             localstorage.setItem('cart', JSON.stringify(tempCart));
                         }
-
                     }
-
                 }
             });
     }
@@ -186,6 +203,13 @@ export class ProductDetailComponent implements OnInit {
                 this.cart.product.quantity = "1";
                 this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
                 storedCartProducts.push(new Product(this.genricProduct));
+                // this.cartService.setCartCount(storedCartProducts.length.toString())
+                this.cartService.getCartCount();
+                this.cartService.cartCountObservable.subscribe((count: string) => {
+                    if (count != undefined) {
+                        this.cartCount = count;
+                    }
+                });
                 localstorage.setItem(JSON.stringify(storedCartProducts));
                 this.updateCart();
             })
@@ -195,11 +219,18 @@ export class ProductDetailComponent implements OnInit {
             this.cart.product.quantity = "1";
             this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
             storedCartProducts.push(new Product(this.genricProduct));
+            // this.cartService.setCartCount(storedCartProducts.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart();
         }
 
-        this.updateCartCount();
+        // this.updateCartCount();
     }
 
 
@@ -224,9 +255,10 @@ export class ProductDetailComponent implements OnInit {
                                         tempCart.push(new Product(res.data.products[i]));
                                     }
                                 }
+                                this.cartService.setCartCount(res.data.products.length.toString())
                                 localstorage.setItem('cart', JSON.stringify(tempCart));
                                 Toast.makeText("Product is added to cart!!!", "long").show();
-                                this.updateCartCount();
+                                // this.updateCartCount();
                                 this.cart = new Cart();
                                 this.cart.product = new Product();
                             }
@@ -252,6 +284,13 @@ export class ProductDetailComponent implements OnInit {
         var storedCart = JSON.parse(localstorage.getItem('cart'));
 
         if (storedCart.length != 0) {
+            // this.cartService.setCartCount(storedCart.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             this.isCartCount = true;
             this.cartCount = storedCart.length;
         } else {
@@ -269,6 +308,13 @@ export class ProductDetailComponent implements OnInit {
         if (storedCartProducts.length != 0) {
             for (var i = 0; i < storedCartProducts.length; i++) {
                 if (this.id == storedCartProducts[i]._id) {
+                    // this.cartService.setCartCount(storedCartProducts.length.toString())
+                    this.cartService.getCartCount();
+                    this.cartService.cartCountObservable.subscribe((count: string) => {
+                        if (count != undefined) {
+                            this.cartCount = count;
+                        }
+                    });
                     this.routerExtensions.navigate(['/cart']);
                     return;
                 }
@@ -276,6 +322,13 @@ export class ProductDetailComponent implements OnInit {
             this.cart.product.quantity = "1";
             this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
             storedCartProducts.push(new Product(this.genricProduct));
+            // this.cartService.setCartCount(storedCartProducts.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart().then((res: boolean) => {
                 if (res) {
@@ -289,6 +342,13 @@ export class ProductDetailComponent implements OnInit {
             this.cart.product.quantity = "1";
             this.cart.product.isSimilarProduct = this.genricProduct.isSimilarProduct;
             storedCartProducts.push(new Product(this.genricProduct));
+            // this.cartService.setCartCount(storedCartProducts.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart().then((res: boolean) => {
                 if (res) {

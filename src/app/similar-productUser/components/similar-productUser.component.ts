@@ -1,3 +1,4 @@
+import { CartService } from './../../services/cart.service';
 import { Component, OnInit } from "@angular/core";
 import { NavigationExtras, ActivatedRoute } from "@angular/router";
 import { Values } from "~/app/values/values";
@@ -24,7 +25,7 @@ import * as Toast from 'nativescript-toast';
 export class SimilarProductUserComponent implements OnInit {
 
     similarProducts = [];
-    cartCount: number;
+    cartCount: number | string;
     categoryId: string;
     product: Product;
     isCartCount: boolean;
@@ -40,7 +41,7 @@ export class SimilarProductUserComponent implements OnInit {
     isLoadingSimilarProducts: boolean;
     shouldLoadSimilarProducts: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private backgroundHttpService: BackgroundHttpService, private page: Page, private cartService: CartService) {
         this.page.actionBarHidden = true;
         this.isLoading = false;
         this.isRendering = false;
@@ -76,7 +77,7 @@ export class SimilarProductUserComponent implements OnInit {
             .subscribe((res: any) => {
                 if (res != null && res != undefined) {
                     if (res.isSuccess == true) {
-                        this.heading = res.data.name;
+                        this.heading = decodeURIComponent(res.data.name);
                     }
                 }
             }, error => {
@@ -89,6 +90,15 @@ export class SimilarProductUserComponent implements OnInit {
         if (localstorage.getItem("userToken") != null && localstorage.getItem("userToken") != undefined && localstorage.getItem("userId") != null && localstorage.getItem("userId") != undefined) {
             this.getSimilarProducts();
         }
+        this.cartService.cartCountObservable.subscribe((count: string) => {
+            if (count == "0") {
+                this.isCartCount = false;
+            }
+            else {
+                this.cartCount = count;
+                this.isCartCount = true;
+            }
+        });
         this.updateCartCount();
     }
 
@@ -161,6 +171,13 @@ export class SimilarProductUserComponent implements OnInit {
         var storedCart = JSON.parse(localstorage.getItem('cart'));
 
         if (storedCart.length != 0) {
+            // this.cartService.setCartCount(storedCart.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             this.isCartCount = true;
             this.cartCount = storedCart.length;
         } else {
@@ -231,6 +248,13 @@ export class SimilarProductUserComponent implements OnInit {
             }, error => {
                 this.cart.product.quantity = "1";
                 storedCartProducts.push(new Product(product));
+                // this.cartService.setCartCount(storedCartProducts.length.toString())
+                this.cartService.getCartCount();
+                this.cartService.cartCountObservable.subscribe((count: string) => {
+                    if (count != undefined) {
+                        this.cartCount = count;
+                    }
+                });
                 localstorage.setItem(JSON.stringify(storedCartProducts));
                 this.updateCart();
             })
@@ -238,6 +262,13 @@ export class SimilarProductUserComponent implements OnInit {
         else {
             this.cart.product.quantity = "1";
             storedCartProducts.push(new Product(product));
+            // this.cartService.setCartCount(storedCartProducts.length.toString())
+            this.cartService.getCartCount();
+            this.cartService.cartCountObservable.subscribe((count: string) => {
+                if (count != undefined) {
+                    this.cartCount = count;
+                }
+            });
             localstorage.setItem(JSON.stringify(storedCartProducts));
             this.updateCart();
         }
@@ -262,9 +293,16 @@ export class SimilarProductUserComponent implements OnInit {
                                     tempCart.push(new Product(res.data.products[i]));
                                 }
                             }
+                            // this.cartService.setCartCount(res.data.products.length.toString())
+                            this.cartService.getCartCount();
+                            this.cartService.cartCountObservable.subscribe((count: string) => {
+                                if (count != undefined) {
+                                    this.cartCount = count;
+                                }
+                            });
                             localstorage.setItem('cart', JSON.stringify(tempCart));
                             Toast.makeText("Product is added to cart!!!", "long").show();
-                            this.updateCartCount();
+                            // this.updateCartCount();
                             this.cart = new Cart();
                             this.cart.product = new Product();
                         }

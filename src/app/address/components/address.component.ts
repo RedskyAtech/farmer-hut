@@ -122,7 +122,7 @@ export class AddressComponent implements OnInit {
         this.addressBorderColor = "#00C012";
         this.address = args.object.text;
     }
-  
+
     onMapReady(event) {
         console.log('Map Ready');
 
@@ -264,15 +264,17 @@ export class AddressComponent implements OnInit {
         else {
             this.isVisibleMapIcon = false;
         }
-      
+
         this.mapView.removeAllMarkers();
 
         this.pinLocation = false;
         this.isLoading = true;
-
+        console.log("latiiiiiiiiLongiiiiiiii:::::::", this.finalLatitude, this.finalLongitude);
         this.http
-            .get(Values.GOOGLE_MAP_URL + "latlng=" + this.finalLatitude + "," + this.finalLongitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
+            // .get(Values.GOOGLE_MAP_URL + "latlng=" + this.finalLatitude + "," + this.finalLongitude + "&key=AIzaSyA3-BQmJVYB6_soLJPv7cx2lFUMAuELlkM")
+            .get(Values.GOOGLE_MAP_URL + "latlng=" + this.finalLatitude + "," + this.finalLongitude + "&key=AIzaSyBJJyDTNfWFxA-KvQD52vUE_2LB45BJtwA")
             .subscribe((res: any) => {
+                console.log("GeoCode RES::::::::::", res);
                 this.mapLabelClass = false;
                 this.mapAddress = res.results[0].formatted_address;
                 this.mapAddressColor = "#00C012";
