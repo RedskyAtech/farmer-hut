@@ -54,6 +54,7 @@ export class AddCategoryComponent implements OnInit {
     isVisibleImage: boolean;
     uploadProgressValue: number;
     networkError: boolean;
+    addButtonCount: number;
 
     constructor(private route: ActivatedRoute, private navigationService: NavigationService, private userService: UserService, private routerExtensions: RouterExtensions, private http: HttpClient, private page: Page) {
         this.page.actionBarHidden = true;
@@ -73,6 +74,7 @@ export class AddCategoryComponent implements OnInit {
         this.userService.activeScreen('');
         this.uploadProgressValue = 10;
         this.networkError = false;
+        this.addButtonCount = 0;
 
         this.route.queryParams.subscribe(params => {
             if (params["categoryId"] != undefined) {
@@ -90,7 +92,8 @@ export class AddCategoryComponent implements OnInit {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
                             this.categoryImage = res.data.image.resize_url;
-                            this.categoryName = res.data.name;
+                            this.categoryName = decodeURIComponent(res.data.name);
+                            // this.categoryName = res.data.name;
                             this.categoryBorderColor = "#00C012";
                             this.isVisibleImage = false;
                         }
@@ -153,16 +156,21 @@ export class AddCategoryComponent implements OnInit {
                     that.showAddButton = true;
                     var image = new ImageSource();
                     image.fromAsset(selected).then((source) => {
+                        // console.log(source.toBase64String("png"));
+                        // that.categoryImage = "data:image/jpeg;base64," + source.toBase64String("png");
+                        // that.isVisibleImage = false;
                         that.imageCropper.show(source, { lockSquare: true }).then((args: any) => {
                             if (args.image !== null) {
                                 var folder: Folder = Folder.fromPath("/storage/emulated/0" + "/farmersHut");
-                                var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.jpg'));
+                                var file: File = File.fromPath(path.join(folder.path, 'FarmersHut.png'));
                                 args.image.saveToFile(file.path, 'jpg');
-                                that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                                that.file = "/storage/emulated/0/farmersHut/FarmersHut.png";
+                                that.categoryImage = undefined;
+                                that.categoryImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.png");
                                 that.name = that.file.substr(that.file.lastIndexOf("/") + 1);
                                 that.extension = that.name.substr(that.name.lastIndexOf(".") + 1);
                                 that.categoryImage = undefined;
-                                that.categoryImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.jpg");
+                                that.categoryImage = fromFile("/storage/emulated/0/farmersHut/FarmersHut.png");
                                 that.shouldImageUpdate = "true";
                                 that.isVisibleImage = false;
                             }
@@ -225,103 +233,106 @@ export class AddCategoryComponent implements OnInit {
             this.warningDialog.show();
         }
         else {
-            var name = encodeURIComponent(this.categoryName);
-            this.isLoading = true;
-            var that = this;
-            var mimeType = "image/" + that.extension;
-            var uploadSession = session('image-upload');
-            if (that.type == "edit") {
-                if (that.file == null) {
-                    that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-                    that.shouldImageUpdate = "false";
-                }
-                var request = {
-                    url: Values.BASE_URL + "categories",
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/octet-stream",
-                        "File-Name": "my file"
-                    },
-                    description: "{'uploading':" + "my file" + "}"
-                }
-                const params = [
-                    { name: "file", filename: that.file, mimeType: mimeType },
-                    { name: "name", value: name },
-                    { name: "isUpdate", value: "true" },
-                    { name: "category_id", value: that.categoryId },
-                    { name: "shouldImageUpdate", value: that.shouldImageUpdate }
-                ]
-                var task = uploadSession.multipartUpload(params, request);
-                task.on("progress", (e) => {
-                    this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
-                    this.uploadProgressDialog.show();
-                });
-                task.on("responded", (e: any) => {
-                    if (e.responseCode == "201") {
-                        this.errorMessage = "Category is already exist.";
+            this.addButtonCount = this.addButtonCount + 1;
+            if (this.addButtonCount == 1) {
+                var name = encodeURIComponent(this.categoryName);
+                this.isLoading = true;
+                var that = this;
+                var mimeType = "image/" + that.extension;
+                var uploadSession = session('image-upload');
+                if (that.type == "edit") {
+                    if (that.file == null) {
+                        that.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                        that.shouldImageUpdate = "false";
+                    }
+                    var request = {
+                        url: Values.BASE_URL + "categories",
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/octet-stream",
+                            "File-Name": "my file"
+                        },
+                        description: "{'uploading':" + "my file" + "}"
+                    }
+                    const params = [
+                        { name: "file", filename: that.file, mimeType: mimeType },
+                        { name: "name", value: name },
+                        { name: "isUpdate", value: "true" },
+                        { name: "category_id", value: that.categoryId },
+                        { name: "shouldImageUpdate", value: that.shouldImageUpdate }
+                    ]
+                    var task = uploadSession.multipartUpload(params, request);
+                    task.on("progress", (e) => {
+                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                        this.uploadProgressDialog.show();
+                    });
+                    task.on("responded", (e: any) => {
+                        if (e.responseCode == "201") {
+                            this.errorMessage = "Category is already exist.";
+                            setTimeout(() => {
+                                this.warningDialog.show();
+                            }, 10);
+                        }
+                        else {
+                            localStorage.setItem('fromCategory', 'true');
+                            this.routerExtensions.back();
+                        }
+                        this.isLoading = false;
+                        this.uploadProgressDialog.hide();
+                    });
+                    task.on("error", (e) => {
+                        this.networkError = true;
+                        this.errorMessage = "May be your network connection is low.";
                         setTimeout(() => {
                             this.warningDialog.show();
                         }, 10);
-                    }
-                    else {
-                        localStorage.setItem('fromCategory', 'true');
-                        this.routerExtensions.back();
-                    }
-                    this.isLoading = false;
-                    this.uploadProgressDialog.hide();
-                });
-                task.on("error", (e) => {
-                    this.networkError = true;
-                    this.errorMessage = "May be your network connection is low.";
-                    setTimeout(() => {
-                        this.warningDialog.show();
-                    }, 10);
-                    this.isLoading = false;
-                });
-                task.on("complete", this.completeEvent);
-            }
-            else {
-                var request = {
-                    url: Values.BASE_URL + "categories",
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/octet-stream",
-                        "File-Name": that.name
-                    },
-                    description: "{'uploading':" + that.name + "}"
+                        this.isLoading = false;
+                    });
+                    task.on("complete", this.completeEvent);
                 }
-                const params = [
-                    { name: "file", filename: that.file, mimeType: mimeType },
-                    { name: "name", value: name },
-                ]
-                var task = uploadSession.multipartUpload(params, request);
-                task.on("progress", (e) => {
-                    this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
-                    this.uploadProgressDialog.show();
-                });
-                task.on("responded", (e: any) => {
-                    if (e.responseCode == "201") {
-                        this.errorMessage = "Category is already exist.";
+                else {
+                    var request = {
+                        url: Values.BASE_URL + "categories",
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/octet-stream",
+                            "File-Name": that.name
+                        },
+                        description: "{'uploading':" + that.name + "}"
+                    }
+                    const params = [
+                        { name: "file", filename: that.file, mimeType: mimeType },
+                        { name: "name", value: name },
+                    ]
+                    var task = uploadSession.multipartUpload(params, request);
+                    task.on("progress", (e) => {
+                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                        this.uploadProgressDialog.show();
+                    });
+                    task.on("responded", (e: any) => {
+                        if (e.responseCode == "201") {
+                            this.errorMessage = "Category is already exist.";
+                            setTimeout(() => {
+                                this.warningDialog.show();
+                            }, 10);
+                        }
+                        else {
+                            localStorage.setItem('fromCategory', 'true')
+                            this.routerExtensions.back();
+                        }
+                        this.uploadProgressDialog.hide();
+                        this.isLoading = false;
+                    });
+                    task.on("error", (e) => {
+                        this.networkError = true;
+                        this.errorMessage = "May be your network connection is low.";
                         setTimeout(() => {
                             this.warningDialog.show();
                         }, 10);
-                    }
-                    else {
-                        localStorage.setItem('fromCategory', 'true')
-                        this.routerExtensions.back();
-                    }
-                    this.uploadProgressDialog.hide();
-                    this.isLoading = false;
-                });
-                task.on("error", (e) => {
-                    this.networkError = true;
-                    this.errorMessage = "May be your network connection is low.";
-                    setTimeout(() => {
-                        this.warningDialog.show();
-                    }, 10);
-                    this.isLoading = false;
-                });
-                task.on("complete", this.completeEvent);
+                        this.isLoading = false;
+                    });
+                    task.on("complete", this.completeEvent);
+                }
             }
         }
     }

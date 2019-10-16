@@ -80,9 +80,7 @@ export class ForgotPasswordComponent implements OnInit {
                             this.isLoading = false;
                             localstorage.setItem('tempToken', res.data.tempToken);
                             this.userService.showLoadingState(false);
-                            this.routerExtensions.navigate(['./setPassword'], {
-                                clearHistory: true,
-                            });
+                            this.routerExtensions.navigate(['./setPassword']);
                         }
                     }
                 }, error => {

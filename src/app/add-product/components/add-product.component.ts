@@ -86,6 +86,7 @@ export class AddProductComponent implements OnInit {
     isVisibleImage: boolean;
     uploadProgressValue: number;
     networkError: boolean;
+    addButtonCount: number;
 
     constructor(private route: ActivatedRoute, private routerExtensions: RouterExtensions, private userService: UserService, private navigationService: NavigationService, private page: Page) {
         this.networkError = false;
@@ -96,7 +97,7 @@ export class AddProductComponent implements OnInit {
         this.imageUrl = null;
         this.userService.activeScreen('');
         this.uploadProgressValue = 10;
-
+        this.addButtonCount = 0;
         this.similarProduct = new SimilarProduct();
         this.similarProduct.products = [];
         this.productImage = "res://add_image_icon";
@@ -415,237 +416,240 @@ export class AddProductComponent implements OnInit {
             this.warningDialog.show();
         }
         else {
-            this.isLoading = true;
-            var that = this;
-            var mimeType = "image/" + this.extension;
-            var uploadSession = session('image-upload');
-            if (that.type == "edit") {
-                if (that.file == null) {
-                    this.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
-                    this.shouldImageUpdate = "false";
-                }
-                if (that.classType == "similarProduct") {
-                    var request = {
-                        url: Values.BASE_URL + "similarProducts",
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/octet-stream",
-                            "File-Name": "my file"
-                        },
-                        description: "{'uploading':" + "my file" + "}"
+            this.addButtonCount = this.addButtonCount + 1;
+            if (this.addButtonCount == 1) {
+                this.isLoading = true;
+                var that = this;
+                var mimeType = "image/" + this.extension;
+                var uploadSession = session('image-upload');
+                if (that.type == "edit") {
+                    if (that.file == null) {
+                        this.file = "/storage/emulated/0/farmersHut/FarmersHut.jpg";
+                        this.shouldImageUpdate = "false";
                     }
-                    var price = that.price.toString();
-                    const params = [
-                        { name: "file", filename: that.file, mimeType: mimeType },
-                        { name: "name", value: that.productName },
-                        { name: "brand", value: that.brandName },
-                        { name: "price.value", value: price },
-                        { name: "price.currency", value: that.currency },
-                        { name: "heading.title", value: that.detailHeading },
-                        { name: "heading.description", value: that.detailDescription },
-                        { name: "dimensions[value]", value: that.weight },
-                        { name: "dimensions[unit]", value: that.weightDimension },
-                        { name: "shouldImageUpdate", value: that.shouldImageUpdate },
-                        { name: "isUpdate", value: "true" },
-                        { name: "product_id", value: that.similarProductId }
-                    ]
-                    var task = uploadSession.multipartUpload(params, request);
-                    task.on("progress", (e) => {
-                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
-                        this.uploadProgressDialog.show();
-                    });
-                    task.on("responded", (e: any) => {
-                        console.log("RESPONSE: " + e.data);
-                        // if (e.responseCode == "201") {
-                        //     this.errorMessage = "Product is already exist.";
-                        //     setTimeout(() => {
-                        //         this.warningDialog.show();
-                        //     }, 10);
-                        // }
-                        // else {
-                        localStorage.setItem('fromSimilarProducts', 'true');
-                        this.routerExtensions.back();
-                        // }
-                        this.isLoading = false;
-                        this.imageCropper = new ImageCropper();
-                        this.uploadProgressDialog.hide();
-                    });
-                    task.on("error", (e) => {
-                        this.networkError = true;
-                        this.imageCropper = new ImageCropper()
-                        this.uploadProgressDialog.hide();
-                        this.errorMessage = "May be your network connection is low.";
-                        setTimeout(() => {
+                    if (that.classType == "similarProduct") {
+                        var request = {
+                            url: Values.BASE_URL + "similarProducts",
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/octet-stream",
+                                "File-Name": "my file"
+                            },
+                            description: "{'uploading':" + "my file" + "}"
+                        }
+                        var price = that.price.toString();
+                        const params = [
+                            { name: "file", filename: that.file, mimeType: mimeType },
+                            { name: "name", value: that.productName },
+                            { name: "brand", value: that.brandName },
+                            { name: "price.value", value: price },
+                            { name: "price.currency", value: that.currency },
+                            { name: "heading.title", value: that.detailHeading },
+                            { name: "heading.description", value: that.detailDescription },
+                            { name: "dimensions[value]", value: that.weight },
+                            { name: "dimensions[unit]", value: that.weightDimension },
+                            { name: "shouldImageUpdate", value: that.shouldImageUpdate },
+                            { name: "isUpdate", value: "true" },
+                            { name: "product_id", value: that.similarProductId }
+                        ]
+                        var task = uploadSession.multipartUpload(params, request);
+                        task.on("progress", (e) => {
+                            this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                            this.uploadProgressDialog.show();
+                        });
+                        task.on("responded", (e: any) => {
+                            console.log("RESPONSE: " + e.data);
+                            // if (e.responseCode == "201") {
+                            //     this.errorMessage = "Product is already exist.";
+                            //     setTimeout(() => {
+                            //         this.warningDialog.show();
+                            //     }, 10);
+                            // }
+                            // else {
+                            localStorage.setItem('fromSimilarProducts', 'true');
+                            this.routerExtensions.back();
+                            // }
+                            this.isLoading = false;
+                            this.imageCropper = new ImageCropper();
+                            this.uploadProgressDialog.hide();
+                        });
+                        task.on("error", (e) => {
+                            this.networkError = true;
+                            this.imageCropper = new ImageCropper()
+                            this.uploadProgressDialog.hide();
+                            this.errorMessage = "May be your network connection is low.";
+                            setTimeout(() => {
+                                this.warningDialog.show();
+                            }, 10);
+                            this.isLoading = false;
+                        });
+                        task.on("complete", this.completeEvent);
+                    }
+                    else {
+                        var request = {
+                            url: Values.BASE_URL + "products",
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/octet-stream",
+                                "File-Name": "my"
+                            },
+                            description: "{'uploading':" + "my" + "}"
+                        }
+                        var price = that.price.toString();
+                        const params = [
+                            { name: "file", filename: that.file, mimeType: mimeType },
+                            { name: "name", value: that.productName },
+                            { name: "brand", value: that.brandName },
+                            { name: "price.value", value: price },
+                            { name: "price.currency", value: that.currency },
+                            { name: "heading.title", value: that.detailHeading },
+                            { name: "heading.description", value: that.detailDescription },
+                            { name: "dimensions[value]", value: that.weight },
+                            { name: "dimensions[unit]", value: that.weightDimension },
+                            { name: "shouldImageUpdate", value: that.shouldImageUpdate },
+                            { name: "isUpdate", value: "true" },
+                            { name: "product_id", value: that.productId },
+                        ]
+                        var task = uploadSession.multipartUpload(params, request);
+                        task.on("progress", (e) => {
+                            this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                            this.uploadProgressDialog.show();
+                        });
+                        task.on("responded", (e: any) => {
+                            console.log("RESPONSE: " + e.data);
+                            // if (e.responseCode == "201") {
+                            //     this.errorMessage = "Product is already exist.";
+                            //     setTimeout(() => {
+                            //         this.warningDialog.show();
+                            //     }, 10);
+                            // }
+                            // else {
+                            localStorage.setItem('fromHome', 'true');
+                            this.routerExtensions.back();
+                            // }
+                            this.isLoading = false;
+                            this.uploadProgressDialog.hide();
+                            this.imageCropper = new ImageCropper();
+                        });
+                        task.on("error", (e) => {
+                            this.imageCropper = new ImageCropper();
+                            this.networkError = true;
+                            this.isLoading = false;
+                            this.uploadProgressDialog.hide();
+                            this.errorMessage = "May be your network connection is low.";
                             this.warningDialog.show();
-                        }, 10);
-                        this.isLoading = false;
-                    });
-                    task.on("complete", this.completeEvent);
-                }
-                else {
-                    var request = {
-                        url: Values.BASE_URL + "products",
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/octet-stream",
-                            "File-Name": "my"
-                        },
-                        description: "{'uploading':" + "my" + "}"
+                        });
+                        task.on("complete", this.completeEvent);
                     }
-                    var price = that.price.toString();
-                    const params = [
-                        { name: "file", filename: that.file, mimeType: mimeType },
-                        { name: "name", value: that.productName },
-                        { name: "brand", value: that.brandName },
-                        { name: "price.value", value: price },
-                        { name: "price.currency", value: that.currency },
-                        { name: "heading.title", value: that.detailHeading },
-                        { name: "heading.description", value: that.detailDescription },
-                        { name: "dimensions[value]", value: that.weight },
-                        { name: "dimensions[unit]", value: that.weightDimension },
-                        { name: "shouldImageUpdate", value: that.shouldImageUpdate },
-                        { name: "isUpdate", value: "true" },
-                        { name: "product_id", value: that.productId },
-                    ]
-                    var task = uploadSession.multipartUpload(params, request);
-                    task.on("progress", (e) => {
-                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
-                        this.uploadProgressDialog.show();
-                    });
-                    task.on("responded", (e: any) => {
-                        console.log("RESPONSE: " + e.data);
-                        // if (e.responseCode == "201") {
-                        //     this.errorMessage = "Product is already exist.";
-                        //     setTimeout(() => {
-                        //         this.warningDialog.show();
-                        //     }, 10);
-                        // }
-                        // else {
-                        localStorage.setItem('fromHome', 'true');
-                        this.routerExtensions.back();
-                        // }
-                        this.isLoading = false;
-                        this.uploadProgressDialog.hide();
-                        this.imageCropper = new ImageCropper();
-                    });
-                    task.on("error", (e) => {
-                        this.imageCropper = new ImageCropper();
-                        this.networkError = true;
-                        this.isLoading = false;
-                        this.uploadProgressDialog.hide();
-                        this.errorMessage = "May be your network connection is low.";
-                        this.warningDialog.show();
-                    });
-                    task.on("complete", this.completeEvent);
-                }
-            } else {
-                if (that.classType == "similarProduct") {
-                    if (localStorage.getItem("categoryId") != null && localStorage.getItem("categoryId") != undefined) {
-                        var categoryId = localStorage.getItem("categoryId");
+                } else {
+                    if (that.classType == "similarProduct") {
+                        if (localStorage.getItem("categoryId") != null && localStorage.getItem("categoryId") != undefined) {
+                            var categoryId = localStorage.getItem("categoryId");
+                        }
+                        var request = {
+                            url: Values.BASE_URL + "similarProducts",
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/octet-stream",
+                                "File-Name": that.name
+                            },
+                            description: "{'uploading':" + that.name + "}"
+                        }
+                        const params = [
+                            { name: "file", filename: that.file, mimeType: mimeType },
+                            { name: "category._id", value: categoryId },
+                            { name: "name", value: that.productName },
+                            { name: "brand", value: that.brandName },
+                            { name: "price.value", value: that.price },
+                            { name: "price.currency", value: that.currency },
+                            { name: "heading.title", value: that.detailHeading },
+                            { name: "heading.description", value: that.detailDescription },
+                            { name: "dimensions[value]", value: that.weight },
+                            { name: "dimensions[unit]", value: that.weightDimension }
+                        ]
+                        var task = uploadSession.multipartUpload(params, request);
+                        task.on("progress", (e) => {
+                            this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                            this.uploadProgressDialog.show();
+                        });
+                        task.on("responded", (e: any) => {
+                            // if (e.responseCode == "201") {
+                            //     this.errorMessage = "Product is already exist.";
+                            //     setTimeout(() => {
+                            //         this.warningDialog.show();
+                            //     }, 10);
+                            // }
+                            // else {
+                            localStorage.setItem('fromSimilarProducts', 'true');
+                            this.routerExtensions.back();
+                            // }
+                            this.isLoading = false;
+                            this.uploadProgressDialog.hide();
+                            this.imageCropper = new ImageCropper();
+                        });
+                        task.on("error", (e) => {
+                            // console.log("ERROR:::::", e);
+                            this.imageCropper = new ImageCropper();
+                            this.networkError = true;
+                            this.isLoading = false;
+                            this.uploadProgressDialog.hide();
+                            this.errorMessage = "May be your network connection is low.";
+                            this.warningDialog.show();
+                        });
+                        // task.on("complete", this.completeEvent);
                     }
-                    var request = {
-                        url: Values.BASE_URL + "similarProducts",
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/octet-stream",
-                            "File-Name": that.name
-                        },
-                        description: "{'uploading':" + that.name + "}"
+                    else {
+                        var request = {
+                            url: Values.BASE_URL + "products",
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/octet-stream",
+                                "File-Name": that.name
+                            },
+                            description: "{'uploading':" + that.name + "}"
+                        }
+                        const params = [
+                            { name: "file", filename: that.file, mimeType: mimeType },
+                            { name: "name", value: that.productName },
+                            { name: "brand", value: that.brandName },
+                            { name: "price.value", value: that.price },
+                            { name: "price.currency", value: that.currency },
+                            { name: "heading.title", value: that.detailHeading },
+                            { name: "heading.description", value: that.detailDescription },
+                            { name: "dimensions[value]", value: that.weight },
+                            { name: "dimensions[unit]", value: that.weightDimension }
+                        ]
+                        var task = uploadSession.multipartUpload(params, request);
+                        task.on("progress", (e) => {
+                            this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
+                            this.uploadProgressDialog.show();
+                        });
+                        task.on("responded", (e: any) => {
+                            // console.log("RESPONSEEE: " + e.data);
+                            // if (e.responseCode == "201") {
+                            //     this.errorMessage = "Product is already exist.";
+                            //     setTimeout(() => {
+                            //         this.warningDialog.show();
+                            //     }, 10);
+                            // }
+                            // else {
+                            localStorage.setItem('fromHome', 'true');
+                            this.routerExtensions.back();
+                            // }
+                            this.imageCropper = new ImageCropper();
+                            this.isLoading = false;
+                            this.uploadProgressDialog.hide();
+                        });
+                        task.on("error", (e) => {
+                            this.imageCropper = new ImageCropper();
+                            this.networkError = true;
+                            this.isLoading = false;
+                            this.uploadProgressDialog.hide();
+                            this.errorMessage = "May be your network connection is low.";
+                            this.warningDialog.show();
+                        });
+                        task.on("complete", this.completeEvent);
                     }
-                    const params = [
-                        { name: "file", filename: that.file, mimeType: mimeType },
-                        { name: "category._id", value: categoryId },
-                        { name: "name", value: that.productName },
-                        { name: "brand", value: that.brandName },
-                        { name: "price.value", value: that.price },
-                        { name: "price.currency", value: that.currency },
-                        { name: "heading.title", value: that.detailHeading },
-                        { name: "heading.description", value: that.detailDescription },
-                        { name: "dimensions[value]", value: that.weight },
-                        { name: "dimensions[unit]", value: that.weightDimension }
-                    ]
-                    var task = uploadSession.multipartUpload(params, request);
-                    task.on("progress", (e) => {
-                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
-                        this.uploadProgressDialog.show();
-                    });
-                    task.on("responded", (e: any) => {
-                        // if (e.responseCode == "201") {
-                        //     this.errorMessage = "Product is already exist.";
-                        //     setTimeout(() => {
-                        //         this.warningDialog.show();
-                        //     }, 10);
-                        // }
-                        // else {
-                        localStorage.setItem('fromSimilarProducts', 'true');
-                        this.routerExtensions.back();
-                        // }
-                        this.isLoading = false;
-                        this.uploadProgressDialog.hide();
-                        this.imageCropper = new ImageCropper();
-                    });
-                    task.on("error", (e) => {
-                        // console.log("ERROR:::::", e);
-                        this.imageCropper = new ImageCropper();
-                        this.networkError = true;
-                        this.isLoading = false;
-                        this.uploadProgressDialog.hide();
-                        this.errorMessage = "May be your network connection is low.";
-                        this.warningDialog.show();
-                    });
-                    // task.on("complete", this.completeEvent);
-                }
-                else {
-                    var request = {
-                        url: Values.BASE_URL + "products",
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/octet-stream",
-                            "File-Name": that.name
-                        },
-                        description: "{'uploading':" + that.name + "}"
-                    }
-                    const params = [
-                        { name: "file", filename: that.file, mimeType: mimeType },
-                        { name: "name", value: that.productName },
-                        { name: "brand", value: that.brandName },
-                        { name: "price.value", value: that.price },
-                        { name: "price.currency", value: that.currency },
-                        { name: "heading.title", value: that.detailHeading },
-                        { name: "heading.description", value: that.detailDescription },
-                        { name: "dimensions[value]", value: that.weight },
-                        { name: "dimensions[unit]", value: that.weightDimension }
-                    ]
-                    var task = uploadSession.multipartUpload(params, request);
-                    task.on("progress", (e) => {
-                        this.uploadProgressValue = (e.currentBytes / e.totalBytes) * 100;
-                        this.uploadProgressDialog.show();
-                    });
-                    task.on("responded", (e: any) => {
-                        // console.log("RESPONSEEE: " + e.data);
-                        // if (e.responseCode == "201") {
-                        //     this.errorMessage = "Product is already exist.";
-                        //     setTimeout(() => {
-                        //         this.warningDialog.show();
-                        //     }, 10);
-                        // }
-                        // else {
-                        localStorage.setItem('fromHome', 'true');
-                        this.routerExtensions.back();
-                        // }
-                        this.imageCropper = new ImageCropper();
-                        this.isLoading = false;
-                        this.uploadProgressDialog.hide();
-                    });
-                    task.on("error", (e) => {
-                        this.imageCropper = new ImageCropper();
-                        this.networkError = true;
-                        this.isLoading = false;
-                        this.uploadProgressDialog.hide();
-                        this.errorMessage = "May be your network connection is low.";
-                        this.warningDialog.show();
-                    });
-                    task.on("complete", this.completeEvent);
                 }
             }
         }

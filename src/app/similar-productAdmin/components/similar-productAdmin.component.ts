@@ -41,6 +41,8 @@ export class SimilarProductAdminComponent implements OnInit {
     isLoadingSimilarProducts: boolean;
     shouldLoadSimilarProducts: boolean;
     isRenderingMessage: boolean;
+    isVisibleHeading: boolean;
+    backheading: string;
 
     constructor(private routerExtensions: RouterExtensions, private router: ActivatedRoute, private page: Page, private navigationService: NavigationService, private userService: UserService, private http: HttpClient) {
         this.page.actionBarHidden = true;
@@ -54,19 +56,24 @@ export class SimilarProductAdminComponent implements OnInit {
         this.isLoadingSimilarProducts = false;
         this.productStatus = "enabled";
         this.isRenderingMessage = false;
+        this.isVisibleHeading = true;
+        this.backheading = "";
 
         this.page.on('navigatedTo', (data) => {
             console.log("ddata:::", data.isBackNavigation);
             console.log("navigating to this page:::", data.context);
             if (data.isBackNavigation) {
-                this.similarPageNo = 1;
-                this.heading = localstorage.getItem("categoryHeading");
+                this.isVisibleHeading = false;
+                this.backheading = localstorage.getItem("categoryHeading");
+                console.log("HEADING:::::::", this.heading);
                 if (localStorage.getItem('fromSimilarProducts') == 'true') {
+                    this.similarPageNo = 1;
                     this.page.requestLayout();
-                    this.similarGridView.refresh();
+                    // this.similarGridView.refresh();
                     this.similarProducts = [];
                     this.categoryId = localstorage.getItem("categoryId");
                     localStorage.setItem('fromSimilarProducts', '');
+                    console.log('In back:::')
                     this.getSimilarProducts();
                 }
             }
@@ -83,6 +90,7 @@ export class SimilarProductAdminComponent implements OnInit {
                 this.heading = localstorage.getItem("categoryHeading");
                 console.log("idddddddd::::::::", this.categoryId);
             }
+            console.log('In forth:::')
             this.getSimilarProducts();
         }
         this.navigationService.backTo = "homeAdmin";
@@ -123,11 +131,12 @@ export class SimilarProductAdminComponent implements OnInit {
     }
 
     onSimilarItemLoading(args: any) {
-        console.log('ProductItemLoaded:::', args.index)
         var criteria = (this.similarPageNo * 10) - 5;
         if (this.shouldLoadSimilarProducts) {
+            console.log("ARGS INDEX:::" + args.index + "CRITERIA:::", criteria);
             if (args.index == criteria) {
                 this.similarPageNo = this.similarPageNo + 1;
+                console.log('PAGE NO::::', this.similarPageNo);
                 this.getSimilarProducts();
             }
         }
@@ -135,10 +144,19 @@ export class SimilarProductAdminComponent implements OnInit {
     }
 
     getSimilarProducts() {
+        console.log("IN AOI")
+
+
+        if (this.categoryId == null || this.categoryId == undefined) {
+            this.categoryId = localstorage.getItem("categoryId", "");
+            this.heading = localstorage.getItem("categoryHeading", "");
+        }
         if (this.categoryId != null && this.categoryId != undefined) {
+            console.log("IN AOIinn:::", this.categoryId)
+
             localstorage.setItem("categoryId", this.categoryId);
             localstorage.setItem("categoryHeading", this.heading);
-            console.log('Category:::', this.categoryId)
+            // console.log('Category:::', this.categoryId)
             this.isLoadingSimilarProducts = true;
             this.userService.showLoadingState(true);
             this.http
@@ -146,7 +164,7 @@ export class SimilarProductAdminComponent implements OnInit {
                 .subscribe((res: any) => {
                     if (res != null && res != undefined) {
                         if (res.isSuccess == true) {
-                            console.trace("RES:::SIMILAR:::", res)
+                            // console.trace("RES:::SIMILAR:::", res)
                             if (res.data.products.length > 0) {
                                 this.userService.showLoadingState(false);
                                 for (var i = 0; i < res.data.products.length; i++) {

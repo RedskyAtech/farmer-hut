@@ -4,8 +4,11 @@
             <StackLayout col="0" height="80%" verticalAlignment="middle" width="15%">
                 <Button class="backButton" (tap)="onBack()"></Button>
             </StackLayout>
-            <StackLayout col="1" height="100%" width="70%" verticalAlignment="middle">
+            <StackLayout *ngIf="isVisibleHeading" col="1" height="100%" width="70%" verticalAlignment="middle">
                 <Label class="pageHeading" [text]="heading"></Label>
+            </StackLayout>
+            <StackLayout *ngIf="!isVisibleHeading" col="1" height="100%" width="70%" verticalAlignment="middle">
+                <Label class="pageHeading" [text]="backheading"></Label>
             </StackLayout>
             <StackLayout col="2" height="80%" width="15%">
                 <Button #menuButton class="menuButton" (tap)="onMenu(menuButton)"></Button>

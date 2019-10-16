@@ -8,6 +8,8 @@ import { ActivatedRoute } from "@angular/router";
 import { ModalComponent } from "~/app/modals/modal.component";
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
+import { BackgroundHttpService } from "~/app/services/background.http.service";
+import { Product } from "~/app/models/product.model";
 
 import * as localstorage from "nativescript-localstorage";
 import * as Toast from 'nativescript-toast';
@@ -35,7 +37,7 @@ export class ConfirmPhoneComponent implements OnInit {
     isRendering: boolean;
     isLoading: boolean;
 
-    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private page: Page) {
+    constructor(private routerExtensions: RouterExtensions, private navigationService: NavigationService, private route: ActivatedRoute, private userService: UserService, private http: HttpClient, private page: Page, private backgroundHttpService: BackgroundHttpService) {
         this.page.actionBarHidden = true;
         this.otpHint = "Enter OTP"
         this.otp = "";
@@ -93,7 +95,78 @@ export class ConfirmPhoneComponent implements OnInit {
                         if (res.isSuccess == true) {
                             this.userService.showLoadingState(false);
                             Toast.makeText("Registered successfully!!!").show();
-                            this.routerExtensions.navigate(['/login']);
+                            // this.routerExtensions.navigate(['/login']);
+                            this.http
+                                .post(Values.BASE_URL + "users/login", this.user)
+                                .subscribe((res: any) => {
+                                    if (res != null && res != undefined) {
+                                        if (res.isSuccess == true) {
+                                            this.userService.showLoadingState(false);
+                                            if (res.data.type == "admin") {
+                                                localstorage.removeItem('userToken');
+                                                localstorage.removeItem('userId');
+                                                if (res.data.token != "" && res.data.token != undefined) {
+                                                    localstorage.setItem('adminToken', res.data.token);
+                                                }
+                                                if (res.data._id != null && res.data._id != undefined) {
+                                                    localstorage.setItem('adminId', res.data._id);
+                                                }
+                                                localstorage.setItem('userType', res.data.type);
+                                                Toast.makeText("Login successfully!!!", "long").show();
+                                                this.routerExtensions.navigate(['./homeAdmin'], {
+                                                    clearHistory: true,
+                                                });
+                                            }
+                                            else {
+                                                localstorage.removeItem('adminToken');
+                                                localstorage.removeItem('adminId');
+                                                if (res.data.token != "" && res.data.token != undefined) {
+                                                    localstorage.setItem('userToken', res.data.token);
+                                                }
+                                                if (res.data._id != null && res.data._id != undefined) {
+                                                    localstorage.setItem('userId', res.data._id);
+                                                    this.http
+                                                        .get(Values.BASE_URL + "users/" + localstorage.getItem("userId"))
+                                                        .subscribe((res: any) => {
+                                                            if (res != "" && res != undefined) {
+                                                                if (res.isSuccess == true) {
+                                                                    this.isLoading = false;
+                                                                    localstorage.setItem('cartId', res.data.cartId);
+                                                                    this.getCart(res.data.cartId);
+                                                                }
+                                                            }
+                                                        }, error => {
+                                                            this.isLoading = false;
+                                                            if (error.error.error == undefined) {
+                                                                this.errorMessage = "May be your network connection is low.";
+                                                                this.warningDialog.show();
+                                                            }
+                                                            else {
+                                                                this.errorMessage = error.error.error;
+                                                                this.warningDialog.show();
+                                                            }
+                                                        });
+                                                }
+                                                localstorage.setItem('userType', res.data.type);
+                                                Toast.makeText("Login successfully!!!", "long").show();
+                                                this.routerExtensions.navigate(['./homeUser'], {
+                                                    clearHistory: true,
+                                                });
+                                            }
+                                        }
+                                    }
+                                }, error => {
+                                    this.userService.showLoadingState(false);
+                                    if (error.error.error == undefined) {
+                                        this.errorMessage = "May be your network connection is low.";
+                                        this.warningDialog.show();
+                                    }
+                                    else {
+                                        this.errorMessage = error.error.error;
+                                        this.warningDialog.show();
+                                    }
+                                    this.isLoading = false;
+                                });
                         }
                     }
                 }, error => {
@@ -109,6 +182,33 @@ export class ConfirmPhoneComponent implements OnInit {
                     }
                 });
         }
+    }
+
+    getCart(cartId: string) {
+        var tempCart = [];
+        this.backgroundHttpService.get(Values.BASE_URL + `carts/${cartId}`, {}).then((res: any) => {
+            if (res != null && res != undefined) {
+                console.log("RES:::CART:::", res)
+                if (res.isSuccess == true) {
+                    if (res.data && res.data.products) {
+                        for (var i = 0; i < res.data.products.length; i++) {
+                            tempCart.push(new Product(res.data.products[i]));
+                        }
+                    }
+                    localstorage.setItem('cart', JSON.stringify(tempCart));
+                }
+            }
+        }
+            , error => {
+                if (error.error.error == undefined) {
+                    this.errorMessage = "May be your network connection is low.";
+                    this.warningDialog.show();
+                }
+                else {
+                    this.errorMessage = error.error.error;
+                    this.warningDialog.show();
+                }
+            });
     }
 
     onResend() {

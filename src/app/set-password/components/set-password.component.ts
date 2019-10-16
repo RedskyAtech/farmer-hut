@@ -138,8 +138,6 @@ export class SetPasswordComponent implements OnInit {
     }
 
     onBack() {
-        this.routerExtensions.navigate(['./forgotPassword'], {
-            clearHistory: true,
-        })
+        this.routerExtensions.back();
     }
 }

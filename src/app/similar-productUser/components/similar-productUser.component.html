@@ -32,22 +32,22 @@
                                 </NSImage>
                             </StackLayout>
                             <GridLayout col="1" rows="auto,auto,,auto,auto" height="100%" width="60%">
-                                <StackLayout row="0" height="20%" width="100%" verticalAlignment="middle">
+                                <StackLayout row="0" height="35%" width="100%" verticalAlignment="middle">
                                     <Label class="product-name" textWrap="true" [text]="item.name"></Label>
                                 </StackLayout>
                                 <StackLayout row="1" height="20%" width="100%" verticalAlignment="middle">
                                     <Label class="product-heading" textWrap="true" [text]="item.heading"></Label>
                                 </StackLayout>
-                                <GridLayout row="2" columns="auto,auto" width="100%" height="25%">
+                                <GridLayout row="2" columns="auto,auto" width="100%" height="20%">
                                     <StackLayout col="0" height="100%" width="50%">
-                                        <Label width="100%" color="#00C012" fontSize="14" [text]="item.weight"></Label>
+                                        <Label width="100%" color="#00C012" fontSize="14%" [text]="item.weight"></Label>
                                     </StackLayout>
                                     <StackLayout col="1" height="100%" width="50%">
-                                        <Label width="100%" color="#00C012" fontSize="14"
+                                        <Label width="100%" color="#00C012" fontSize="14%"
                                             [text]="'Rs '+item.price"></Label>
                                     </StackLayout>
                                 </GridLayout>
-                                <GridLayout row="3" columns="auto,auto" width="100%" height="35%">
+                                <GridLayout row="3" columns="auto,auto" width="100%" height="25%">
                                     <StackLayout col="0" height="100%" width="50%" verticalAlignment="middle">
                                         <Button class="addCartButton" text="Add to cart"
                                             (tap)="onAddCart(item)"></Button>

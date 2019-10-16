@@ -6,7 +6,6 @@ import { UserService } from '../../services/user.service';
 import { Order } from "~/app/models/order.model";
 import { NavigationService } from "~/app/services/navigation.service";
 import { Page } from "tns-core-modules/ui/page/page";
-
 import * as localstorage from "nativescript-localstorage";
 
 
@@ -70,9 +69,10 @@ export class ViewOrdersComponent implements OnInit {
         console.log('ProductItemLoaded:::', args.index)
         var criteria = (this.orderPageNo * 10) - 5;
         if (this.shouldLoadOrders) {
+            console.log("ARGS INDEX:::" + args.index + "CRITERIA:::", criteria);
             if (args.index == criteria) {
                 this.orderPageNo = this.orderPageNo + 1;
-                this.orderedProducts = [];
+                // this.orderedProducts = [];
                 this.getOrders();
             }
         }
@@ -81,6 +81,8 @@ export class ViewOrdersComponent implements OnInit {
 
 
     getOrders() {
+        console.log("ADMIN TOKEN::::", localstorage.getItem("adminToken"));
+        console.log("ADMIN Id::::", localstorage.getItem("adminId"));
         if (localstorage.getItem("adminToken") != null &&
             localstorage.getItem("adminToken") != undefined &&
             localstorage.getItem("adminId") != null &&
