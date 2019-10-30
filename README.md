@@ -3,12 +3,11 @@ NativeScript is an open-source framework to develop apps on the Apple iOS and An
  
  
  ##  Screenshots
-![image](./src/login.jpeg)
-![image](./src/signup.jpeg)
-![image](./src/music1.jpeg)
-![image](./src/music2.jpeg)
-![image](./src/music3.jpeg)
-![image](./src/music4.jpeg)
+![image](./src/one.jpeg)
+![image](./src/two.jpeg)
+![image](./src/three.jpeg)
+![image](./src/four.jpeg)
+![image](./src/five.jpeg)
 
 
 * ## Prerequisites
