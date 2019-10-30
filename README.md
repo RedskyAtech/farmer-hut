@@ -22,11 +22,11 @@ This app is built with the NativeScript CLI. Once you have the [CLI installed](h
 3. `npm install` 
 
 ## App Functions
-1.Play audio with in-app player
-2.Music will be uploaded by admin (1 user)
-3.Push notifications
-4.Social functions (instant message, comment, share, friends lists)
-5.Ads (Banner and Pop up, admob)
+1.online shopping app
+2.Push notifications
+3.Social functions (feedback)
+4.can add more product cateogories(admin app)
+5.live tracking
 
 
 
